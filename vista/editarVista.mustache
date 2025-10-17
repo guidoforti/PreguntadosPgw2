@@ -1,0 +1,26 @@
+<div class="w3-container w3-center w3-margin">
+    {{#fila}}
+        <form method="POST"
+              action="/pokemon/editar"
+              class="w3-card w3-white w3-padding w3-content"
+              style="max-width:700px;text-align:left">
+
+            <p><label>Id: </label>{{id}}</p> <input class="w3-input w3-border" type="hidden" name="id" value="{{id}}">
+            <p><label>Número</label><input class="w3-input w3-border" type="number" name="numero" value="{{numero}}"></p>
+            <p><label>Nombre</label><input class="w3-input w3-border" type="text" name="nombre" value="{{nombre}}"></p>
+            <p><label>Tipo</label>
+                <select class="w3-select w3-border" name="tipo">
+                    {{#tipos}}
+                        <option value="{{tipo_valor}}" {{#es_tipo_seleccionado}}selected{{/es_tipo_seleccionado}}>{{tipo_valor}}</option>
+                    {{/tipos}}
+                </select>
+            </p>
+            <p><label>Descripción</label><textarea class="w3-input w3-border" name="descripcion">{{descripcion}}</textarea></p>
+            <p><button class="w3-button w3-green" type="submit">Guardar</button>
+                <a class="w3-button w3-blue" href="/">Volver</a></p>
+        </form>
+    {{/fila}}
+    {{^fila}}
+        <div class='w3-panel w3-red'>Pokémon no encontrado</div>
+    {{/fila}}
+</div>
