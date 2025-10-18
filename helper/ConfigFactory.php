@@ -3,7 +3,9 @@ include_once("helper/MyConexion.php");
 include_once("helper/IncludeFileRenderer.php");
 include_once("helper/NewRouter.php");
 include_once("controller/LoginController.php");
+include_once ("controller/RegistroController.php");
 include_once("model/LoginModel.php");
+include_once ("model/RegistroModel.php");
 include_once('vendor/mustache/src/Mustache/Autoloader.php');
 include_once ("helper/MustacheRenderer.php");
 
@@ -31,6 +33,8 @@ class ConfigFactory
         $this->objetos["router"] = new NewRouter($this, "PreguntadosController", "base");
 
         $this->objetos["LoginController"] = new LoginController(new LoginModel($this->conexion), $this->renderer);
+
+        $this->objetos["RegistroController"] = new RegistroController(new RegistroModel($this->conexion), $this->renderer);
 
        }
 
