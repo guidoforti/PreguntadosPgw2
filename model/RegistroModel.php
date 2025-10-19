@@ -14,52 +14,84 @@ class RegistroModel
 
     public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen)
     {
+        // Validaciones de datos lógicas
         if ($this->existeNombreUsuario($nombreUsuario)) {
-            return ['error' => 'el nombre de usuario no esta disponible'];
+            return ['error' => 'El nombre de usuario no está disponible'];
         }
         if (!$this->sonContraseniasIguales($contraseniaUno, $contraseniaDos)) {
-            return ['error' => 'las contraseñas no coinciden'];
+            return ['error' => 'Las contraseñas no coinciden'];
         }
         if (!$this->esEmailValido($email)) {
-            return ['error' => 'El email no tiene un formato o dominio valido'];
+            return ['error' => 'El email no tiene un formato o dominio válido'];
+        }
+        if (!$this->esAnioNacimientoValido($anioNacimiento)) {
+            return ['error' => 'El año de nacimiento no es válido'];
         }
 
-        // muevo la imagen a los files correctos y persisto el pokemon
-        $direccioBase = "../imagenes/usuario/";
-        if (isset($imagen) && $imagen['error'] == 0) {
-            $nombreDeLaImagen = basename($imagen["name"]);
-            $direccioFinalDeImagen = $direccioBase . $nombreDeLaImagen;
-            move_uploaded_file($imagen["tmp_name"], $direccioFinalDeImagen);
-        } else {
-            return ['error' => 'error al guardar la imagen'];
+        // Validación y guardado de imagen
+        $rutaBase = __DIR__ . "../imagenes/usuario/";
+        if (!is_dir($rutaBase)) {
+            mkdir($rutaBase, 0777, true);
         }
 
-        $contrasenaHash = password_hash($contraseniaUno, PASSWORD_DEFAULT);
-        $contrasenaHash = password_hash($contraseniaUno, PASSWORD_DEFAULT);
-        $ciudadId = 1; // Asegúrate de obtener este valor de alguna manera
+        $rutaRelativa = null; // se guardará en BD
+        if ($imagen && $imagen['error'] === UPLOAD_ERR_OK) {
+            $tipoMime = mime_content_type($imagen['tmp_name']);
+            $tamaño = $imagen['size'];
 
+            // Validar formato
+            $formatosPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!in_array($tipoMime, $formatosPermitidos)) {
+                return ['error' => 'Formato de imagen no permitido (solo JPG, PNG o GIF)'];
+            }
+
+            // Validar tamaño (máx 2 MB)
+            if ($tamaño > 2 * 1024 * 1024) {
+                return ['error' => 'La imagen supera el tamaño máximo de 2MB'];
+            }
+
+            // Obtener extensión segura
+            $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+            $fechaActual = new DateTime();
+            $nombreSeguro = 'profile_' . $fechaActual->format('YmdHisv') . '.' . strtolower($ext);
+
+            // Construir rutas
+            $rutaFinal = $rutaBase . $nombreSeguro;
+            $rutaRelativa = "imagenes/usuario/" . $nombreSeguro;
+
+            if (!move_uploaded_file($imagen['tmp_name'], $rutaFinal)) {
+                return ['error' => 'Error al guardar la imagen'];
+            }
+        }
+
+        // Hash de contraseña
+        $contrasenaHash = password_hash($contraseniaUno, PASSWORD_DEFAULT);
+        $ciudadId = 1; // Temporal hasta integrar mapa
+
+        // Insert SQL
         $sql = "INSERT INTO usuarios (
-                nombre_completo, 
-                nombre_usuario, 
-                email, 
-                contrasena_hash, 
-                ano_nacimiento, 
-                sexo, 
-                ciudad_id, 
-                url_foto_perfil, 
-                rol, 
-                esta_verificado
-            ) VALUES (
-                '$nombreCompleto',
-                '$nombreUsuario',
-                '$email',
-                '$contrasenaHash',
-                $anioNacimiento,
-                '$sexo',
-                $ciudadId,
-                $direccioFinalDeImagen,
-                'usuario',
-                0)";
+                    nombre_completo, 
+                    nombre_usuario, 
+                    email, 
+                    contrasena_hash, 
+                    ano_nacimiento, 
+                    sexo, 
+                    ciudad_id, 
+                    url_foto_perfil, 
+                    rol, 
+                    esta_verificado
+                ) VALUES (
+                    '$nombreCompleto',
+                    '$nombreUsuario',
+                    '$email',
+                    '$contrasenaHash',
+                    $anioNacimiento,
+                    '$sexo',
+                    $ciudadId,
+                    " . ($rutaRelativa ? "'$rutaRelativa'" : "NULL") . ",
+                    'usuario',
+                    0
+                )";
 
         $resultado = $this->conexion->query($sql);
 
@@ -68,7 +100,6 @@ class RegistroModel
         } else {
             return ['error' => 'El usuario no se pudo registrar correctamente'];
         }
-
     }
 
     public function existeNombreUsuario($nombreUsuario)
@@ -119,5 +150,13 @@ class RegistroModel
         }
 
         return $esValido;
+    }
+
+    public function esAnioNacimientoValido($anioNacimiento) {
+        $anioValido = true;
+        if( !is_int($anioNacimiento) || $anioNacimiento < 1900 ) {
+            $anioValido = false;
+        }
+        return $anioValido;
     }
 }

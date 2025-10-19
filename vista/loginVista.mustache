@@ -1,10 +1,38 @@
-<div class="w3-container w3-center w3-margin">
-    <form method="POST" action="/login/login" class="w3-card w3-padding w3-light-grey w3-display-inline-block" style="min-width:300px">
-        {{#error}}
-            <div class='w3-panel w3-red'>{{error}}</div>
-        {{/error}}
-        <p><input class="w3-input w3-border" type="text" name="usuario" placeholder="Usuario"></p>
-        <p><input class="w3-input w3-border" type="password" name="password" placeholder="Password"></p>
-        <p><input class="w3-button w3-blue" type="submit" value="Ingresar"></p>
-    </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Iniciar Sesión</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mensajes de éxito o error -->
+                    {{#exito}}
+                        <div class="alert alert-success text-center">{{exito}}</div>
+                    {{/exito}}
+                    {{#error}}
+                        <div class="alert alert-danger text-center">{{error}}</div>
+                    {{/error}}
+
+                    <!-- Formulario de login -->
+                    <form action="/login/login" method="POST">
+                        <div class="mb-3">
+                            <label for="usuario" class="form-label">Nombre de Usuario</label>
+                            <input type="text" class="form-control" id="usuario" name="usuario" required minlength="3" maxlength="50" placeholder="Ingresá tu usuario">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="8" placeholder="Ingresá tu contraseña">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                            <a href="/registro/registroForm" class="btn btn-outline-secondary">¿No tenés cuenta? Registrate</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
