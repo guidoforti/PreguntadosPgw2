@@ -7,7 +7,7 @@ include_once ("controller/RegistroController.php");
 include_once ("controller/PreguntadosController.php");
 include_once("model/LoginModel.php");
 include_once ("model/RegistroModel.php");
-include_once('vendor/mustache/src/Mustache/Autoloader.php');
+include_once('vendor/autoload.php');
 include_once ("helper/MustacheRenderer.php");
 
 class ConfigFactory
