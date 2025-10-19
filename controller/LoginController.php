@@ -13,25 +13,50 @@ class LoginController
 
     public function base()
     {
-        $this->login();
+        $this->loginForm();
     }
 
     public function loginForm()
     {
+        if (isset($_SESSION["usuario"])) {
+            $this->redirectToIndex();
+            return;
+        }
         $this->renderer->render("login");
     }
 
     public function login()
     {
-        $resultado = $this->model->getUserWith($_POST["usuario"], $_POST["password"]);
+        // Tomar los datos del POST
+        $usuario = $_POST["usuario"] ?? '';
+        $password = $_POST["password"] ?? '';
 
-        if (sizeof($resultado) > 0) {
-            $_SESSION["usuario"] = $_POST["usuario"];
-            $this->redirectToIndex();
-        } else {
-            $this->renderer->render("login", ["error" => "Usuario o clave incorrecta"]);
+        // Validar campos vacíos
+        if (empty($usuario) || empty($password)) {
+            $this->renderer->render("login", ["error" => "Debe completar todos los campos"]);
+            return;
         }
+
+        // Llamar al modelo
+        $resultado = $this->model->getUserWith($usuario, $password);
+
+        // Manejar errores del modelo
+        if (isset($resultado['error'])) {
+            $this->renderer->render("login", ["error" => $resultado['error']]);
+            return;
+        }
+
+        // Login exitoso
+        if (isset($resultado['success'])) {
+            $_SESSION["usuario"] = $resultado['usuario']['nombre_usuario'];
+            $this->redirectToIndex();
+            return;
+        }
+
+        // Caso fallback (no debería ocurrir)
+        $this->renderer->render("login", ["error" => "Error desconocido al iniciar sesión"]);
     }
+
 
     public function logout()
     {
@@ -41,9 +66,8 @@ class LoginController
 
     public function redirectToIndex()
     {
-        header("Location: /");
+        header("Location: /ProyectoGrupo2/");
         exit;
     }
 
 }
-

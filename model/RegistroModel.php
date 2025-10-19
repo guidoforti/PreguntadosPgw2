@@ -29,7 +29,7 @@ class RegistroModel
         }
 
         // Validación y guardado de imagen
-        $rutaBase = __DIR__ . "../imagenes/usuario/";
+        $rutaBase = __DIR__ . "/../imagenes/usuario/";
         if (!is_dir($rutaBase)) {
             mkdir($rutaBase, 0777, true);
         }
@@ -105,7 +105,7 @@ class RegistroModel
     public function existeNombreUsuario($nombreUsuario)
     {
         $estaPresente = false;
-        $sql = "SELECT * FROM usuarios where nombre_usuario = $nombreUsuario";
+        $sql = "SELECT * FROM usuarios where nombre_usuario = '$nombreUsuario'";
         $resultado = $this->conexion->query($sql);
         if ($resultado) {
             $estaPresente = true;
@@ -154,7 +154,13 @@ class RegistroModel
 
     public function esAnioNacimientoValido($anioNacimiento) {
         $anioValido = true;
-        if( !is_int($anioNacimiento) || $anioNacimiento < 1900 ) {
+        try {
+            $anioNacimientoInt = (int) $anioNacimiento;
+            if( $anioNacimientoInt < 1900 ) {
+                $anioValido = false;
+            }
+            
+        } catch (\Throwable $th) {
             $anioValido = false;
         }
         return $anioValido;

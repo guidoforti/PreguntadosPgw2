@@ -21,6 +21,10 @@ class RegistroController
 
     public function registrarForm()
     {
+        if (isset($_SESSION["usuario"])) {
+            $this->redirectToIndex();
+            return;
+        }
         $this->render->render("registrar");
     }
 
@@ -72,5 +76,10 @@ class RegistroController
         }
     }
 
+    public function redirectToIndex()
+    {
+        header("Location: /ProyectoGrupo2/");
+        exit;
+    }
 
 }

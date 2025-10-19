@@ -10,7 +10,7 @@ CREATE TABLE paises (
                         PRIMARY KEY (pais_id),
                         UNIQUE KEY uk_nombre_pais (nombre)
 
-)
+);
 
 
 CREATE TABLE ciudades (
@@ -25,7 +25,7 @@ CREATE TABLE ciudades (
                               ON DELETE RESTRICT  -- Opcional: Evita borrar un país si tiene ciudades
                               ON UPDATE CASCADE   -- Opcional: Si el pais_id cambia, se actualiza aquí
 
-)
+);
 
 
 CREATE TABLE usuarios (
@@ -68,7 +68,7 @@ CREATE TABLE usuarios (
 
 
 
-)
+);
 
 
 
