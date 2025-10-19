@@ -82,6 +82,22 @@
                             <div class="form-text">Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 2MB</div>
                         </div>
 
+                        <!-- Seleccion de Ubicación -->
+
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+                        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+                        <div class="mb-4">
+                            <label class="form-label">Seleccioná tu ubicación</label>
+                            <div id="map" style="height: 300px;"></div>
+                        </div>
+
+                        <input type="hidden" name="latitud" id="latitud">
+                        <input type="hidden" name="longitud" id="longitud">
+                        <input type="hidden" name="direccion" id="direccion">
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Registrarse</button>
                             <a href="/ProyectoGrupo2/login/loginForm" class="btn btn-outline-secondary">¿Ya tienes cuenta? Inicia Sesión</a>
@@ -129,5 +145,36 @@
     document.addEventListener('DOMContentLoaded', function() {
         const anioActual = new Date().getFullYear();
         document.getElementById('anioNacimiento').max = anioActual - 1;
-    });
+
+        // Javascript del Mapa
+        let map = L.map('map').setView([-34.6037, -58.3816], 13);
+        let marker;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.Control.geocoder({
+            geocoder: L.Control.Geocoder.nominatim({
+                serviceUrl: 'http://localhost/ProyectoGrupo2/proxyNominatim.php?'
+            }),
+            defaultMarkGeocode: false
+        })
+                .on('markgeocode', function (e){
+                    let latlng = e.geocode.center;
+
+                    map.setView(latlng, 15);
+
+                    if(marker){
+                        marker.setLatLng(latlng);
+                    } else {
+                        marker = L.marker(latlng).addTo(map);
+                    }
+
+                    document.getElementById('latitud').value = latlng.lat;
+                    document.getElementById('longitud').value = latlng.lng;
+                    document.getElementById('direccion').value = e.geocode.name;
+                })
+                .addTo(map);
+    })
 </script>
