@@ -8,8 +8,8 @@ class MustacheRenderer{
         Mustache_Autoloader::register();
         $this->mustache = new Mustache_Engine(
             array(
-            'partials_loader' => new Mustache_Loader_FilesystemLoader( $partialsPathLoader )
-        ));
+                'partials_loader' => new Mustache_Loader_FilesystemLoader( $partialsPathLoader )
+            ));
         $this->viewsFolder = $partialsPathLoader;
     }
 
@@ -21,6 +21,7 @@ class MustacheRenderer{
         $contentAsString = file_get_contents(  $this->viewsFolder .'/header.mustache');
         $contentAsString .= file_get_contents( $contentFile );
         $contentAsString .= file_get_contents($this->viewsFolder . '/footer.mustache');
+
         return $this->mustache->render($contentAsString, $data);
     }
 }

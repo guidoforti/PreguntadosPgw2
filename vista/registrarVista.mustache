@@ -1,4 +1,3 @@
-
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
@@ -9,10 +8,9 @@
                 <div class="card-body">
                 <!-- Mensajes de éxito o error -->
                     {{#exito}}
-                        {{#.}}
                         <div class="alert alert-success text-center">{{exito}}</div>
-                        {{/.}}
                     {{/exito}}
+
                     {{#error}}
                         <div class="alert alert-danger text-center">{{error}}</div>
                     {{/error}}
@@ -28,7 +26,7 @@
                         <div class="mb-3">
                             <label for="anioNacimiento" class="form-label">Año de Nacimiento</label>
                             <input type="number" class="form-control" id="anioNacimiento" name="anioNacimiento"
-                                   required min="1900" max="{{anioActual}}">
+                                    max="{{anioActual}}">
                         </div>
 
                         <!-- Sexo -->
@@ -95,8 +93,9 @@
     </div>
 </div>
 
+
 <script>
-    // Validación de contraseñas coincidentes
+
     const password = document.getElementById('password');
     const confirmPassword = document.getElementById('confirmPassword');
     const form = document.getElementById('formRegistro');
@@ -113,11 +112,11 @@
         }
     }
 
-    // Validar al cambiar cualquiera de los campos de contraseña
+
     password.onchange = validatePassword;
     confirmPassword.onkeyup = validatePassword;
 
-    // Validar al enviar el formulario
+
     form.onsubmit = function(e) {
         if (!validatePassword()) {
             e.preventDefault();
@@ -126,7 +125,7 @@
         return true;
     };
 
-    // Establecer año actual para el campo de año de nacimiento
+
     document.addEventListener('DOMContentLoaded', function() {
         const anioActual = new Date().getFullYear();
         document.getElementById('anioNacimiento').max = anioActual - 1;

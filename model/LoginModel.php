@@ -22,7 +22,7 @@ class LoginModel
         $usuario = $resultado[0];
 
         if (!password_verify($password, $usuario['contrasena_hash'])) {
-            return ['error' => 'resultado o contraseña incorrecta'];
+            return ['error' => 'Usuario o contraseña incorrecta'];
         }
 
         return ['success' => 'Inicio de sesión exitoso', 'usuario' => $usuario];

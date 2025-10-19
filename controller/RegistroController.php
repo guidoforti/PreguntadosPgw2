@@ -25,13 +25,25 @@ class RegistroController
             $this->redirectToIndex();
             return;
         }
-        $this->render->render("registrar");
+
+        $data = [
+            'exito' => null,
+            'error' => null,
+            'anioActual' => date('Y')
+        ];
+
+        $this->render->render("registrar", $data);
     }
 
     public function registrar()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->render->render("registrar", ["error" => "Método no permitido."]);
+            $data = [
+                "error" => "Método no permitido.",
+                "exito" => null,
+                "anioActual" => date('Y')
+            ];
+            $this->render->render("registrar", $data);
             return;
         }
 
@@ -49,7 +61,12 @@ class RegistroController
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario', 'contraseniaUno', 'contraseniaDos');
         foreach ($campos as $clave => $valor) {
             if (empty($valor)) {
-                $this->render->render("registrar", ["error" => "El campo '$clave' es obligatorio."]);
+                $data = [
+                    "error" => "El campo '$clave' es obligatorio.",
+                    "exito" => null,
+                    "anioActual" => date('Y')
+                ];
+                $this->render->render("registrar", $data);
                 return;
             }
         }
@@ -66,13 +83,27 @@ class RegistroController
             $imagen
         );
 
-        // Mostrar el resultado en la vista correspondiente
+
         if (isset($resultado['error'])) {
-            $this->render->render("registrar", ["error" => $resultado['error']]);
+
+            $data = [
+                "error" => $resultado['error'],
+                "exito" => null,
+                "anioActual" => date('Y')
+            ];
+            $this->render->render("registrar", $data);
+
         } elseif (isset($resultado['success'])) {
+
             $this->render->render("login", ["exito" => $resultado['success']]);
         } else {
-            $this->render->render("registrar", ["error" => "Error desconocido al registrar el usuario."]);
+
+            $data = [
+                "error" => "Error desconocido al registrar el usuario.",
+                "exito" => null,
+                "anioActual" => date('Y')
+            ];
+            $this->render->render("registrar", $data);
         }
     }
 
