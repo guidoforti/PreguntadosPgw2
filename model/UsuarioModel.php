@@ -102,7 +102,7 @@ class UsuarioModel
         }
     }
 
-    public  function deleteUsuarioById ($id)
+    public function deleteUsuarioById($id)
     {
         $sql = "DELETE FROM usuarios where id = $id";
         $this->conexion->query($sql);
@@ -116,7 +116,7 @@ class UsuarioModel
         return $resultado[0];
     }
 
-    public function updateUsuario($id , $nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen , $rol , $estadoDeVerificacion)
+    public function updateUsuario($id, $nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $rol, $estadoDeVerificacion)
     {
         try {
             if (empty($id)) {
@@ -232,6 +232,7 @@ class UsuarioModel
         }
 
     }
+
     public function existeNombreUsuario($nombreUsuario)
     {
         $estaPresente = false;
@@ -282,14 +283,15 @@ class UsuarioModel
         return $esValido;
     }
 
-    public function esAnioNacimientoValido($anioNacimiento) {
+    public function esAnioNacimientoValido($anioNacimiento)
+    {
         $anioValido = true;
         try {
-            $anioNacimientoInt = (int) $anioNacimiento;
-            if( $anioNacimientoInt < 1900 ) {
+            $anioNacimientoInt = (int)$anioNacimiento;
+            if ($anioNacimientoInt < 1900) {
                 $anioValido = false;
             }
-            
+
         } catch (\Throwable $th) {
             $anioValido = false;
         }
