@@ -2,6 +2,8 @@ CREATE DATABASE IF NOT EXISTS preguntados;
 USE preguntados;
 
 DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS ciudades;
+DROP TABLE IF EXISTS paises;
 
 CREATE TABLE paises (
                         pais_id INT NOT NULL AUTO_INCREMENT,
@@ -65,11 +67,13 @@ CREATE TABLE usuarios (
     -- NOTA: Esto asume que ya existe una tabla 'ciudades' con una columna 'ciudad_id' que es PK.
 
                           FOREIGN KEY (ciudad_id) REFERENCES ciudades(ciudad_id)
-
-
-
 );
 
+    
+-- INSERTS INICIALES
+INSERT INTO paises (nombre) VALUES ('Argentina');
 
+-- Obtener el ID de Argentina para la ciudad
+SET @pais_id_arg = (SELECT pais_id FROM paises WHERE nombre='Argentina');
 
-
+INSERT INTO ciudades (pais_id, nombre) VALUES (@pais_id_arg, 'Buenos Aires');
