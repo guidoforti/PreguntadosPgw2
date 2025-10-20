@@ -96,6 +96,9 @@
 
                         <input type="hidden" name="latitud" id="latitud">
                         <input type="hidden" name="longitud" id="longitud">
+                        <input type="hidden" name="pais" id="pais">
+                        <input type="hidden" name="provincia" id="provincia">
+                        <input type="hidden" name="ciudad" id="ciudad">
                         <input type="hidden" name="direccion" id="direccion">
 
                         <div class="d-grid gap-2">
@@ -162,6 +165,7 @@
         })
                 .on('markgeocode', function (e){
                     let latlng = e.geocode.center;
+                    let address = e.geocode.properties.address;
 
                     map.setView(latlng, 15);
 
