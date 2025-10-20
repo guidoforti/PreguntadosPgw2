@@ -12,7 +12,7 @@ class UsuarioModel
     }
 
 
-    public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen)
+    public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $ciudadId)
     {
         // Validaciones de datos lógicas
         if ($this->existeNombreUsuario($nombreUsuario)) {
@@ -66,37 +66,27 @@ class UsuarioModel
 
         // Hash de contraseña
         $contrasenaHash = password_hash($contraseniaUno, PASSWORD_DEFAULT);
-        $ciudadId = 1; // Temporal hasta integrar mapa
+        $tokenVerificacion = bin2hex(random_bytes(16));
 
         // Insert SQL
         $sql = "INSERT INTO usuarios (
-                    nombre_completo, 
-                    nombre_usuario, 
-                    email, 
-                    contrasena_hash, 
-                    ano_nacimiento, 
-                    sexo, 
-                    ciudad_id, 
-                    url_foto_perfil, 
-                    rol, 
-                    esta_verificado
-                ) VALUES (
-                    '$nombreCompleto',
-                    '$nombreUsuario',
-                    '$email',
-                    '$contrasenaHash',
-                    $anioNacimiento,
-                    '$sexo',
-                    $ciudadId,
-                    " . ($rutaRelativa ? "'$rutaRelativa'" : "NULL") . ",
-                    'usuario',
-                    0
-                )";
+            nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, 
+            sexo, ciudad_id, url_foto_perfil, rol, token_verificacion, esta_verificado
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $resultado = $this->conexion->query($sql);
+        $tipos = 'ssssisiissi';
 
-        if ($resultado) {
-            return ['success' => 'Usuario registrado correctamente'];
+        $parametros = [
+            $nombreCompleto, $nombreUsuario, $email, $contrasenaHash,
+            $anioNacimiento, $sexo, $ciudadId, $rutaRelativa, 'usuario',
+            $tokenVerificacion, 0
+        ];
+
+        $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
+
+        if ($resultado === true) { // Se compara con 'true' para INSERTs/UPDATEs
+            // ✅ DEBEMOS DEVOLVER TOKEN Y EMAIL (que ya están en variables locales)
+            return ['success' => 'Usuario registrado correctamente', 'token' => $tokenVerificacion, 'email' => $email];
         } else {
             return ['error' => 'El usuario no se pudo registrar correctamente'];
         }
@@ -104,16 +94,20 @@ class UsuarioModel
 
     public function deleteUsuarioById($id)
     {
-        $sql = "DELETE FROM usuarios where id = $id";
-        $this->conexion->query($sql);
+        $sql = "DELETE FROM usuarios where id = ?";
+        $this->conexion->preparedQuery($sql, 'i', [$id]);
 
     }
 
     public function getUsuarioById($id)
     {
-        $sql = "SELECT * FROM usuarios where id = $id";
-        $resultado = $this->conexion->query($sql);
-        return $resultado[0];
+        $sql = "SELECT * FROM usuarios WHERE usuario_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$id]);
+        // Asume que preparedQuery devuelve un array vacío [] si no hay resultados
+        if (!empty($resultado)) {
+            return $resultado[0];
+        }
+        return null;
     }
 
     public function updateUsuario($id, $nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $rol, $estadoDeVerificacion)
@@ -199,31 +193,32 @@ class UsuarioModel
 
             // Actualizo en la base de datos con consulta preparada
             $sql = "UPDATE usuarios SET 
-                nombre_completo = :nombreCompleto,
-                nombre_usuario = :nombreUsuario,
-                email = :email,
-                contrasena_hash = :contrasenaHash,
-                ano_nacimiento = :anioNacimiento,
-                sexo = :sexo,
-                url_foto_perfil = :urlFotoPerfil,
-                rol = :rol,
-                esta_verificado = :estaVerificado
-                WHERE id = :id";
+            nombre_completo = ?,
+            nombre_usuario = ?,
+            email = ?,
+            contrasena_hash = ?,
+            ano_nacimiento = ?,
+            sexo = ?,
+            url_foto_perfil = ?,
+            rol = ?,
+            esta_verificado = ?
+            WHERE usuario_id = ?";
 
-            $params = [
-                ':id' => $id,
-                ':nombreCompleto' => $nombreCompleto,
-                ':nombreUsuario' => $nombreUsuario,
-                ':email' => $email,
-                ':contrasenaHash' => $contrasenaHash,
-                ':anioNacimiento' => $anioNacimiento,
-                ':sexo' => $sexo,
-                ':urlFotoPerfil' => $rutaRelativa,
-                ':rol' => $rol,
-                ':estaVerificado' => $estadoDeVerificacion
+            $tipos = 'sssiisssii';
+
+            $parametros = [
+                $nombreCompleto,
+                $nombreUsuario,
+                $email,
+                $contrasenaHash,
+                $anioNacimiento,
+                $sexo,
+                $rutaRelativa,
+                $rol,
+                $estadoDeVerificacion,
+                $id
             ];
-
-            $this->conexion->query($sql, $params);
+            $this->conexion->preparedQuery($sql, $tipos, $parametros);
 
             return ['success' => 'Usuario actualizado correctamente'];
         } catch (Exception $e) {
@@ -236,12 +231,9 @@ class UsuarioModel
     public function existeNombreUsuario($nombreUsuario)
     {
         $estaPresente = false;
-        $sql = "SELECT * FROM usuarios where nombre_usuario = '$nombreUsuario'";
-        $resultado = $this->conexion->query($sql);
-        if ($resultado) {
-            $estaPresente = true;
-        }
-        return $estaPresente;
+        $sql = "SELECT * FROM usuarios where nombre_usuario = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 's', [$nombreUsuario]);
+        return !empty($resultado);
     }
 
     public function sonContraseniasIguales($contraseniaUno, $contraseniaDos)
@@ -296,5 +288,13 @@ class UsuarioModel
             $anioValido = false;
         }
         return $anioValido;
+    }
+
+    public function validarCuenta($token)
+    {
+        $sql = "UPDATE usuarios SET esta_verificado = 1, token_verificacion = NULL 
+                WHERE token_verificacion = ?";
+        // preparedQuery debe devolver true si el UPDATE fue exitoso (y afectó filas)
+        return $this->conexion->preparedQuery($sql, 's', [$token]) === true;
     }
 }

@@ -56,6 +56,7 @@ class RegistroController
         $contraseniaUno   = $_POST['password'] ?? null;
         $contraseniaDos   = $_POST['confirmPassword'] ?? null;
         $imagen           = $_FILES['fotoPerfil'] ?? null;
+        $ciudadId         = $_POST['ciudadId'] ?? 1;
 
         // Validar campos vacíos antes de pasar al modelo
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario', 'contraseniaUno', 'contraseniaDos');
@@ -80,7 +81,8 @@ class RegistroController
             $nombreUsuario,
             $contraseniaUno,
             $contraseniaDos,
-            $imagen
+            $imagen,
+            $ciudadId
         );
 
 
@@ -93,10 +95,26 @@ class RegistroController
             ];
             $this->render->render("registrar", $data);
 
-        } elseif (isset($resultado['success'])) {
+        } elseif (isset($resultado['token'])) {
 
-            $this->render->render("login", ["exito" => $resultado['success']]);
-        } else {
+            // 3. ÉXITO: Envío del Email
+            $token = $resultado['token'];
+            $emailDestino = $email;
+
+            $urlBase = "http://localhost/ProyectoGrupo2/";
+            $linkActivacion = $urlBase . "registro/validar?token=" . $token;
+
+            $asunto = "Activa tu cuenta de Preguntados PGW2";
+            $cuerpoHTML = "Para activar tu cuenta, haz click en: <a href='{$linkActivacion}'>ACTIVAR MI CUENTA</a>";
+
+            if (Mailer::enviar($emailDestino, $asunto, $cuerpoHTML)) {
+                $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta."]);
+            } else {
+                $this->render->render("login", ["error" => "Registro exitoso, pero falló el envío del email de verificación."]);
+            }
+
+        }
+        else {
 
             $data = [
                 "error" => "Error desconocido al registrar el usuario.",
@@ -110,6 +128,25 @@ class RegistroController
     public function redirectToIndex()
     {
         header("Location: /ProyectoGrupo2/");
+        exit;
+    }
+
+    public function validar()
+    {
+        $token = $_GET['token'] ?? null;
+
+        if (!$token) {
+            header("Location: /ProyectoGrupo2/login/loginForm?error=token_invalido");
+            exit;
+        }
+
+        // El modelo busca el token y actualiza 'esta_verificado = 1'
+        if ($this->model->validarCuenta($token)) {
+            header("Location: /ProyectoGrupo2/login/loginForm?exito=cuenta_activada");
+        } else {
+            // Token no encontrado o ya utilizado
+            header("Location: /ProyectoGrupo2/login/loginForm?error=token_expirado_o_invalido");
+        }
         exit;
     }
 
