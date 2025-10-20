@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 include_once("helper/MyConexion.php");
 include_once("helper/IncludeFileRenderer.php");
 include_once("helper/NewRouter.php");
@@ -9,6 +10,7 @@ include_once("model/LoginModel.php");
 include_once("model/UsuarioModel.php");
 include_once('vendor/autoload.php');
 include_once ("helper/MustacheRenderer.php");
+include_once ("helper/Mailer.php");
 
 class ConfigFactory
 {

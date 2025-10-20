@@ -30,4 +30,31 @@ class MyConexion
         // Para INSERT, UPDATE, DELETE devuelve true si funcionó
         return ['success' => true, 'affected_rows' => $this->conexion->affected_rows, 'insert_id' => $this->conexion->insert_id];
     }
+
+    public function preparedQuery(string $sql, string $tipos = '', array $parametros = [])
+    {
+        $stmt = $this->conexion->prepare($sql);
+        if ($stmt === false) {
+            error_log("Error al preparar la consulta: " . $this->conexion->error . " | SQL: " . $sql);
+            return false;
+        }
+        if (!empty($parametros)) {
+            $stmt->bind_param($tipos, ...$parametros);
+        }
+        $success = $stmt->execute();
+        if ($success === false) {
+            error_log("Error al ejecutar la consulta: " . $stmt->error);
+            $stmt->close();
+            return false;
+        }
+        $resultado = $stmt->get_result();
+        if ($resultado) {
+            $data = $resultado->fetch_all(MYSQLI_ASSOC);
+        } else {
+            $data = $success; // Devuelve true/false para INSERT/UPDATE/DELETE
+        }
+        $stmt->close();
+        return $data;
+    }
+
 }

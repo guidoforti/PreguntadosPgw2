@@ -56,6 +56,10 @@ CREATE TABLE usuarios (
 
                           fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+                          token_verificacion VARCHAR(32) NULL,
+
+
+
 
 
     -- Definición de Claves Primarias y Únicas
