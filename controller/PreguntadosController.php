@@ -30,7 +30,7 @@ class PreguntadosController
     }
 
     public function redirectToLogin() {
-        header("Location: /ProyectoGrupo2/login/loginForm");
+        header("Location: /login/loginForm");
         exit;
     }
 
