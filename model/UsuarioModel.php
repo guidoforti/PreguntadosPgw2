@@ -84,8 +84,7 @@ class UsuarioModel
 
         $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
 
-        if ($resultado === true) { // Se compara con 'true' para INSERTs/UPDATEs
-            // ✅ DEBEMOS DEVOLVER TOKEN Y EMAIL (que ya están en variables locales)
+        if ($resultado === true) {
             return ['success' => 'Usuario registrado correctamente', 'token' => $tokenVerificacion, 'email' => $email];
         } else {
             return ['error' => 'El usuario no se pudo registrar correctamente'];
@@ -103,7 +102,6 @@ class UsuarioModel
     {
         $sql = "SELECT * FROM usuarios WHERE usuario_id = ?";
         $resultado = $this->conexion->preparedQuery($sql, 'i', [$id]);
-        // Asume que preparedQuery devuelve un array vacío [] si no hay resultados
         if (!empty($resultado)) {
             return $resultado[0];
         }

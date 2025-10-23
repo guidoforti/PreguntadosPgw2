@@ -101,7 +101,7 @@ class RegistroController
             $token = $resultado['token'];
             $emailDestino = $email;
 
-            $urlBase = "http://localhost/ProyectoGrupo2/";
+            $urlBase = "http://localhost/";
             $linkActivacion = $urlBase . "registro/validar?token=" . $token;
 
             $asunto = "Activa tu cuenta de Preguntados PGW2";
@@ -127,7 +127,7 @@ class RegistroController
 
     public function redirectToIndex()
     {
-        header("Location: /ProyectoGrupo2/");
+        header("Location: /");
         exit;
     }
 
@@ -136,16 +136,16 @@ class RegistroController
         $token = $_GET['token'] ?? null;
 
         if (!$token) {
-            header("Location: /ProyectoGrupo2/login/loginForm?error=token_invalido");
+            header("Location: /login/loginForm?error=token_invalido");
             exit;
         }
 
         // El modelo busca el token y actualiza 'esta_verificado = 1'
         if ($this->model->validarCuenta($token)) {
-            header("Location: /ProyectoGrupo2/login/loginForm?exito=cuenta_activada");
+            header("Location: /login/loginForm?exito=cuenta_activada");
         } else {
             // Token no encontrado o ya utilizado
-            header("Location: /ProyectoGrupo2/login/loginForm?error=token_expirado_o_invalido");
+            header("Location: /login/loginForm?error=token_expirado_o_invalido");
         }
         exit;
     }

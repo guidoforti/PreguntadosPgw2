@@ -66,7 +66,7 @@ class LoginController
 
     public function redirectToIndex()
     {
-        header("Location: /ProyectoGrupo2/");
+        header("Location: /");
         exit;
     }
 

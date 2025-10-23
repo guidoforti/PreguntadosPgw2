@@ -1,5 +1,4 @@
 <?php
-// helper/Mailer.php
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -8,9 +7,9 @@ class Mailer {
 
     // Configuración del Servidor SMTP
     private static $smtp_host = 'smtp.gmail.com';
-    private static $smtp_user = 'morenojm2708@gmail.com'; // 📌 REEMPLAZAR con el email remitente
+    private static $smtp_user = 'morenojm2708@gmail.com';
     private static $smtp_pass = 'nfmy ilqn qwrm uvuu';
-    private static $from_name = 'Preguntados PGW2'; // 📌 Nombre del remitente
+    private static $from_name = 'Preguntados PGW2'; 
 
     public static function enviar(string $destino, string $asunto, string $cuerpoHTML): bool {
 
