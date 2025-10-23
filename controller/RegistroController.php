@@ -56,7 +56,9 @@ class RegistroController
         $contraseniaUno   = $_POST['password'] ?? null;
         $contraseniaDos   = $_POST['confirmPassword'] ?? null;
         $imagen           = $_FILES['fotoPerfil'] ?? null;
-        $ciudadId         = $_POST['ciudadId'] ?? 1;
+        $paisNombre       = $_POST['paisNombre'] ?? null;
+        $provinciaNombre  = $_POST['provinciaNombre'] ?? null;
+        $ciudadNombre     = $_POST['ciudadNombre'] ?? null;
 
         // Validar campos vacíos antes de pasar al modelo
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario', 'contraseniaUno', 'contraseniaDos');
@@ -82,7 +84,9 @@ class RegistroController
             $contraseniaUno,
             $contraseniaDos,
             $imagen,
-            $ciudadId
+            $paisNombre,
+            $provinciaNombre,
+            $ciudadNombre
         );
 
 

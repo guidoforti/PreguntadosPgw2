@@ -94,12 +94,10 @@
                             <div id="map" style="height: 300px;"></div>
                         </div>
 
-                        <input type="hidden" name="latitud" id="latitud">
-                        <input type="hidden" name="longitud" id="longitud">
-                        <input type="hidden" name="pais" id="pais">
-                        <input type="hidden" name="provincia" id="provincia">
-                        <input type="hidden" name="ciudad" id="ciudad">
-                        <input type="hidden" name="direccion" id="direccion">
+                        <input type="hidden" name="paisNombre" id="pais">
+                        <input type="hidden" name="provinciaNombre" id="provincia">
+                        <input type="hidden" name="ciudadNombre" id="ciudad">
+
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Registrarse</button>
@@ -159,13 +157,15 @@
 
         L.Control.geocoder({
             geocoder: L.Control.Geocoder.nominatim({
-                serviceUrl: 'http://localhost/ProyectoGrupo2/proxyNominatim.php?'
+                serviceUrl: 'http://localhost/proxyNominatim.php?'
             }),
             defaultMarkGeocode: false
         })
                 .on('markgeocode', function (e){
                     let latlng = e.geocode.center;
                     let address = e.geocode.properties.address;
+
+                    console.log('Geocode result:', e.geocode);
 
                     map.setView(latlng, 15);
 
@@ -175,9 +175,9 @@
                         marker = L.marker(latlng).addTo(map);
                     }
 
-                    document.getElementById('latitud').value = latlng.lat;
-                    document.getElementById('longitud').value = latlng.lng;
-                    document.getElementById('direccion').value = e.geocode.name;
+                    document.getElementById('pais').value = address.country || '';
+                    document.getElementById('provincia').value = address.state || '';
+                    document.getElementById('ciudad').value = address.city || address.town || address.village || '';
                 })
                 .addTo(map);
     })

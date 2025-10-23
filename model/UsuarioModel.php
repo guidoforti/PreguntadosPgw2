@@ -12,7 +12,7 @@ class UsuarioModel
     }
 
 
-    public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $ciudadId)
+    public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $paisNombre, $provinciaNombre, $ciudadNombre)
     {
         // Validaciones de datos lógicas
         if ($this->existeNombreUsuario($nombreUsuario)) {
@@ -49,6 +49,10 @@ class UsuarioModel
             if ($tamaño > 2 * 1024 * 1024) {
                 return ['error' => 'La imagen supera el tamaño máximo de 2MB'];
             }
+
+            $paisId = $this->obtenerOCrear('paises', $paisNombre);
+            $provinciaId = $this->obtenerOCrear('provincias', $provinciaNombre, ['pais_id' => $paisId]);
+            $ciudadId = $this->obtenerOCrear('ciudades', $ciudadNombre, ['provincia_id' => $provinciaId]);
 
             // Obtener extensión segura
             $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
@@ -288,11 +292,48 @@ class UsuarioModel
         return $anioValido;
     }
 
-    public function validarCuenta($token)
-    {
+    public function validarCuenta($token){
         $sql = "UPDATE usuarios SET esta_verificado = 1, token_verificacion = NULL 
                 WHERE token_verificacion = ?";
         // preparedQuery debe devolver true si el UPDATE fue exitoso (y afectó filas)
         return $this->conexion->preparedQuery($sql, 's', [$token]) === true;
+    }
+
+    private function obtenerOCrear($tabla, $nombre, $extra = []) {
+
+        $columnas = ['nombre'];
+        $valores = [$nombre];
+        $tipos = 's';
+
+
+        foreach($extra as $col => $val) {
+            $columnas[] = $col;
+            $valores[] = $val;
+            $tipos .= is_int($val) ? 'i' : 's';
+        }
+
+        $placeholders = implode(',', array_fill(0, count($columnas), '?'));
+        $tipos = str_repeat('s', count($valores));
+
+        $sqlInsert = "INSERT IGNORE INTO $tabla (" . implode(',', $columnas) . ") VALUES ($placeholders)";
+        $this->conexion->preparedQuery($sqlInsert, $tipos, $valores);
+
+        $where = [];
+        $whereValores = [];
+        foreach($columnas as $i => $col) {
+            $where[] = "$col = ?";
+            $whereValores[] = $valores[$i];
+        }
+
+        $idColumn = [
+            'paises'     => 'pais_id',
+            'provincias' => 'provincia_id',
+            'ciudades'   => 'ciudad_id'
+        ][$tabla] ?? "{$tabla}_id";
+
+        $sqlSelect = "SELECT $idColumn as id FROM $tabla WHERE " . implode(' AND ', $where) . " LIMIT 1";
+        $resultado = $this->conexion->preparedQuery($sqlSelect, $tipos, $whereValores);
+
+        return $resultado[0]['id'] ?? null;
     }
 }
