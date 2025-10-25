@@ -19,19 +19,11 @@ class PreguntadosController
 
     public function home()
     {
-        if (!isset($_SESSION["usuario"])) {
-            $this->redirectToLogin();
-            return;
-        }
-
         $this->renderer->render("home", [
-            "usuario" => $_SESSION["usuario"]
+            "usuario" => $_SESSION["usuario"] ?? 'invitado',
+            "rol" => $_SESSION["rol"] ?? 'usuario'//Esto en el futuro hay que eliminarlo, ahora nos sirve de guia
         ]);
     }
 
-    public function redirectToLogin() {
-        header("Location: /login/loginForm");
-        exit;
-    }
 
 }
