@@ -13,7 +13,7 @@ $rutas_publicas = [
 ];
 
 // ----------------------------------------------------
-// 📌 1. LÓGICA DE ASIGNACIÓN DEL MÉTODO POR DEFECTO (Si existe el controlador)
+// LOGICA DE ASIGNACIÓN DEL MÉTODO POR DEFECTO (Si existe el controlador)
 // ----------------------------------------------------
 
 if (!is_null($controller) && is_null($method)) {
@@ -21,7 +21,7 @@ if (!is_null($controller) && is_null($method)) {
 }
 
 // ----------------------------------------------------
-// 📌 2. LÓGICA DE SEGURIDAD (Maneja el caso no logueado y el caso de la raíz)
+// LÓGICA DE SEGURIDAD (Maneja el caso no logueado y el caso de la raíz)
 // ----------------------------------------------------
 
 $esRutaPublica = isset($rutas_publicas[$controller]) &&

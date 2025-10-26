@@ -57,4 +57,15 @@ class MyConexion
         return $data;
     }
 
+
+    public function getMysqli(): \mysqli
+    {
+        return $this->conexion;
+    }
+
+
+    public function getInsertId(): int
+    {
+        return $this->conexion->insert_id;
+    }
 }
