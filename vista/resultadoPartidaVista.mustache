@@ -1,0 +1,48 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            {{#gano}}
+
+                <div class="card shadow-sm text-center border-success">
+                    <div class="card-body p-4 p-md-5">
+                        <h1 class="display-4 text-success fw-bold">¡Ganaste! 🏆</h1>
+                        <p class="lead mt-3">Felicitaciones, superaste la partida.</p>
+
+                        <h2 class="display-5 my-4">
+                            Tu puntaje:
+                            <span class="badge bg-success">{{puntaje}}</span>
+                        </h2>
+                    </div>
+                </div>
+            {{/gano}}
+
+            {{^gano}}
+
+                <div class="card shadow-sm text-center border-danger">
+                    <div class="card-body p-4 p-md-5">
+                        <h1 class="display-4 text-danger fw-bold">¡Perdiste! 😥</h1>
+                        <p class="lead mt-3">¡No te preocupes! Podés intentarlo de nuevo.</p>
+
+                        <h2 class="display-5 my-4">
+                            Tu puntaje:
+                            <span class="badge bg-danger">{{puntaje}}</span>
+                        </h2>
+                    </div>
+                </div>
+            {{/gano}}
+
+            <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+
+                <a href="/jugarPartida" class="btn btn-primary btn-lg px-4">
+                    Jugar de nuevo
+                </a>
+
+                <a href="/" class="btn btn-outline-secondary btn-lg px-4">
+                    Volver al Lobby
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

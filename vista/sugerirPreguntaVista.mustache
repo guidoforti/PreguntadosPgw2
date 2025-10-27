@@ -1,0 +1,46 @@
+<div class="container mt-5">
+    <h2>Sugerir Nueva Pregunta</h2>
+    <p class="text-muted">Ayudanos a mejorar el banco de preguntas. Tu sugerencia se revisará antes de ser activada.</p>
+
+    {{#error}}<div class="alert alert-danger">{{error}}</div>{{/error}}
+
+    <form method="POST" action="/editor/procesarSugerencia">
+
+        <div class="mb-3">
+            <label for="pregunta" class="form-label">Texto de la Pregunta</label>
+            <textarea class="form-control" name="pregunta" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="categoriaId" class="form-label">Categoría</label>
+            <select class="form-select" name="categoriaId" required>
+                {{#categorias}}
+                    <option value="{{categoria_id}}">{{nombre}}</option>
+                {{/categorias}}
+            </select>
+        </div>
+
+        <h4>Opciones de Respuesta (Marca con el radio button la opción CORRECTA)</h4>
+        <div class="mb-3">
+            <div class="input-group mb-2">
+                <span class="input-group-text"><input type="radio" name="respuestaCorrecta" value="0" required></span>
+                <input type="text" class="form-control" name="respuestas[]" placeholder="Opción A" required>
+            </div>
+            <div class="input-group mb-2">
+                <span class="input-group-text"><input type="radio" name="respuestaCorrecta" value="1" required></span>
+                <input type="text" class="form-control" name="respuestas[]" placeholder="Opción B" required>
+            </div>
+            <div class="input-group mb-2">
+                <span class="input-group-text"><input type="radio" name="respuestaCorrecta" value="2" required></span>
+                <input type="text" class="form-control" name="respuestas[]" placeholder="Opción C" required>
+            </div>
+            <div class="input-group mb-2">
+                <span class="input-group-text"><input type="radio" name="respuestaCorrecta" value="3" required></span>
+                <input type="text" class="form-control" name="respuestas[]" placeholder="Opción D" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enviar Sugerencia</button>
+        <a href="/preguntados/home" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+</div>

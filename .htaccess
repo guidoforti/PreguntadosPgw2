@@ -6,6 +6,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteRule ^proxyNominatim\.php$ - [L]
     RewriteBase /
     RewriteRule ^(imagenes)($|/) - [L,NC]
     RewriteCond %{REQUEST_FILENAME} !-f
