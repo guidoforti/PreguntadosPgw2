@@ -19,9 +19,12 @@ class PreguntadosController
 
     public function home()
     {
+        $rol = $_SESSION["rol"] ?? 'usuario';
         $this->renderer->render("home", [
-            "usuario" => $_SESSION["usuario"] ?? 'invitado',
-            "rol" => $_SESSION["rol"] ?? 'usuario'//Esto en el futuro hay que eliminarlo, ahora nos sirve de guia
+            "usuario" => $_SESSION["usuario"] ?? 'Invitado',
+            "rol" => $rol,
+            "esEditorOAdmin" => ($rol === 'editor' || $rol === 'admin'),
+            "esAdmin" => ($rol === 'admin')
         ]);
     }
 

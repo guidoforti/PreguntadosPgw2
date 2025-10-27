@@ -1,0 +1,31 @@
+<div class="container mt-5">
+    <h2>Sugerir Nueva Pregunta</h2>
+
+    {{#error}}<div class="alert alert-danger">{{error}}</div>{{/error}}
+
+    <form method="POST" action="/editor/procesarSugerencia">
+        <div class="mb-3">
+            <label for="pregunta" class="form-label">Texto de la Pregunta</label>
+            <textarea class="form-control" name="pregunta" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="categoriaId" class="form-label">Categoría</label>
+            <select class="form-select" name="categoriaId" required>
+                {{#categorias}}
+                    <option value="{{categoria_id}}">{{nombre}}</option>
+                {{/categorias}}
+            </select>
+        </div>
+
+        <h4>Opciones de Respuesta (Marca la Correcta)</h4>
+        <div class="mb-3">
+            <input type="radio" name="respuestaCorrecta" value="0" required> <input type="text" name="respuestas[]" placeholder="Opción A" required><br>
+            <input type="radio" name="respuestaCorrecta" value="1" required> <input type="text" name="respuestas[]" placeholder="Opción B" required><br>
+            <input type="radio" name="respuestaCorrecta" value="2" required> <input type="text" name="respuestas[]" placeholder="Opción C" required><br>
+            <input type="radio" name="respuestaCorrecta" value="3" required> <input type="text" name="respuestas[]" placeholder="Opción D" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enviar Sugerencia</button>
+    </form>
+</div>

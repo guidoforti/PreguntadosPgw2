@@ -1,6 +1,13 @@
+-- --------------------------------------------------------
+-- 1. CONFIGURACIÓN INICIAL Y BORRADO DE BASE DE DATOS
+-- --------------------------------------------------------
 DROP DATABASE IF EXISTS preguntados;
 CREATE DATABASE IF NOT EXISTS preguntados CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE preguntados;
+
+-- --------------------------------------------------------
+-- 2. LIMPIEZA DE TABLAS (ORDEN INVERSO POR CLAVES FORÁNEAS)
+-- --------------------------------------------------------
 DROP TABLE IF EXISTS usuarios_organizaciones;
 DROP TABLE IF EXISTS organizaciones;
 DROP TABLE IF EXISTS preguntas_reportadas;
@@ -13,6 +20,9 @@ DROP TABLE IF EXISTS ciudades;
 DROP TABLE IF EXISTS provincias;
 DROP TABLE IF EXISTS paises;
 
+-- --------------------------------------------------------
+-- 3. TABLAS DE UBICACIÓN
+-- --------------------------------------------------------
 
 CREATE TABLE paises (
                         pais_id INT NOT NULL AUTO_INCREMENT,
@@ -39,6 +49,9 @@ CREATE TABLE ciudades (
                           FOREIGN KEY (provincia_id) REFERENCES provincias(provincia_id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- --------------------------------------------------------
+-- 4. TABLAS DE USUARIOS Y ROLES
+-- --------------------------------------------------------
 
 CREATE TABLE usuarios (
                           usuario_id INT NOT NULL AUTO_INCREMENT,
@@ -54,12 +67,15 @@ CREATE TABLE usuarios (
                           esta_verificado BOOLEAN NOT NULL DEFAULT FALSE,
                           fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           token_verificacion VARCHAR(32) NULL,
-                          ranking INT DEFAULT 0, -- Columna para puntaje total en el ranking
+                          ranking INT DEFAULT 0,
 
                           PRIMARY KEY (usuario_id),
                           FOREIGN KEY (ciudad_id) REFERENCES ciudades(ciudad_id)
 );
 
+-- --------------------------------------------------------
+-- 5. TABLAS DE CONTENIDO Y JUEGO CORE
+-- --------------------------------------------------------
 
 CREATE TABLE categorias (
                             categoria_id INT NOT NULL AUTO_INCREMENT,
@@ -89,30 +105,67 @@ CREATE TABLE respuestas (
                             texto_respuesta TEXT NOT NULL,
                             es_correcta BOOLEAN NOT NULL,
                             PRIMARY KEY (respuesta_id),
-                            FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id)
+                            FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE
 );
 
 -- --------------------------------------------------------
--- 6. TABLA DE HISTORIAL DE RESPUESTAS Y CONTROL DE TIEMPO
+-- 6. TABLA DE HISTORIAL DE RESPUESTAS Y CONTROL
 -- --------------------------------------------------------
 
 CREATE TABLE respuestas_usuario (
                                     respuesta_usuario_id INT NOT NULL AUTO_INCREMENT,
                                     usuario_id INT NOT NULL,
                                     pregunta_id INT NOT NULL,
-                                    respuesta_id INT NOT NULL, -- La opción que seleccionó
+                                    respuesta_id INT NOT NULL,
                                     fue_correcta BOOLEAN NOT NULL,
                                     fecha_respuesta DATETIME NOT NULL,
-                                    tiempo_inicio_pregunta DATETIME NOT NULL, -- 📌 MOVIMIENTO: Control de tiempo para los 40s
+                                    tiempo_inicio_pregunta DATETIME NOT NULL,
 
                                     PRIMARY KEY (respuesta_usuario_id),
-                                    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id),
-                                    FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id),
-                                    FOREIGN KEY (respuesta_id) REFERENCES respuestas(respuesta_id)
+                                    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
+                                    FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE,
+                                    FOREIGN KEY (respuesta_id) REFERENCES respuestas(respuesta_id) ON DELETE CASCADE
 );
 
 -- --------------------------------------------------------
--- 7. INSERTS DE DATOS DE PRUEBA
+-- 7. TABLAS DE GESTIÓN Y REPORTE (DEL MERMAID)
+-- --------------------------------------------------------
+
+CREATE TABLE preguntas_reportadas (
+                                      reporte_id INT NOT NULL AUTO_INCREMENT,
+                                      pregunta_id INT NOT NULL,
+                                      reportado_por_usuario_id INT NOT NULL,
+                                      motivo TEXT NOT NULL,
+                                      estado ENUM('reportado', 'aprobado', 'rechazado') NOT NULL DEFAULT 'reportado',
+                                      fecha_reporte DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                      revisado_por_usuario_id INT NULL,
+
+                                      PRIMARY KEY (reporte_id),
+                                      FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE,
+                                      FOREIGN KEY (reportado_por_usuario_id) REFERENCES usuarios(usuario_id) ON DELETE RESTRICT,
+                                      FOREIGN KEY (revisado_por_usuario_id) REFERENCES usuarios(usuario_id) ON DELETE SET NULL
+);
+
+CREATE TABLE organizaciones (
+                                organizacion_id INT NOT NULL AUTO_INCREMENT,
+                                nombre VARCHAR(255) UNIQUE NOT NULL,
+                                identificador_qr VARCHAR(50) UNIQUE NOT NULL, -- Código único para escanear
+                                PRIMARY KEY (organizacion_id)
+);
+
+CREATE TABLE usuarios_organizaciones (
+                                         usuario_organizacion_id INT NOT NULL AUTO_INCREMENT,
+                                         usuario_id INT NOT NULL,
+                                         organizacion_id INT NOT NULL,
+                                         fecha_activacion DATETIME NOT NULL, -- Momento en que escaneó el QR
+
+                                         PRIMARY KEY (usuario_organizacion_id),
+                                         FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
+                                         FOREIGN KEY (organizacion_id) REFERENCES organizaciones(organizacion_id) ON DELETE CASCADE
+);
+
+-- --------------------------------------------------------
+-- 8. INSERTS DE DATOS DE PRUEBA
 -- --------------------------------------------------------
 
 -- Datos de Ubicación
@@ -127,37 +180,26 @@ SET @ciudad_caba = (SELECT ciudad_id FROM ciudades WHERE nombre='CABA');
 SET @hash_test = '$2y$10$oE509h7o02/6h0u6j5g.X.fL9g/S3lWjT3t.M1v2oK9Q2eK4G9g/';
 
 INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
-                                                                                                                                          ('Admin', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
-                                                                                                                                          ('Editor Test', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
+                                                                                                                                          ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
+                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
                                                                                                                                           ('Usuario No Verificado', 'unverified', 'no_verificado@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', FALSE);
 
--- Datos de Contenido (Tecnología)
+-- Datos de Contenido (Categorías y Preguntas)
 INSERT INTO categorias (nombre, color_hex) VALUES ('Tecnología', '#007bff'), ('Historia', '#dc3545');
 SET @cat_tech = LAST_INSERT_ID();
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, dificultad) VALUES
     (@cat_tech, '¿Qué lenguaje de programación es el backend de este proyecto?', 'activa', 1, 0.20);
-SET @preg1 = LAST_INSERT_ID(); -- @preg1 tiene el ID correcto
+SET @preg1 = LAST_INSERT_ID();
 
--- Pregunta 2: MVC
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, dificultad) VALUES
     (@cat_tech, '¿Cuál es el acrónimo para la arquitectura Modelo-Vista-Controlador?', 'activa', 1, 0.10);
-SET @preg2 = LAST_INSERT_ID(); -- @preg2 tiene el ID correcto
-
--- --------------------------------------------------------
--- 2. INSERTS DE RESPUESTAS (Ahora son seguros)
--- --------------------------------------------------------
+SET @preg2 = LAST_INSERT_ID();
 
 -- Respuestas para Pregunta 1
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (@preg1, 'Python', FALSE),
-                                                                       (@preg1, 'Java', FALSE),
-                                                                       (@preg1, 'PHP', TRUE), -- Correcta
-                                                                       (@preg1, 'C#', FALSE);
+                                                                       (@preg1, 'Python', FALSE), (@preg1, 'Java', FALSE), (@preg1, 'PHP', TRUE), (@preg1, 'C#', FALSE);
 
--- Respuestas para Pregunta 2 (Tu código con error original)
+-- Respuestas para Pregunta 2
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (@preg2, 'MVVM', FALSE),
-                                                                       (@preg2, 'MVC', TRUE), -- Correcta
-                                                                       (@preg2, 'REST', FALSE),
-                                                                       (@preg2, 'HTTP', FALSE);
+                                                                       (@preg2, 'MVVM', FALSE), (@preg2, 'MVC', TRUE), (@preg2, 'REST', FALSE), (@preg2, 'HTTP', FALSE);

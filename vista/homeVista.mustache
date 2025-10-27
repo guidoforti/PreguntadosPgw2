@@ -1,16 +1,22 @@
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow text-center">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Bienvenido</h4>
-                </div>
-                <div class="card-body">
-                    <p class="fs-5">Hola, <strong>{{usuario}}</strong>!</p>
-                    <p>Has iniciado sesión correctamente.</p>
-                    <a href="/login/logout" class="btn btn-outline-secondary mt-3">Cerrar sesión</a>
-                </div>
-            </div>
-        </div>
+    <h2>Lobby de Preguntados</h2>
+    <p>Bienvenido, {{usuario}} (Rol: <strong>{{rol}}</strong>)</p>
+
+    <div class="mt-4">
+        <h3>Acciones de Juego</h3>
+        <a href="/preguntados/jugarPartida" class="btn btn-primary me-2">Jugar Partida</a>
+        <a href="/editor/sugerirPreguntaForm" class="btn btn-success me-2">Sugerir Pregunta</a>
+
+        <a href="/login/logout" class="btn btn-outline-danger">Cerrar Sesión</a>
     </div>
+
+    {{#esEditorOAdmin}}
+        <hr>
+        <h3>Panel de Edición</h3>
+        <a href="/editor/revisarPendientes" class="btn btn-warning me-2">Revisar Sugerencias/Reportes</a>
+    {{/esEditorOAdmin}}
+
+    {{#esAdmin}}
+        <a href="/admin/verReportes" class="btn btn-danger">Ver Reportes Generales</a>
+    {{/esAdmin}}
 </div>

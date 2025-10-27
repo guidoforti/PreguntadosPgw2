@@ -3,14 +3,19 @@ require 'vendor/autoload.php';
 include_once("helper/MyConexion.php");
 include_once("helper/IncludeFileRenderer.php");
 include_once("helper/NewRouter.php");
+include_once ("helper/MustacheRenderer.php");
+include_once ("helper/Mailer.php");
+include_once ("helper/SecurityHelper.php");
+
 include_once("controller/LoginController.php");
 include_once ("controller/RegistroController.php");
 include_once ("controller/PreguntadosController.php");
+include_once ("controller/EditorController.php");
+
+include_once("model/PreguntasModel.php");
 include_once("model/LoginModel.php");
 include_once("model/UsuarioModel.php");
-include_once('vendor/autoload.php');
-include_once ("helper/MustacheRenderer.php");
-include_once ("helper/Mailer.php");
+
 
 class ConfigFactory
 {
@@ -31,6 +36,8 @@ class ConfigFactory
             $this->config["database"]
         );
 
+        $preguntasModel = new PreguntasModel($this->conexion);
+
         $this->renderer = new MustacheRenderer("vista");
 
         $this->objetos["router"] = new NewRouter($this, "PreguntadosController", "base");
@@ -39,7 +46,9 @@ class ConfigFactory
 
         $this->objetos["RegistroController"] = new RegistroController(new UsuarioModel($this->conexion), $this->renderer);
 
-        $this->objetos["PreguntadosController"] = new PreguntadosController(null, $this->renderer);
+        $this->objetos["PreguntadosController"] = new PreguntadosController($preguntasModel, $this->renderer);
+
+        $this->objetos["EditorController"] = new EditorController($preguntasModel, $this->renderer);
 
        }
 
