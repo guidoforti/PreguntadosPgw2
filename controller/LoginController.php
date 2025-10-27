@@ -50,6 +50,7 @@ class LoginController
         if (isset($resultado['success'])) {
             $_SESSION["usuario"] = $resultado['usuario']['nombre_usuario'];
             $_SESSION["rol"] = $resultado['usuario']['rol'];
+            $_SESSION["usuario_id"] = $resultado['usuario']['usuario_id'];
             $this->redirectToIndex();
             return;
         }

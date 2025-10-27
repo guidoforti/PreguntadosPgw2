@@ -109,20 +109,32 @@ CREATE TABLE respuestas (
 );
 
 -- --------------------------------------------------------
--- 6. TABLAS DE HISTORIAL Y GESTIÓN (REPORTE)
+-- 6. TABLAS DE HISTORIAL Y GESTIÓN (REPORTE) + TABLA DE PARTIDA
 -- --------------------------------------------------------
+
+CREATE TABLE partidas_usuario (
+                                    partida_id INT AUTO_INCREMENT PRIMARY KEY,
+                                    usuario_id INT NOT NULL,
+                                    puntaje INT DEFAULT 0,
+                                    estado ENUM('en_curso', 'finalizada', 'perdida', 'interrumpida') DEFAULT 'en_curso',
+                                    fecha_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                    fecha_fin DATETIME NULL,
+                                    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
+    );
 
 CREATE TABLE respuestas_usuario (
                                     respuesta_usuario_id INT NOT NULL AUTO_INCREMENT,
                                     usuario_id INT NOT NULL,
+                                    partida_id INT NOT NULL,
                                     pregunta_id INT NOT NULL,
-                                    respuesta_id INT NOT NULL,
+                                    respuesta_id INT NULL,
                                     fue_correcta BOOLEAN NOT NULL,
                                     fecha_respuesta DATETIME NOT NULL,
                                     tiempo_inicio_pregunta DATETIME NOT NULL,
 
                                     PRIMARY KEY (respuesta_usuario_id),
                                     FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
+                                    FOREIGN KEY (partida_id) REFERENCES partidas_usuario(partida_id) ON DELETE CASCADE, -- FK agregada
                                     FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE,
                                     FOREIGN KEY (respuesta_id) REFERENCES respuestas(respuesta_id) ON DELETE CASCADE
 );
@@ -205,3 +217,102 @@ INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
 -- Respuestas para Pregunta 2
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg2, 'MVVM', FALSE), (@preg2, 'MVC', TRUE), (@preg2, 'REST', FALSE), (@preg2, 'HTTP', FALSE);
+INSERT INTO categorias (nombre, color_hex) VALUES
+                                               ('Geografía', '#3498DB'),
+                                               ('Ciencia', '#2ECC71'),
+                                               ('Cultura Pop', '#E74C3C')
+ON DUPLICATE KEY UPDATE nombre=nombre;
+
+SELECT categoria_id INTO @cat_geo FROM categorias WHERE nombre = 'Geografía';
+SELECT categoria_id INTO @cat_cie FROM categorias WHERE nombre = 'Ciencia';
+SELECT categoria_id INTO @cat_pop FROM categorias WHERE nombre = 'Cultura Pop';
+
+-- Pregunta 1 (Geografía)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_geo, '¿Cuál es la capital de Francia?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'París', 1),
+                                                                       (LAST_INSERT_ID(), 'Londres', 0),
+                                                                       (LAST_INSERT_ID(), 'Madrid', 0),
+                                                                       (LAST_INSERT_ID(), 'Berlín', 0);
+
+-- Pregunta 2 (Geografía)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_geo, '¿En qué país se encuentran las pirámides de Giza?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Egipto', 1),
+                                                                       (LAST_INSERT_ID(), 'México', 0),
+                                                                       (LAST_INSERT_ID(), 'Grecia', 0),
+                                                                       (LAST_INSERT_ID(), 'Perú', 0);
+
+-- Pregunta 3 (Geografía)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_geo, '¿Cuál es el río más largo del mundo?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Amazonas', 1),
+                                                                       (LAST_INSERT_ID(), 'Nilo', 0),
+                                                                       (LAST_INSERT_ID(), 'Misisipi', 0),
+                                                                       (LAST_INSERT_ID(), 'Danubio', 0);
+
+-- Pregunta 4 (Ciencia)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_cie, '¿Cuál es la fórmula química del agua?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'H2O', 1),
+                                                                       (LAST_INSERT_ID(), 'CO2', 0),
+                                                                       (LAST_INSERT_ID(), 'O2', 0),
+                                                                       (LAST_INSERT_ID(), 'NaCl', 0);
+
+-- Pregunta 5 (Ciencia)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_cie, '¿Cuál es el planeta más cercano al Sol?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Mercurio', 1),
+                                                                       (LAST_INSERT_ID(), 'Venus', 0),
+                                                                       (LAST_INSERT_ID(), 'Marte', 0),
+                                                                       (LAST_INSERT_ID(), 'Tierra', 0);
+
+-- Pregunta 6 (Ciencia)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_cie, '¿Cómo se llama el proceso de las plantas para crear su alimento?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Fotosíntesis', 1),
+                                                                       (LAST_INSERT_ID(), 'Respiración', 0),
+                                                                       (LAST_INSERT_ID(), 'Digestión', 0),
+                                                                       (LAST_INSERT_ID(), 'Mitosis', 0);
+
+-- Pregunta 7 (Cultura Pop)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_pop, '¿Quién pintó la "Mona Lisa"?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Leonardo da Vinci', 1),
+                                                                       (LAST_INSERT_ID(), 'Miguel Ángel', 0),
+                                                                       (LAST_INSERT_ID(), 'Picasso', 0),
+                                                                       (LAST_INSERT_ID(), 'Van Gogh', 0);
+
+-- Pregunta 8 (Cultura Pop)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_pop, '¿Cómo se llama el fontanero de Nintendo?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Mario', 1),
+                                                                       (LAST_INSERT_ID(), 'Luigi', 0),
+                                                                       (LAST_INSERT_ID(), 'Wario', 0),
+                                                                       (LAST_INSERT_ID(), 'Sonic', 0);
+
+-- Pregunta 9 (Cultura Pop)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_pop, '¿De qué banda era vocalista Freddie Mercury?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Queen', 1),
+                                                                       (LAST_INSERT_ID(), 'The Beatles', 0),
+                                                                       (LAST_INSERT_ID(), 'U2', 0),
+                                                                       (LAST_INSERT_ID(), 'Nirvana', 0);
+
+-- Pregunta 10 (Cultura Pop)
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES (@cat_pop, '¿Quién es el protagonista principal de "Harry Potter"?', 'activa', @admin_id, @admin_id);
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (LAST_INSERT_ID(), 'Harry Potter', 1),
+                                                                       (LAST_INSERT_ID(), 'Ron Weasley', 0),
+                                                                       (LAST_INSERT_ID(), 'Lord Voldemort', 0),
+                                                                       (LAST_INSERT_ID(), 'Dumbledore', 0);

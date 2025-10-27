@@ -25,6 +25,7 @@ class PreguntadosController
             // Datos del usuario (defensivos)
             "usuario" => $_SESSION["usuario"] ?? 'Invitado',
             "rol" => $rol,
+            "usuario_id" => $_SESSION["usuario_id"] ?? '??',
 
             // Flags calculadas para la vista (Visibilidad de botones)
             "esAdmin" => ($rol === 'admin'),
