@@ -1,0 +1,150 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <form action="/jugarPartida/responder" method="POST" id="pregunta-form" class="card shadow-sm p-4 ">
+
+                <div class="text-center mb-4">
+                    <div id="timer-display" class="mx-auto">
+                        <span id="timer">{{ timer }}</span>
+                    </div>
+                </div>
+
+                <h2 class="h3 text-center mb-4 fw-normal">{{pregunta.texto_pregunta}}</h2>
+
+                <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
+
+                <div class="d-grid gap-3">
+                    {{#respuestas}}
+                        <div>
+                            <input  type="radio"
+                                    class="btn-check"
+                                    name="respuesta_id"
+                                    id="opcion-{{ respuesta_id }}"
+                                    value="{{ respuesta_id }}"
+                                    autocomplete="off"
+                                    required>
+
+                            <label class="btn btn-outline-primary btn-lg w-100" for="opcion-{{ respuesta_id }}">
+                                {{ texto_respuesta }}
+                            </label>
+                        </div>
+                    {{/respuestas}}
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">Responder</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. CÓDIGO DEL TIMER (Igual que antes) ---
+    const timerElement = document.getElementById('timer');
+    const formElement = document.getElementById('pregunta-form');
+    let tiempoRestante = parseInt(timerElement.innerText);
+
+    // IMPORTANTE: Definimos 'intervalo' en un scope más alto
+    let intervalo = setInterval(() => {
+        tiempoRestante--;
+        timerElement.innerText = tiempoRestante;
+
+        if (tiempoRestante <= 0) {
+            clearInterval(intervalo);
+            document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
+                radio.disabled = true;
+                radio.nextElementSibling.classList.add('disabled');
+            });
+            formElement.submit();
+        }
+    }, 1000);
+
+    formElement.addEventListener('submit', () => {
+        clearInterval(intervalo);
+    });
+
+
+    // --- 2. CÓDIGO ANTI-TRAMPA (La nueva versión) ---
+
+    let seFueDeLaPestana = false; // Flag para que se ejecute 1 sola vez por pregunta
+
+    document.addEventListener("visibilitychange", () => {
+
+        // Chequeamos:
+        // 1. Si el usuario SE FUE ('hidden')
+        // 2. Si NO lo hemos penalizado ya en esta pregunta (!seFueDeLaPestana)
+        // 3. Si el timer todavía existe (intervalo)
+        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
+
+            // ¡PENALIZADO!
+            // 1. Levantamos la bandera
+            seFueDeLaPestana = true;
+
+            // 2. Frenamos el timer local
+            clearInterval(intervalo);
+            intervalo = null; // Lo matamos para que no se ejecute de nuevo
+
+            // 3. Mostramos el cartelito (¡LA MAGIA!)
+            Swal.fire({
+                title: '¡Tramposo!',
+                text: "Cambiaste de pestaña. Esta pregunta se marcará como incorrecta.",
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                allowOutsideClick: false, // No puede cerrarlo haciendo clic afuera
+                allowEscapeKey: false // No puede cerrarlo con "Escape"
+
+            }).then((result) => {
+
+                // 4. DESPUÉS de que el usuario apretó "Entendido"...
+                // Deshabilitamos los botones
+                document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
+                    radio.disabled = true;
+                    radio.nextElementSibling.classList.add('disabled');
+                });
+
+                // 5. ...enviamos el formulario (el backend lo toma como incorrecto)
+                formElement.submit();
+            });
+        }
+    });
+</script>
+
+<style>
+    /* Estilo para el círculo del timer */
+    #timer-display {
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #dc3545; /* Rojo de "danger" de Bootstrap */
+
+        /* Círculo */
+        width: 80px;
+        height: 80px;
+        line-height: 75px; /* Centrado vertical */
+        text-align: center;
+
+        border: 4px solid #dc3545;
+        border-radius: 50%;
+        background-color: #fff;
+
+        /* Sombra sutil */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Bootstrap por defecto pone el 'btn-outline-primary' azul
+       cuando está seleccionado. Lo cambiamos a un color "seleccionado"
+       más neutro o más fuerte, como un azul sólido.
+    */
+    .btn-check:checked + .btn-outline-primary {
+        background-color: #0d6efd; /* Azul primario de Bootstrap */
+        color: #fff;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+    }
+
+    /* Para que el label tenga un buen espacio y alineación */
+    .btn-outline-primary {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        text-align: left;
+        padding-left: 1.5rem;
+    }
+</style>

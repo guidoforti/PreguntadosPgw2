@@ -1,0 +1,13 @@
+{
+    "name": "marco/proyecto-grupo2",
+    "authors": [
+        {
+            "name": "Marco Folco",
+            "email": "marcofolco28@gmail.com"
+        }
+    ],
+    "require": {
+        "mustache/mustache": "^3.0",
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

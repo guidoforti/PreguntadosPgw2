@@ -1,0 +1,29 @@
+<h2>Lobby de Preguntados</h2>
+<p>Bienvenido, **{{usuario}}** (Rol: <strong>{{rol}}</strong>) **{{usuario_id}}</p>
+
+<div class="mt-4">
+    <h3>Acciones de Juego</h3>
+
+    <a href="/jugarPartida" class="btn btn-primary me-2">Jugar Partida</a>
+
+    <a href="/editor/sugerirPreguntaForm" class="btn btn-success me-2">Sugerir Pregunta</a>
+
+    <a href="/login/logout" class="btn btn-outline-danger">Cerrar Sesión</a>
+</div>
+
+{{#esEditorOAdmin}}
+    <hr>
+    <h3>Panel de Edición</h3>
+    <p class="text-muted">Gestión de contenido y moderación.</p>
+
+    <a href="/editor/revisarPendientes" class="btn btn-warning me-2">Revisar Sugerencias/Reportes</a>
+{{/esEditorOAdmin}}
+
+{{#esAdmin}}
+    <hr>
+    <h3>Panel de Administración</h3>
+    <p class="text-muted">Acceso a reportes y configuración de sistema.</p>
+
+    <a href="/admin/verReportes" class="btn btn-danger">Ver Reportes Generales</a>
+{{/esAdmin}}
+</div>
