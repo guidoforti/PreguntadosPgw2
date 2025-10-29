@@ -1,0 +1,36 @@
+name: Despliegue a InfinityFree
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Código
+        uses: actions/checkout@v4
+
+      - name: Deploy a InfinityFree
+
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+        with:
+          ftp-server: ${{ secrets.FTP_HOST }}
+
+          ftp-port: 21
+
+          ftp-username: ${{ secrets.FTP_USER }}
+
+          ftp-password: ${{ secrets.FTP_PASS }}
+
+          ftp-server-directory: /htdocs/
+
+          exclude: |
+            .git*
+            .github*
+            config/config.ini
+
+          protocol: ftp
+          security: loose

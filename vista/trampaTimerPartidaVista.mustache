@@ -1,0 +1,101 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm p-5 border-danger">
+
+                <!-- Warning Icon -->
+                <div class="text-center mb-4">
+                    <div class="display-1 text-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h1 class="h2 text-center mb-3 text-danger fw-bold">¡Intento de Trampa Detectado!</h1>
+
+                <!-- Message -->
+                <div class="alert alert-danger" role="alert">
+                    <p class="mb-0">
+                        <strong>Se detectó que intentaste refrescar la página</strong> para obtener más tiempo para responder.
+                        Esta acción está penalizada en el juego.
+                    </p>
+                </div>
+
+                <!-- Explanation -->
+                <div class="bg-light p-4 rounded mb-4">
+                    <p class="text-muted mb-2">
+                        <strong>¿Qué sucedió?</strong>
+                    </p>
+                    <ul class="text-muted mb-0">
+                        <li>Nuestro sistema detectó un reinicio de página mientras estabas respondiendo una pregunta.</li>
+                        <li>El temporizador del servidor registró que superaste el límite de 20 segundos.</li>
+                        <li>Por lo tanto, <strong>esta pregunta será marcada como incorrecta</strong>.</li>
+                    </ul>
+                </div>
+
+                <!-- Current Question Info -->
+                <div class="card bg-white border-secondary mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Pregunta Actual:</h5>
+                        <p class="card-text text-muted">{{pregunta.texto_pregunta}}</p>
+                    </div>
+                </div>
+
+                <!-- Action Form -->
+                <form action="/jugarPartida/responder" method="POST" class="d-grid">
+                    <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-arrow-right"></i> Siguiente Pregunta
+                    </button>
+                </form>
+
+                <!-- Footer note -->
+                <p class="text-center text-muted small mt-4 mb-0">
+                    Esta acción ha sido registrada. Por favor, respeta el límite de tiempo en las próximas preguntas.
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Card styling for cheat detection */
+    .card.border-danger {
+        border-width: 2px !important;
+    }
+
+    /* Alert styling */
+    .alert-danger {
+        border-radius: 8px;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    /* Icon styling */
+    .display-1 {
+        line-height: 1;
+        margin-bottom: 1rem;
+    }
+
+    /* Button styling */
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-danger {
+        transition: all 0.3s ease;
+    }
+
+    /* Info box styling */
+    .bg-light {
+        background-color: #f8f9fa !important;
+        border-left: 4px solid #dc3545;
+    }
+
+    /* Card info styling */
+    .card.bg-white {
+        background-color: #f9f9f9 !important;
+    }
+</style>
