@@ -18,6 +18,8 @@ class JugarPartidaController
     }
     public function iniciarPartida(){
 
+        $this->limpiarSesionDePartida();
+
         $usuario_id = $_SESSION['usuario_id'];
 
         $partida_id = $this->model->crearPartida($usuario_id);
@@ -54,7 +56,27 @@ class JugarPartidaController
 
         $data_pregunta = $this->model->getPreguntaCompleta($id_pregunta_actual);
 
-        $_SESSION['pregunta_start_time'] = time();
+        $tiempo_restante = 20;
+
+        if( isset($_SESSION['pregunta_start_time']) ) {
+            $start_time = $_SESSION['pregunta_start_time'];
+            $tiempo_limite = 20;
+            $tiempo_usado = time() - $start_time;
+            $tiempo_restante = $tiempo_limite - $tiempo_usado;
+
+            $es_timeout = ($tiempo_restante <= 0);
+
+            if( $es_timeout ) {
+                $this->renderer->render("trampaTimerPartida", $data_pregunta);
+                exit;
+            }
+
+        } else {
+            $_SESSION['pregunta_start_time'] = time();
+        }
+
+        $data_pregunta['timer'] = $tiempo_restante;
+
 
         $this->renderer->render("jugarPartida", $data_pregunta);
 
@@ -101,6 +123,7 @@ class JugarPartidaController
         } else {
             header("Location: /jugarPartida/mostrarPregunta");
         }
+        unset($_SESSION['pregunta_start_time']);
         exit;
     }
 
@@ -122,13 +145,17 @@ class JugarPartidaController
             'gano' => $gano_la_partida
         ];
 
+        $this->limpiarSesionDePartida();
+
+        $this->renderer->render("resultadoPartida", $data_resultado);
+    }
+
+    private function limpiarSesionDePartida() {
         unset($_SESSION['partida_id']);
         unset($_SESSION['preguntas_partida']);
         unset($_SESSION['pregunta_actual_index']);
         unset($_SESSION['puntaje_actual']);
         unset($_SESSION['pregunta_start_time']);
-
-        $this->renderer->render("resultadoPartida", $data_resultado);
     }
 
 }
