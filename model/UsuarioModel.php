@@ -230,6 +230,53 @@ class UsuarioModel
 
     }
 
+    public function modificarRanking($id, $puntos)
+    {
+        try {
+
+
+            $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
+            $resultadoUsuario = $this->conexion->preparedQuery($sql, 'i', $id);
+
+            if (empty($resultadoUsuario)) {
+                throw new Exception("Usuario no encontrado");
+            }
+
+            // Calcular nuevo ranking
+            $nuevoRanking = $resultadoUsuario[0]['ranking'] + $puntos;
+
+            // Actualizar el ranking
+            $sqlUpdate = "UPDATE usuarios SET ranking = ? WHERE usuario_id = ?";
+            $resultadoUpdate = $this->conexion->preparedQuery($sqlUpdate, 'ii', $nuevoRanking, $id);
+
+            if (!$resultadoUpdate) {
+                throw new Exception("Error al actualizar el ranking");
+            }
+
+            // Obtener el ranking actualizado
+            $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
+            $usuarioActualizado = $this->conexion->preparedQuery($sql, 'i', $id);
+
+            return [
+                'success' => true,
+                'message' => 'Ranking actualizado correctamente',
+                'rankingActualizado' => $usuarioActualizado[0]['ranking']
+            ];
+
+        } catch (InvalidArgumentException $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        } catch (Exception $e) {
+            error_log("Error en aumentarRanking: " . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Ocurrió un error al actualizar el ranking del usuario'
+            ];
+        }
+    }
+
     public function existeNombreUsuario($nombreUsuario)
     {
         $estaPresente = false;
@@ -292,21 +339,23 @@ class UsuarioModel
         return $anioValido;
     }
 
-    public function validarCuenta($token){
+    public function validarCuenta($token)
+    {
         $sql = "UPDATE usuarios SET esta_verificado = 1, token_verificacion = NULL 
                 WHERE token_verificacion = ?";
         // preparedQuery debe devolver true si el UPDATE fue exitoso (y afectó filas)
         return $this->conexion->preparedQuery($sql, 's', [$token]) === true;
     }
 
-    private function obtenerOCrear($tabla, $nombre, $extra = []) {
+    private function obtenerOCrear($tabla, $nombre, $extra = [])
+    {
 
         $columnas = ['nombre'];
         $valores = [$nombre];
         $tipos = 's';
 
 
-        foreach($extra as $col => $val) {
+        foreach ($extra as $col => $val) {
             $columnas[] = $col;
             $valores[] = $val;
             $tipos .= is_int($val) ? 'i' : 's';
@@ -320,15 +369,15 @@ class UsuarioModel
 
         $where = [];
         $whereValores = [];
-        foreach($columnas as $i => $col) {
+        foreach ($columnas as $i => $col) {
             $where[] = "$col = ?";
             $whereValores[] = $valores[$i];
         }
 
         $idColumn = [
-            'paises'     => 'pais_id',
+            'paises' => 'pais_id',
             'provincias' => 'provincia_id',
-            'ciudades'   => 'ciudad_id'
+            'ciudades' => 'ciudad_id'
         ][$tabla] ?? "{$tabla}_id";
 
         $sqlSelect = "SELECT $idColumn as id FROM $tabla WHERE " . implode(' AND ', $where) . " LIMIT 1";

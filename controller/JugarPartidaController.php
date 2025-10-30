@@ -4,11 +4,13 @@ class JugarPartidaController
 {
 
     private $model;
+    private $modelUsuarios;
     private $renderer;
 
-    public function __construct($model, $renderer)
+    public function __construct($model, $modelUsuarios , $renderer)
     {
         $this->model = $model;
+        $this->modelUsuarios = $modelUsuarios;
         $this->renderer = $renderer;
     }
 
@@ -136,13 +138,17 @@ class JugarPartidaController
 
         $partida_id = $_SESSION['partida_id'];
         $puntaje_final = $_SESSION['puntaje_actual'];
-
+        $usuario_id = $_SESSION['usuario_id'];
         $gano_la_partida = $puntaje_final > 5;
+        $puntosDeRanking = $this->model->calcularPuntosPorPartida($puntaje_final);
         $this->model->cerrarPartida($partida_id, $gano_la_partida);
+        $nuevoRanking = $this->modelUsuarios->modificarRanking($usuario_id , $puntosDeRanking);
 
         $data_resultado = [
             'puntaje' => $puntaje_final,
-            'gano' => $gano_la_partida
+            'gano' => $gano_la_partida,
+            'puntosDeRanking' => $puntosDeRanking,
+            'nuevoRanking' => $nuevoRanking
         ];
 
         $this->limpiarSesionDePartida();

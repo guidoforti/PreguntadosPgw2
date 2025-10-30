@@ -51,7 +51,7 @@ class ConfigFactory
 
         $this->objetos["EditorController"] = new  EditorController(new PreguntasModel($this->conexion), $this->renderer);
 
-        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), $this->renderer);
+        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), new UsuarioModel($this->conexion) , $this->renderer);
        }
 
     public function get($objectName)

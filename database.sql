@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS respuestas_usuario;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS categorias;
+DROP TABLE  IF EXISTS partidas_usuario;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS ciudades;
 DROP TABLE IF EXISTS provincias;
@@ -67,7 +68,7 @@ CREATE TABLE usuarios (
                           esta_verificado BOOLEAN NOT NULL DEFAULT FALSE,
                           fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           token_verificacion VARCHAR(32) NULL,
-                          ranking INT DEFAULT 0,
+                          ranking INT DEFAULT 100,
 
                           PRIMARY KEY (usuario_id),
                           FOREIGN KEY (ciudad_id) REFERENCES ciudades(ciudad_id)
@@ -316,3 +317,5 @@ INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (LAST_INSERT_ID(), 'Ron Weasley', 0),
                                                                        (LAST_INSERT_ID(), 'Lord Voldemort', 0),
                                                                        (LAST_INSERT_ID(), 'Dumbledore', 0);
+
+
