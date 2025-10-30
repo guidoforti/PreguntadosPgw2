@@ -236,7 +236,7 @@ class UsuarioModel
 
 
             $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
-            $resultadoUsuario = $this->conexion->preparedQuery($sql, 'i', $id);
+            $resultadoUsuario = $this->conexion->preparedQuery($sql, 'i', [$id]);
 
             if (empty($resultadoUsuario)) {
                 throw new Exception("Usuario no encontrado");
@@ -247,7 +247,7 @@ class UsuarioModel
 
             // Actualizar el ranking
             $sqlUpdate = "UPDATE usuarios SET ranking = ? WHERE usuario_id = ?";
-            $resultadoUpdate = $this->conexion->preparedQuery($sqlUpdate, 'ii', $nuevoRanking, $id);
+            $resultadoUpdate = $this->conexion->preparedQuery($sqlUpdate, 'ii', [$nuevoRanking, $id]);
 
             if (!$resultadoUpdate) {
                 throw new Exception("Error al actualizar el ranking");
@@ -255,10 +255,11 @@ class UsuarioModel
 
             // Obtener el ranking actualizado
             $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
-            $usuarioActualizado = $this->conexion->preparedQuery($sql, 'i', $id);
+            $usuarioActualizado = $this->conexion->preparedQuery($sql, 'i', [$id]);
 
             return [
                 'success' => true,
+                'error' => false,
                 'message' => 'Ranking actualizado correctamente',
                 'rankingActualizado' => $usuarioActualizado[0]['ranking']
             ];

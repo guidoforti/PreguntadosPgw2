@@ -141,8 +141,16 @@ class JugarPartidaController
         $usuario_id = $_SESSION['usuario_id'];
         $gano_la_partida = $puntaje_final > 5;
         $puntosDeRanking = $this->model->calcularPuntosPorPartida($puntaje_final);
+        $resultadoRanking = $this->modelUsuarios->modificarRanking($usuario_id , $puntosDeRanking);
+
+        if ($resultadoRanking['error'] != false) {
+            $data_resultado = [
+                'error' => "surgio un error al actualizar el ranking"
+            ];
+        }
+        $nuevoRanking = $resultadoRanking['rankingActualizado'];
+
         $this->model->cerrarPartida($partida_id, $gano_la_partida);
-        $nuevoRanking = $this->modelUsuarios->modificarRanking($usuario_id , $puntosDeRanking);
 
         $data_resultado = [
             'puntaje' => $puntaje_final,
