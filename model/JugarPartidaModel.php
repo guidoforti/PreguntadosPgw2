@@ -4,7 +4,19 @@ class JugarPartidaModel
 {
 
     private $conexion;
-
+    const MAPA_PUNTUACION = [
+        0 => -15,
+        1 => -10,
+        2 => -10,
+        3 => -5,
+        4 => -5,
+        5 => -5,
+        6 => 5,
+        7 => 5,
+        8 => 5,
+        9 => 10,
+        10 => 15
+    ];
     public function __construct($conexion)
     {
         $this->conexion = $conexion;
@@ -87,6 +99,11 @@ class JugarPartidaModel
         }
 
         return $fue_correcta;
+    }
+
+    public function calcularPuntosPorPartida($preguntasAcertadas) {
+
+        return self::MAPA_PUNTUACION[$preguntasAcertadas] ?? 0;
     }
 
     public function cerrarPartida($partida_id, $gano){
