@@ -233,44 +233,34 @@ class UsuarioModel
     public function modificarRanking($id, $puntos)
     {
         try {
-
-
-            $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
-            $resultadoUsuario = $this->conexion->preparedQuery($sql, 'i', [$id]);
-
-            if (empty($resultadoUsuario)) {
-                throw new Exception("Usuario no encontrado");
-            }
-
-            // Calcular nuevo ranking
-            $nuevoRanking = $resultadoUsuario[0]['ranking'] + $puntos;
-
-            // Actualizar el ranking
-            $sqlUpdate = "UPDATE usuarios SET ranking = ? WHERE usuario_id = ?";
-            $resultadoUpdate = $this->conexion->preparedQuery($sqlUpdate, 'ii', [$nuevoRanking, $id]);
+            // Le decimos a mmysql que él mismo haga la suma en vez de obterner el rankign sumarlo y updatearlo, asi tenemos atomicidad.
+            // seguro contra condiciones de carrera.
+            $sql = "UPDATE usuarios SET ranking = ranking + ? WHERE usuario_id = ?";
+            $resultadoUpdate = $this->conexion->preparedQuery($sql, 'ii', [$puntos, $id]);
 
             if (!$resultadoUpdate) {
-                throw new Exception("Error al actualizar el ranking");
+                throw new Exception("Error al actualizar el ranking (ID no encontrado o sin cambios).");
             }
 
-            // Obtener el ranking actualizado
-            $sql = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
-            $usuarioActualizado = $this->conexion->preparedQuery($sql, 'i', [$id]);
+            // leemos el nuevo valor para devolverlo.
+            $sql_select = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
+            $resultado = $this->conexion->preparedQuery($sql_select, 'i', [$id]);
+
+            if (empty($resultado)) {
+                throw new Exception("Usuario no encontrado post-actualización.");
+            }
+
+            $nuevoRanking = $resultado[0]['ranking'];
 
             return [
                 'success' => true,
                 'error' => false,
                 'message' => 'Ranking actualizado correctamente',
-                'rankingActualizado' => $usuarioActualizado[0]['ranking']
+                'rankingActualizado' => $nuevoRanking
             ];
 
-        } catch (InvalidArgumentException $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
         } catch (Exception $e) {
-            error_log("Error en aumentarRanking: " . $e->getMessage());
+            error_log("Error en modificarRanking: " . $e->getMessage());
             return [
                 'success' => false,
                 'error' => 'Ocurrió un error al actualizar el ranking del usuario'
@@ -385,5 +375,36 @@ class UsuarioModel
         $resultado = $this->conexion->preparedQuery($sqlSelect, $tipos, $whereValores);
 
         return $resultado[0]['id'] ?? null;
+    }
+
+
+    public function obtenerRango($puntos)
+    {
+        $basePath = "imagenes/rangos/";
+        if ($puntos > 300) {
+            return [
+                "nombre" => "Diamante",
+                "imagen" => $basePath . "diamante.png",
+                "color" => "text-info" // Un color de Bootstrap
+            ];
+        } elseif ($puntos > 200) {
+            return [
+                "nombre" => "Platino",
+                "imagen" => $basePath . "platino.png",
+                "color" => "text-primary"
+            ];
+        } elseif ($puntos > 100) {
+            return [
+                "nombre" => "Oro",
+                "imagen" => $basePath . "oro.png",
+                "color" => "text-warning"
+            ];
+        } else {
+            return [
+                "nombre" => "Bronce",
+                "imagen" => $basePath . "bronce.png",
+                "color" => "text-secondary"
+            ];
+        }
     }
 }
