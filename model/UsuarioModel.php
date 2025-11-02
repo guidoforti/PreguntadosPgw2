@@ -377,6 +377,26 @@ class UsuarioModel
         return $resultado[0]['id'] ?? null;
     }
 
+    public function getUsuarioConUbicacion($usuario_id)
+    {
+        $sql = "SELECT
+                    u.*,
+                    c.nombre as ciudad_nombre,
+                    p.nombre as provincia_nombre,
+                    pa.nombre as pais_nombre
+                FROM usuarios u
+                LEFT JOIN ciudades c ON u.ciudad_id = c.ciudad_id
+                LEFT JOIN provincias p ON c.provincia_id = p.provincia_id
+                LEFT JOIN paises pa ON p.pais_id = pa.pais_id
+                WHERE u.usuario_id = ? AND u.esta_verificado = TRUE";
+
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$usuario_id]);
+
+        if (!empty($resultado)) {
+            return $resultado[0];
+        }
+        return null;
+    }
 
     public function obtenerRango($puntos)
     {
