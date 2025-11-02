@@ -1,0 +1,108 @@
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="display-5">🏆 Ranking Global de Jugadores</h2>
+            <p class="text-muted">Competencia y desafíos entre toda la comunidad</p>
+        </div>
+    </div>
+
+    {{#totalUsuarios}}
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 60px">#</th>
+                    <th style="width: 60px">Avatar</th>
+                    <th>Usuario</th>
+                    <th class="text-end" style="width: 100px">Puntos</th>
+                    <th style="width: 120px">Rango</th>
+                    <th class="text-center" style="width: 100px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#usuarios}}
+                <tr>
+                    <!-- Posición -->
+                    <td>
+                        <span class="badge bg-dark fs-6">{{posicion}}</span>
+                    </td>
+
+                    <!-- Avatar -->
+                    <td>
+                        {{#url_foto_perfil}}
+                        <img src="/{{url_foto_perfil}}"
+                             alt="{{nombre_usuario}}"
+                             class="rounded-circle"
+                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #dee2e6;">
+                        {{/url_foto_perfil}}
+                        {{^url_foto_perfil}}
+                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white"
+                             style="width: 40px; height: 40px; font-weight: bold;">
+                            {{nombre_usuario.[0]}}
+                        </div>
+                        {{/url_foto_perfil}}
+                    </td>
+
+                    <!-- Usuario -->
+                    <td>
+                        <strong>{{nombre_usuario}}</strong>
+                    </td>
+
+                    <!-- Puntos -->
+                    <td class="text-end">
+                        <span class="fw-bold fs-5">{{ranking}}</span>
+                    </td>
+
+                    <!-- Rango -->
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/{{rango.imagen}}"
+                                 alt="{{rango.nombre}}"
+                                 style="width: 30px; height: 30px;">
+                            <span class="{{rango.color}} fw-semibold">{{rango.nombre}}</span>
+                        </div>
+                    </td>
+
+                    <!-- Acciones -->
+                    <td class="text-center">
+                        <a href="#"
+                           class="btn btn-sm btn-outline-primary"
+                           title="Ver perfil de {{nombre_usuario}}">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+                {{/usuarios}}
+            </tbody>
+        </table>
+    </div>
+    {{/totalUsuarios}}
+
+    {{^totalUsuarios}}
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Sin datos</h4>
+        <p>No hay usuarios en el ranking todavía. ¡Juega partidas para ganar puntos y aparecer en el ranking!</p>
+    </div>
+    {{/totalUsuarios}}
+
+    <!-- Botón volver -->
+    <div class="mt-4">
+        <a href="/" class="btn btn-outline-secondary">← Volver al Lobby</a>
+    </div>
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .display-5 {
+        font-weight: 700;
+        color: #0d6efd;
+    }
+
+    .badge {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+    }
+</style>
