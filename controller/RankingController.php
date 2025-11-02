@@ -22,7 +22,8 @@ class RankingController
     {
         SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
 
-        $usuarios = $this->model->getRankingGlobal(50);
+        // 1. Obtener ranking global
+        $usuarios = $this->model->getRankingGlobal();
 
         $usuariosConRango = [];
         $posicion = 1;
@@ -44,9 +45,33 @@ class RankingController
             }
         }
 
+        // 2. Obtener datos del usuario logueado
+        $usuario_id = $_SESSION['usuario_id'] ?? null;
+        $historialEnriquecido = [];
+        $estadisticas = null;
+        $tienePartidas = false;
+
+        if ($usuario_id) {
+            // Obtener historial enriquecido (toda la lógica está en el modelo)
+            $historialEnriquecido = $this->model->getHistorialEnriquecido($usuario_id, 10);
+            $tienePartidas = count($historialEnriquecido) > 0;
+
+            // Obtener estadísticas
+            $estadisticas = $this->model->getEstadisticasUsuario($usuario_id);
+            if ($estadisticas && is_array($estadisticas) && !empty($estadisticas)) {
+                $estadisticas = $estadisticas[0];
+            } else {
+                $estadisticas = null;
+            }
+        }
+
+        // 3. Preparar datos para la vista
         $data = [
             'usuarios' => $usuariosConRango,
-            'totalUsuarios' => count($usuariosConRango)
+            'totalUsuarios' => count($usuariosConRango),
+            'historial' => $historialEnriquecido,
+            'estadisticas' => $estadisticas,
+            'tienePartidas' => $tienePartidas
         ];
 
         $this->renderer->render("ranking", $data);
