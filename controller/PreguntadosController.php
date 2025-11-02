@@ -3,35 +3,62 @@
 class PreguntadosController
 {
 
-    private $model; // PreguntasModel
+    private $preguntasModel;// PreguntasModel
+    private $usuarioModel;
     private $renderer;
 
-    public function __construct($model, $renderer)
+    public function __construct($model, $usuarioModel, $renderer)
     {
-        $this->model = $model;
+        $this->preguntasModel = $model;
+        $this->usuarioModel = $usuarioModel;
         $this->renderer = $renderer;
     }
 
     public function base()
+
     {
         $this->home();
     }
 
     public function home()
     {
-        $rol = $_SESSION["rol"] ?? 'usuario';
+        //logica del cron manual
+        if ($this->preguntasModel->debeEjecutarseElCronManual()) {
+            session_write_close();
+            //con esto nos aseguramos de que toda la tarea se corra por mas que el usuario cierre sesion o la pagina
+            ignore_user_abort(true);
+            // EJECUTAR LA TAREA PESADA
+            $this->preguntasModel->recalcularDificultadDePreguntasGlobal();
+        }
 
-        $this->renderer->render("home", [
-            // Datos del usuario (defensivos)
+
+        $rol = $_SESSION["rol"] ?? 'usuario';
+        $usuario_id = $_SESSION["usuario_id"] ?? null;
+
+        // Preparamos un array $data para enviar a la vista
+        $data = [
             "usuario" => $_SESSION["usuario"] ?? 'Invitado',
             "rol" => $rol,
-            "usuario_id" => $_SESSION["usuario_id"] ?? '??',
-
-            // Flags calculadas para la vista (Visibilidad de botones)
+            "usuario_id" => $usuario_id ?? '??',
             "esAdmin" => ($rol === 'admin'),
             "esEditorOAdmin" => ($rol === 'editor' || $rol === 'admin')
+        ];
 
-            // Aquí se agregará el ranking, partidas, etc., en pasos futuros.
-        ]);
+        // Si el usuario está logueado, buscamos sus datos de rango
+        if ($usuario_id) {
+
+            //Buscamos los datos del usuario (que incluyen el ranking)
+            $usuario = $this->usuarioModel->getUsuarioById($usuario_id);
+
+            if ($usuario) {
+                $rango = $this->usuarioModel->obtenerRango($usuario['ranking']);
+
+                $data['rango'] = $rango;
+                $data['ranking_puntos'] = $usuario['ranking'];
+            }
+        }
+
+        $this->renderer->render("home", $data);
     }
+
 }

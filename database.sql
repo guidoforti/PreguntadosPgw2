@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS respuestas_usuario;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS categorias;
+DROP TABLE  IF EXISTS partidas_usuario;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS ciudades;
 DROP TABLE IF EXISTS provincias;
@@ -67,7 +68,7 @@ CREATE TABLE usuarios (
                           esta_verificado BOOLEAN NOT NULL DEFAULT FALSE,
                           fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           token_verificacion VARCHAR(32) NULL,
-                          ranking INT DEFAULT 0,
+                          ranking INT DEFAULT 100,
 
                           PRIMARY KEY (usuario_id),
                           FOREIGN KEY (ciudad_id) REFERENCES ciudades(ciudad_id)
@@ -191,12 +192,13 @@ INSERT INTO ciudades (provincia_id, nombre) VALUES (@prov_ba, 'La Matanza'), (@p
 SET @ciudad_caba = (SELECT ciudad_id FROM ciudades WHERE nombre='CABA');
 
 -- Usuarios de Prueba (Contraseña: '12345678')
-SET @hash_test = '$2y$10$oE509h7o02/6h0u6j5g.X.fL9g/S3lWjT3t.M1v2oK9Q2eK4G9g/';
+SET @hash_test = '$2y$10$ldqCeVk5gCcDoUEIYtSEGu7QW9vLD4ymMCA/Gc9oAYz.6v.eXLD2i';
 
 INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
                                                                                                                                           ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
                                                                                                                                           ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
-                                                                                                                                          ('Usuario No Verificado', 'unverified', 'no_verificado@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', FALSE);
+                                                                                                                                          ('Usuario No Verificado', 'unverified', 'no_verificado@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', FALSE),
+                                                                                                                                          ('Usuario Verificado', 'user', 'user@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', TRUE);
 
 -- Datos de Contenido (Categorías y Preguntas)
 INSERT INTO categorias (nombre, color_hex) VALUES ('Tecnología', '#007bff'), ('Historia', '#dc3545');
@@ -316,3 +318,5 @@ INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (LAST_INSERT_ID(), 'Ron Weasley', 0),
                                                                        (LAST_INSERT_ID(), 'Lord Voldemort', 0),
                                                                        (LAST_INSERT_ID(), 'Dumbledore', 0);
+
+
