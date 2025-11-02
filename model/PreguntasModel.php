@@ -71,6 +71,10 @@ class PreguntasModel
     {
         //escribimos el time en donde se ejecuto por ultima vez el archivo
         //el lock ex nos bloquea el archivo para que no se ejecute
+        $directorio = dirname($this->archivoLogCron);
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0777, true);
+        }
         file_put_contents($this->archivoLogCron, time(), LOCK_EX);
     }
 
@@ -104,19 +108,23 @@ class PreguntasModel
         $sqlUpdate = "UPDATE preguntas SET dificultad = ? WHERE pregunta_id = ?";
 
         $contador = 0;
-        foreach ($totales as $linea) {
-            $preguntaId = $linea['pregunta_id'];
-            $totalDeRespuestas = $linea['respuestas_totales'];
-            $totalDeRespuestasCorrectas = $linea['respuestas_correctas'];
 
-            $totalPonderado = $TOTAL_PARA_PONDERAR + $totalDeRespuestas;
-            $correctasPonderadas = $TOTAL_CORRECTA_PARA_PONDERAR +  $totalDeRespuestasCorrectas;
+        // Validar que $totales no sea null antes de hacer foreach
+        if ($totales !== null && is_array($totales)) {
+            foreach ($totales as $linea) {
+                $preguntaId = $linea['pregunta_id'];
+                $totalDeRespuestas = $linea['respuestas_totales'];
+                $totalDeRespuestasCorrectas = $linea['respuestas_correctas'];
 
-            $ratioCorrectas = $correctasPonderadas / $totalPonderado;
-            $nuevaDificultad = round(1.0 - $ratioCorrectas , 2);
+                $totalPonderado = $TOTAL_PARA_PONDERAR + $totalDeRespuestas;
+                $correctasPonderadas = $TOTAL_CORRECTA_PARA_PONDERAR +  $totalDeRespuestasCorrectas;
 
-            $this->conexion->preparedQuery($sqlUpdate , 'di' , [$nuevaDificultad , $preguntaId]);
-            $contador++;
+                $ratioCorrectas = $correctasPonderadas / $totalPonderado;
+                $nuevaDificultad = round(1.0 - $ratioCorrectas , 2);
+
+                $this->conexion->preparedQuery($sqlUpdate , 'di' , [$nuevaDificultad , $preguntaId]);
+                $contador++;
+            }
         }
 
         return "RECALCULO COMPLETADO . $contador PREGUNTAS ACTUALIZADAS";
