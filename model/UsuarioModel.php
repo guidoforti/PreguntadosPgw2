@@ -78,7 +78,7 @@ class UsuarioModel
             sexo, ciudad_id, url_foto_perfil, rol, token_verificacion, esta_verificado
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $tipos = 'ssssisiissi';
+        $tipos = 'ssssisisssi';
 
         $parametros = [
             $nombreCompleto, $nombreUsuario, $email, $contrasenaHash,
