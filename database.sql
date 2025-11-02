@@ -192,7 +192,7 @@ INSERT INTO ciudades (provincia_id, nombre) VALUES (@prov_ba, 'La Matanza'), (@p
 SET @ciudad_caba = (SELECT ciudad_id FROM ciudades WHERE nombre='CABA');
 
 -- Usuarios de Prueba (Contraseña: '12345678')
-SET @hash_test = '$2y$10$oE509h7o02/6h0u6j5g.X.fL9g/S3lWjT3t.M1v2oK9Q2eK4G9g/';
+SET @hash_test = '$2y$10$ldqCeVk5gCcDoUEIYtSEGu7QW9vLD4ymMCA/Gc9oAYz.6v.eXLD2i';
 
 INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
                                                                                                                                           ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
