@@ -27,6 +27,9 @@ class UsuarioModel
         if (!$this->esAnioNacimientoValido($anioNacimiento)) {
             return ['error' => 'El año de nacimiento no es válido'];
         }
+        if ($this->existeEmail($email)) {
+            return ['error' => 'El correo electrónico ya está registrado.'];
+        }
 
         // Validación y guardado de imagen
         $rutaBase = __DIR__ . "/../imagenes/usuario/";
@@ -81,9 +84,17 @@ class UsuarioModel
         $tipos = 'ssssisisssi';
 
         $parametros = [
-            $nombreCompleto, $nombreUsuario, $email, $contrasenaHash,
-            $anioNacimiento, $sexo, $ciudadId, $rutaRelativa, 'usuario',
-            $tokenVerificacion, 0
+            $nombreCompleto,
+            $nombreUsuario,
+            $email,
+            $contrasenaHash,
+            $anioNacimiento,
+            $sexo,
+            $ciudadId,
+            $rutaRelativa,
+            'usuario',
+            $tokenVerificacion,
+            0
         ];
 
         $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
@@ -99,7 +110,6 @@ class UsuarioModel
     {
         $sql = "DELETE FROM usuarios where id = ?";
         $this->conexion->preparedQuery($sql, 'i', [$id]);
-
     }
 
     public function getUsuarioById($id)
@@ -227,7 +237,6 @@ class UsuarioModel
 
             return ['error' => 'Ocurrió un error al actualizar el usuario'];
         }
-
     }
 
     public function modificarRanking($id, $puntos)
@@ -258,7 +267,6 @@ class UsuarioModel
                 'message' => 'Ranking actualizado correctamente',
                 'rankingActualizado' => $nuevoRanking
             ];
-
         } catch (Exception $e) {
             error_log("Error en modificarRanking: " . $e->getMessage());
             return [
@@ -283,6 +291,14 @@ class UsuarioModel
             $sonIguales = false;
         }
         return $sonIguales;
+    }
+
+    public function existeEmail($email)
+    {
+        $sql = "SELECT usuario_id FROM usuarios WHERE email = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 's', [$email]);
+
+        return !empty($resultado);
     }
 
     public function esEmailValido($email)
@@ -323,7 +339,6 @@ class UsuarioModel
             if ($anioNacimientoInt < 1900) {
                 $anioValido = false;
             }
-
         } catch (\Throwable $th) {
             $anioValido = false;
         }
