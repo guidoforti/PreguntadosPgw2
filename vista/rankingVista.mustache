@@ -1,0 +1,210 @@
+<div class="container my-5">
+    <h2 class="display-5 mb-4 text-center">🏆 Ranking y Estadísticas</h2>
+
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: Mis Stats (Desktop: 5/12, Mobile: 12/12) -->
+        <div class="col-12 col-lg-5">
+            <!-- Card de Estadísticas -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📊 Mis Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    {{#estadisticas}}
+                    <div class="row text-center g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0">{{total_partidas}}</h3>
+                                <small class="text-muted">Total Partidas</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-success bg-opacity-10 rounded">
+                                <h3 class="mb-0 text-success">{{victorias}}</h3>
+                                <small class="text-muted">Victorias</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0">{{puntaje_promedio}}</h3>
+                                <small class="text-muted">Promedio</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded">
+                                <h3 class="mb-0 text-warning">{{mejor_puntaje}}/10</h3>
+                                <small class="text-muted">Mejor Puntaje</small>
+                            </div>
+                        </div>
+                    </div>
+                    {{/estadisticas}}
+                    {{^estadisticas}}
+                    <p class="text-muted mb-0">No hay estadísticas disponibles</p>
+                    {{/estadisticas}}
+                </div>
+            </div>
+
+            <!-- Card de Historial -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">🎮 Últimas Partidas</h5>
+                </div>
+                <div class="card-body p-0">
+                    {{#tienePartidas}}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><small>Fecha</small></th>
+                                    <th><small>Puntaje</small></th>
+                                    <th><small>Duración</small></th>
+                                    <th><small>Resultado</small></th>
+                                    <th class="text-end"><small>Pts</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#historial}}
+                                <tr>
+                                    <td><small>{{fecha_formateada}}</small></td>
+                                    <td><strong>{{puntaje}}/10</strong></td>
+                                    <td><small>{{duracion}}</small></td>
+                                    <td><span class="badge bg-{{badge_clase}}">{{resultado_texto}}</span></td>
+                                    <td class="text-end">
+                                        <span class="fw-bold {{puntos_clase}}">{{puntos_signo}}{{puntos_ranking}}</span>
+                                    </td>
+                                </tr>
+                                {{/historial}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{/tienePartidas}}
+                    {{^tienePartidas}}
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-2">Aún no has jugado partidas</p>
+                        <a href="/jugarPartida" class="btn btn-sm btn-primary">Jugar Ahora</a>
+                    </div>
+                    {{/tienePartidas}}
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Ranking Global (Desktop: 7/12, Mobile: 12/12) -->
+        <div class="col-12 col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">🌍 Ranking Global</h5>
+                </div>
+                <div class="card-body p-0">
+                    {{#totalUsuarios}}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 50px">#</th>
+                                    <th style="width: 50px">Avatar</th>
+                                    <th>Usuario</th>
+                                    <th class="text-end" style="width: 80px">Puntos</th>
+                                    <th style="width: 100px">Rango</th>
+                                    <th class="text-center" style="width: 70px">Ver</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#usuarios}}
+                                <tr>
+                                    <td><span class="badge bg-dark">{{posicion}}</span></td>
+                                    <td>
+                                        {{#url_foto_perfil}}
+                                        <img src="/{{url_foto_perfil}}" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid #dee2e6;">
+                                        {{/url_foto_perfil}}
+                                        {{^url_foto_perfil}}
+                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 0.8rem; font-weight: bold;">
+                                            {{nombre_usuario.[0]}}
+                                        </div>
+                                        {{/url_foto_perfil}}
+                                    </td>
+                                    <td><strong>{{nombre_usuario}}</strong></td>
+                                    <td class="text-end"><span class="fw-bold">{{ranking}}</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1">
+                                            <img src="/{{rango.imagen}}" style="width: 25px; height: 25px;" title="{{rango.nombre}}">
+                                            <small class="{{rango.color}} d-none d-sm-inline">{{rango.nombre}}</small>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/perfil/ver?usuario_id={{usuario_id}}" class="btn btn-sm btn-outline-primary" title="Ver perfil">Ver</a>
+                                    </td>
+                                </tr>
+                                {{/usuarios}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{/totalUsuarios}}
+                    {{^totalUsuarios}}
+                    <div class="p-4 text-center">
+                        <p class="text-muted">No hay usuarios en el ranking</p>
+                    </div>
+                    {{/totalUsuarios}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="mt-4">
+        <a href="/" class="btn btn-outline-secondary">← Volver al Lobby</a>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+    }
+
+    .card-header {
+        font-weight: 600;
+        border-bottom: 2px solid rgba(0,0,0,.125);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .display-5 {
+        font-weight: 700;
+        color: #0d6efd;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    /* Separador visual entre columnas */
+    @media (min-width: 992px) {
+        .col-lg-5 {
+            border-right: 3px solid #dee2e6;
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+        .card {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-sm {
+            font-size: 0.8rem;
+        }
+
+        .table th, .table td {
+            padding: 0.5rem !important;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.5rem;
+        }
+    }
+</style>

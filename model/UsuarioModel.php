@@ -27,6 +27,9 @@ class UsuarioModel
         if (!$this->esAnioNacimientoValido($anioNacimiento)) {
             return ['error' => 'El año de nacimiento no es válido'];
         }
+        if ($this->existeEmail($email)) {
+            return ['error' => 'El correo electrónico ya está registrado.'];
+        }
 
         // Validación y guardado de imagen
         $rutaBase = __DIR__ . "/../imagenes/usuario/";
@@ -78,12 +81,20 @@ class UsuarioModel
             sexo, ciudad_id, url_foto_perfil, rol, token_verificacion, esta_verificado
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $tipos = 'ssssisiissi';
+        $tipos = 'ssssisisssi';
 
         $parametros = [
-            $nombreCompleto, $nombreUsuario, $email, $contrasenaHash,
-            $anioNacimiento, $sexo, $ciudadId, $rutaRelativa, 'usuario',
-            $tokenVerificacion, 0
+            $nombreCompleto,
+            $nombreUsuario,
+            $email,
+            $contrasenaHash,
+            $anioNacimiento,
+            $sexo,
+            $ciudadId,
+            $rutaRelativa,
+            'usuario',
+            $tokenVerificacion,
+            0
         ];
 
         $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
@@ -99,7 +110,6 @@ class UsuarioModel
     {
         $sql = "DELETE FROM usuarios where id = ?";
         $this->conexion->preparedQuery($sql, 'i', [$id]);
-
     }
 
     public function getUsuarioById($id)
@@ -227,7 +237,43 @@ class UsuarioModel
 
             return ['error' => 'Ocurrió un error al actualizar el usuario'];
         }
+    }
 
+    public function modificarRanking($id, $puntos)
+    {
+        try {
+            // Le decimos a mmysql que él mismo haga la suma en vez de obterner el rankign sumarlo y updatearlo, asi tenemos atomicidad.
+            // seguro contra condiciones de carrera.
+            $sql = "UPDATE usuarios SET ranking = ranking + ? WHERE usuario_id = ?";
+            $resultadoUpdate = $this->conexion->preparedQuery($sql, 'ii', [$puntos, $id]);
+
+            if (!$resultadoUpdate) {
+                throw new Exception("Error al actualizar el ranking (ID no encontrado o sin cambios).");
+            }
+
+            // leemos el nuevo valor para devolverlo.
+            $sql_select = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
+            $resultado = $this->conexion->preparedQuery($sql_select, 'i', [$id]);
+
+            if (empty($resultado)) {
+                throw new Exception("Usuario no encontrado post-actualización.");
+            }
+
+            $nuevoRanking = $resultado[0]['ranking'];
+
+            return [
+                'success' => true,
+                'error' => false,
+                'message' => 'Ranking actualizado correctamente',
+                'rankingActualizado' => $nuevoRanking
+            ];
+        } catch (Exception $e) {
+            error_log("Error en modificarRanking: " . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Ocurrió un error al actualizar el ranking del usuario'
+            ];
+        }
     }
 
     public function existeNombreUsuario($nombreUsuario)
@@ -245,6 +291,14 @@ class UsuarioModel
             $sonIguales = false;
         }
         return $sonIguales;
+    }
+
+    public function existeEmail($email)
+    {
+        $sql = "SELECT usuario_id FROM usuarios WHERE email = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 's', [$email]);
+
+        return !empty($resultado);
     }
 
     public function esEmailValido($email)
@@ -285,28 +339,29 @@ class UsuarioModel
             if ($anioNacimientoInt < 1900) {
                 $anioValido = false;
             }
-
         } catch (\Throwable $th) {
             $anioValido = false;
         }
         return $anioValido;
     }
 
-    public function validarCuenta($token){
+    public function validarCuenta($token)
+    {
         $sql = "UPDATE usuarios SET esta_verificado = 1, token_verificacion = NULL 
                 WHERE token_verificacion = ?";
         // preparedQuery debe devolver true si el UPDATE fue exitoso (y afectó filas)
         return $this->conexion->preparedQuery($sql, 's', [$token]) === true;
     }
 
-    private function obtenerOCrear($tabla, $nombre, $extra = []) {
+    private function obtenerOCrear($tabla, $nombre, $extra = [])
+    {
 
         $columnas = ['nombre'];
         $valores = [$nombre];
         $tipos = 's';
 
 
-        foreach($extra as $col => $val) {
+        foreach ($extra as $col => $val) {
             $columnas[] = $col;
             $valores[] = $val;
             $tipos .= is_int($val) ? 'i' : 's';
@@ -320,20 +375,71 @@ class UsuarioModel
 
         $where = [];
         $whereValores = [];
-        foreach($columnas as $i => $col) {
+        foreach ($columnas as $i => $col) {
             $where[] = "$col = ?";
             $whereValores[] = $valores[$i];
         }
 
         $idColumn = [
-            'paises'     => 'pais_id',
+            'paises' => 'pais_id',
             'provincias' => 'provincia_id',
-            'ciudades'   => 'ciudad_id'
+            'ciudades' => 'ciudad_id'
         ][$tabla] ?? "{$tabla}_id";
 
         $sqlSelect = "SELECT $idColumn as id FROM $tabla WHERE " . implode(' AND ', $where) . " LIMIT 1";
         $resultado = $this->conexion->preparedQuery($sqlSelect, $tipos, $whereValores);
 
         return $resultado[0]['id'] ?? null;
+    }
+
+    public function getUsuarioConUbicacion($usuario_id)
+    {
+        $sql = "SELECT
+                    u.*,
+                    c.nombre as ciudad_nombre,
+                    p.nombre as provincia_nombre,
+                    pa.nombre as pais_nombre
+                FROM usuarios u
+                LEFT JOIN ciudades c ON u.ciudad_id = c.ciudad_id
+                LEFT JOIN provincias p ON c.provincia_id = p.provincia_id
+                LEFT JOIN paises pa ON p.pais_id = pa.pais_id
+                WHERE u.usuario_id = ? AND u.esta_verificado = TRUE";
+
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$usuario_id]);
+
+        if (!empty($resultado)) {
+            return $resultado[0];
+        }
+        return null;
+    }
+
+    public function obtenerRango($puntos)
+    {
+        $basePath = "imagenes/rangos/";
+        if ($puntos > 300) {
+            return [
+                "nombre" => "Diamante",
+                "imagen" => $basePath . "diamante.png",
+                "color" => "text-info" // Un color de Bootstrap
+            ];
+        } elseif ($puntos > 200) {
+            return [
+                "nombre" => "Platino",
+                "imagen" => $basePath . "platino.png",
+                "color" => "text-primary"
+            ];
+        } elseif ($puntos > 100) {
+            return [
+                "nombre" => "Oro",
+                "imagen" => $basePath . "oro.png",
+                "color" => "text-warning"
+            ];
+        } else {
+            return [
+                "nombre" => "Bronce",
+                "imagen" => $basePath . "bronce.png",
+                "color" => "text-secondary"
+            ];
+        }
     }
 }

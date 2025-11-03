@@ -6,6 +6,7 @@ include_once("model/LoginModel.php");
 include_once("model/UsuarioModel.php");
 include_once("model/PreguntasModel.php");
 include_once("model/JugarPartidaModel.php");
+include_once("model/RankingModel.php");
 // Helpers y Renderizadores
 include_once("helper/MyConexion.php");
 include_once("helper/NewRouter.php");
@@ -18,6 +19,8 @@ include_once ("controller/RegistroController.php");
 include_once ("controller/PreguntadosController.php");
 include_once ("controller/EditorController.php");
 include_once ("controller/JugarPartidaController.php");
+include_once ("controller/RankingController.php");
+include_once ("controller/PerfilController.php");
 
 class ConfigFactory
 {
@@ -47,11 +50,15 @@ class ConfigFactory
 
         $this->objetos["RegistroController"] = new RegistroController(new UsuarioModel($this->conexion), $this->renderer);
 
-        $this->objetos["PreguntadosController"] = new PreguntadosController(new PreguntasModel($this->conexion), $this->renderer);
+        $this->objetos["PreguntadosController"] = new PreguntadosController(new PreguntasModel($this->conexion), new UsuarioModel($this->conexion), $this->renderer);
 
         $this->objetos["EditorController"] = new  EditorController(new PreguntasModel($this->conexion), $this->renderer);
 
-        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), $this->renderer);
+        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), new UsuarioModel($this->conexion) , $this->renderer);
+
+        $this->objetos["RankingController"] = new RankingController(new RankingModel($this->conexion), new UsuarioModel($this->conexion), $this->renderer);
+
+        $this->objetos["PerfilController"] = new PerfilController(new UsuarioModel($this->conexion), new RankingModel($this->conexion), $this->renderer);
        }
 
     public function get($objectName)
