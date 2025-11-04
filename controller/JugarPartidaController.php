@@ -5,12 +5,15 @@ class JugarPartidaController
 
     private $model;
     private $modelUsuarios;
+
+    private $modelPreguntas;
     private $renderer;
 
-    public function __construct($model, $modelUsuarios , $renderer)
+    public function __construct($model, $modelUsuarios, $modelPreguntas , $renderer)
     {
         $this->model = $model;
         $this->modelUsuarios = $modelUsuarios;
+        $this->modelPreguntas = $modelPreguntas;
         $this->renderer = $renderer;
     }
 
@@ -136,6 +139,7 @@ class JugarPartidaController
             exit;
         }
 
+        $listaIdPreguntas = $_SESSION['preguntas_partida'];
         $partida_id = $_SESSION['partida_id'];
         $puntaje_final = $_SESSION['puntaje_actual'];
         $usuario_id = $_SESSION['usuario_id'];
@@ -143,6 +147,7 @@ class JugarPartidaController
         $puntosDeRanking = $this->model->calcularPuntosPorPartida($puntaje_final);
         $resultadoRanking = $this->modelUsuarios->modificarRanking($usuario_id , $puntosDeRanking);
 
+        $this->modelPreguntas->recalcularDificultadDePreguntasDePartida($listaIdPreguntas);
 
         $nuevoRanking = $resultadoRanking['rankingActualizado'];
         $rango = $this->modelUsuarios->obtenerRango($nuevoRanking);
