@@ -105,7 +105,8 @@ class RegistroController
             $token = $resultado['token'];
             $emailDestino = $email;
 
-            $urlBase = "http://localhost/";
+            $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $urlBase = $protocolo . "://" . $_SERVER['HTTP_HOST'] . "/";
             $linkActivacion = $urlBase . "registro/validar?token=" . $token;
 
             $asunto = "Activa tu cuenta de Preguntados PGW2";
