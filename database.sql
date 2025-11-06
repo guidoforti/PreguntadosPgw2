@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS respuestas_usuario;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS categorias;
-DROP TABLE  IF EXISTS partidas_usuario;
+DROP TABLE IF EXISTS partidas_usuario;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS ciudades;
 DROP TABLE IF EXISTS provincias;
@@ -24,7 +24,6 @@ DROP TABLE IF EXISTS paises;
 -- --------------------------------------------------------
 -- 3. TABLAS DE UBICACIÓN
 -- --------------------------------------------------------
-
 CREATE TABLE paises (
                         pais_id INT NOT NULL AUTO_INCREMENT,
                         nombre VARCHAR(255) NOT NULL,
@@ -53,7 +52,6 @@ CREATE TABLE ciudades (
 -- --------------------------------------------------------
 -- 4. TABLAS DE USUARIOS Y ROLES
 -- --------------------------------------------------------
-
 CREATE TABLE usuarios (
                           usuario_id INT NOT NULL AUTO_INCREMENT,
                           nombre_completo VARCHAR(255) NOT NULL,
@@ -69,7 +67,6 @@ CREATE TABLE usuarios (
                           fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           token_verificacion VARCHAR(32) NULL,
                           ranking INT DEFAULT 100,
-
                           PRIMARY KEY (usuario_id),
                           FOREIGN KEY (ciudad_id) REFERENCES ciudades(ciudad_id)
 );
@@ -77,7 +74,6 @@ CREATE TABLE usuarios (
 -- --------------------------------------------------------
 -- 5. TABLAS DE CONTENIDO Y JUEGO CORE
 -- --------------------------------------------------------
-
 CREATE TABLE categorias (
                             categoria_id INT NOT NULL AUTO_INCREMENT,
                             nombre VARCHAR(100) UNIQUE NOT NULL,
@@ -91,10 +87,8 @@ CREATE TABLE preguntas (
                            texto_pregunta TEXT NOT NULL,
                            estado ENUM('pendiente', 'activa', 'rechazada') NOT NULL DEFAULT 'pendiente',
                            dificultad DECIMAL(3,2) DEFAULT 0.50,
-
                            creada_por_usuario_id INT NULL,
                            aprobado_por_usuario_id INT NULL,
-
                            PRIMARY KEY (pregunta_id),
                            FOREIGN KEY (categoria_id) REFERENCES categorias(categoria_id),
                            FOREIGN KEY (creada_por_usuario_id) REFERENCES usuarios(usuario_id)
@@ -110,18 +104,17 @@ CREATE TABLE respuestas (
 );
 
 -- --------------------------------------------------------
--- 6. TABLAS DE HISTORIAL Y GESTIÓN (REPORTE) + TABLA DE PARTIDA
+-- 6. TABLAS DE HISTORIAL Y REPORTES
 -- --------------------------------------------------------
-
 CREATE TABLE partidas_usuario (
-                                    partida_id INT AUTO_INCREMENT PRIMARY KEY,
-                                    usuario_id INT NOT NULL,
-                                    puntaje INT DEFAULT 0,
-                                    estado ENUM('en_curso', 'finalizada', 'perdida', 'interrumpida') DEFAULT 'en_curso',
-                                    fecha_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    fecha_fin DATETIME NULL,
-                                    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
-    );
+                                  partida_id INT AUTO_INCREMENT PRIMARY KEY,
+                                  usuario_id INT NOT NULL,
+                                  puntaje INT DEFAULT 0,
+                                  estado ENUM('en_curso', 'finalizada', 'perdida', 'interrumpida') DEFAULT 'en_curso',
+                                  fecha_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                  fecha_fin DATETIME NULL,
+                                  FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
+);
 
 CREATE TABLE respuestas_usuario (
                                     respuesta_usuario_id INT NOT NULL AUTO_INCREMENT,
@@ -132,15 +125,13 @@ CREATE TABLE respuestas_usuario (
                                     fue_correcta BOOLEAN NOT NULL,
                                     fecha_respuesta DATETIME NOT NULL,
                                     tiempo_inicio_pregunta DATETIME NOT NULL,
-
                                     PRIMARY KEY (respuesta_usuario_id),
                                     FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
-                                    FOREIGN KEY (partida_id) REFERENCES partidas_usuario(partida_id) ON DELETE CASCADE, -- FK agregada
+                                    FOREIGN KEY (partida_id) REFERENCES partidas_usuario(partida_id) ON DELETE CASCADE,
                                     FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE,
                                     FOREIGN KEY (respuesta_id) REFERENCES respuestas(respuesta_id) ON DELETE CASCADE
 );
 
--- 📌 TABLA AGREGADA: Para la revisión de Editores
 CREATE TABLE preguntas_reportadas (
                                       reporte_id INT NOT NULL AUTO_INCREMENT,
                                       pregunta_id INT NOT NULL,
@@ -149,7 +140,6 @@ CREATE TABLE preguntas_reportadas (
                                       estado ENUM('reportado', 'aprobado', 'rechazado') NOT NULL DEFAULT 'reportado',
                                       fecha_reporte DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                       revisado_por_usuario_id INT NULL,
-
                                       PRIMARY KEY (reporte_id),
                                       FOREIGN KEY (pregunta_id) REFERENCES preguntas(pregunta_id) ON DELETE CASCADE,
                                       FOREIGN KEY (reportado_por_usuario_id) REFERENCES usuarios(usuario_id) ON DELETE RESTRICT,
@@ -157,9 +147,8 @@ CREATE TABLE preguntas_reportadas (
 );
 
 -- --------------------------------------------------------
--- 7. TABLAS DE TERCEROS (MERMAID COMPLETO)
+-- 7. TABLAS DE ORGANIZACIONES (EXTERNAS)
 -- --------------------------------------------------------
-
 CREATE TABLE organizaciones (
                                 organizacion_id INT NOT NULL AUTO_INCREMENT,
                                 nombre VARCHAR(255) UNIQUE NOT NULL,
@@ -172,151 +161,191 @@ CREATE TABLE usuarios_organizaciones (
                                          usuario_id INT NOT NULL,
                                          organizacion_id INT NOT NULL,
                                          fecha_activacion DATETIME NOT NULL,
-
                                          PRIMARY KEY (usuario_organizacion_id),
                                          FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id) ON DELETE CASCADE,
                                          FOREIGN KEY (organizacion_id) REFERENCES organizaciones(organizacion_id) ON DELETE CASCADE
 );
 
-
 -- --------------------------------------------------------
 -- 8. INSERTS DE DATOS DE PRUEBA
 -- --------------------------------------------------------
-
--- Datos de Ubicación
+-- Ubicación
 INSERT INTO paises (nombre) VALUES ('Argentina');
 SET @pais_id_arg = LAST_INSERT_ID();
-INSERT INTO provincias (pais_id, nombre) VALUES (@pais_id_arg, 'Buenos Aires'), (@pais_id_arg, 'Córdoba');
-SET @prov_ba = (SELECT provincia_id FROM provincias WHERE nombre='Buenos Aires');
-INSERT INTO ciudades (provincia_id, nombre) VALUES (@prov_ba, 'La Matanza'), (@prov_ba, 'CABA');
-SET @ciudad_caba = (SELECT ciudad_id FROM ciudades WHERE nombre='CABA');
+INSERT INTO provincias (pais_id, nombre) VALUES (@pais_id_arg, 'Buenos Aires');
+SET @prov_ba = LAST_INSERT_ID();
+INSERT INTO ciudades (provincia_id, nombre) VALUES (@prov_ba, 'CABA');
+SET @ciudad_caba = LAST_INSERT_ID();
 
--- Usuarios de Prueba (Contraseña: '12345678')
+-- Usuarios de prueba
 SET @hash_test = '$2y$10$ldqCeVk5gCcDoUEIYtSEGu7QW9vLD4ymMCA/Gc9oAYz.6v.eXLD2i';
-
 INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
                                                                                                                                           ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
-                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
-                                                                                                                                          ('Usuario No Verificado', 'unverified', 'no_verificado@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', FALSE),
-                                                                                                                                          ('Usuario Verificado', 'user', 'user@mail.com', @hash_test, 2000, 'X', @ciudad_caba, 'usuario', TRUE);
+                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE);
 
--- Datos de Contenido (Categorías y Preguntas)
-INSERT INTO categorias (nombre, color_hex) VALUES ('Tecnología', '#007bff'), ('Historia', '#dc3545');
-SET @cat_tech = LAST_INSERT_ID();
+SET @admin_id = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'admin_test');
 
-INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, dificultad) VALUES
-    (@cat_tech, '¿Qué lenguaje de programación es el backend de este proyecto?', 'activa', 1, 0.20);
-SET @preg1 = LAST_INSERT_ID();
-
-INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, dificultad) VALUES
-    (@cat_tech, '¿Cuál es el acrónimo para la arquitectura Modelo-Vista-Controlador?', 'activa', 1, 0.10);
-SET @preg2 = LAST_INSERT_ID();
-
--- Respuestas para Pregunta 1
-INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (@preg1, 'Python', FALSE), (@preg1, 'Java', FALSE), (@preg1, 'PHP', TRUE), (@preg1, 'C#', FALSE);
-
--- Respuestas para Pregunta 2
-INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (@preg2, 'MVVM', FALSE), (@preg2, 'MVC', TRUE), (@preg2, 'REST', FALSE), (@preg2, 'HTTP', FALSE);
+-- Categorías
 INSERT INTO categorias (nombre, color_hex) VALUES
                                                ('Geografía', '#3498DB'),
                                                ('Ciencia', '#2ECC71'),
-                                               ('Cultura Pop', '#E74C3C')
-ON DUPLICATE KEY UPDATE nombre=nombre;
+                                               ('Cultura Pop', '#E74C3C'),
+                                               ('Historia', '#DC3545')
+ON DUPLICATE KEY UPDATE nombre = nombre;
 
 SELECT categoria_id INTO @cat_geo FROM categorias WHERE nombre = 'Geografía';
 SELECT categoria_id INTO @cat_cie FROM categorias WHERE nombre = 'Ciencia';
 SELECT categoria_id INTO @cat_pop FROM categorias WHERE nombre = 'Cultura Pop';
+SELECT categoria_id INTO @cat_his FROM categorias WHERE nombre = 'Historia';
 
--- Pregunta 1 (Geografía)
+-- --------------------------------------------------------
+-- 9. PREGUNTAS Y RESPUESTAS
+-- --------------------------------------------------------
+
+-- ==========================
+-- 📚 PREGUNTAS Y RESPUESTAS (20 EN TOTAL)
+-- ==========================
+
+-- 🌍 GEOGRAFÍA
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_geo, '¿Cuál es la capital de Francia?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_geo, '¿Cuál es la capital de Francia?', 'activa', @admin_id, @admin_id);
+SET @preg_geo1 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'París', 1),
-                                                                       (LAST_INSERT_ID(), 'Londres', 0),
-                                                                       (LAST_INSERT_ID(), 'Madrid', 0),
-                                                                       (LAST_INSERT_ID(), 'Berlín', 0);
+                                                                       (@preg_geo1, 'París', 1), (@preg_geo1, 'Roma', 0), (@preg_geo1, 'Londres', 0), (@preg_geo1, 'Madrid', 0);
 
--- Pregunta 2 (Geografía)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_geo, '¿En qué país se encuentran las pirámides de Giza?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_geo, '¿En qué país se encuentra la Torre de Pisa?', 'activa', @admin_id, @admin_id);
+SET @preg_geo2 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Egipto', 1),
-                                                                       (LAST_INSERT_ID(), 'México', 0),
-                                                                       (LAST_INSERT_ID(), 'Grecia', 0),
-                                                                       (LAST_INSERT_ID(), 'Perú', 0);
+                                                                       (@preg_geo2, 'Italia', 1), (@preg_geo2, 'Francia', 0), (@preg_geo2, 'España', 0), (@preg_geo2, 'Portugal', 0);
 
--- Pregunta 3 (Geografía)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_geo, '¿Cuál es el río más largo del mundo?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_geo, '¿Cuál es el río más largo del mundo?', 'activa', @admin_id, @admin_id);
+SET @preg_geo3 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Amazonas', 1),
-                                                                       (LAST_INSERT_ID(), 'Nilo', 0),
-                                                                       (LAST_INSERT_ID(), 'Misisipi', 0),
-                                                                       (LAST_INSERT_ID(), 'Danubio', 0);
+                                                                       (@preg_geo3, 'Amazonas', 1), (@preg_geo3, 'Nilo', 0), (@preg_geo3, 'Yangtsé', 0), (@preg_geo3, 'Misisipi', 0);
 
--- Pregunta 4 (Ciencia)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_cie, '¿Cuál es la fórmula química del agua?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_geo, '¿En qué continente se encuentra el desierto del Sahara?', 'activa', @admin_id, @admin_id);
+SET @preg_geo4 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'H2O', 1),
-                                                                       (LAST_INSERT_ID(), 'CO2', 0),
-                                                                       (LAST_INSERT_ID(), 'O2', 0),
-                                                                       (LAST_INSERT_ID(), 'NaCl', 0);
+                                                                       (@preg_geo4, 'África', 1), (@preg_geo4, 'Asia', 0), (@preg_geo4, 'Oceanía', 0), (@preg_geo4, 'América del Sur', 0);
 
--- Pregunta 5 (Ciencia)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_cie, '¿Cuál es el planeta más cercano al Sol?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_geo, '¿Cuál es el país más grande del mundo por superficie?', 'activa', @admin_id, @admin_id);
+SET @preg_geo5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Mercurio', 1),
-                                                                       (LAST_INSERT_ID(), 'Venus', 0),
-                                                                       (LAST_INSERT_ID(), 'Marte', 0),
-                                                                       (LAST_INSERT_ID(), 'Tierra', 0);
+                                                                       (@preg_geo5, 'Rusia', 1), (@preg_geo5, 'Canadá', 0), (@preg_geo5, 'China', 0), (@preg_geo5, 'Estados Unidos', 0);
 
--- Pregunta 6 (Ciencia)
+-- ⚛️ CIENCIA
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_cie, '¿Cómo se llama el proceso de las plantas para crear su alimento?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_cie, '¿Cuál es la fórmula química del agua?', 'activa', @admin_id, @admin_id);
+SET @preg_cie1 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Fotosíntesis', 1),
-                                                                       (LAST_INSERT_ID(), 'Respiración', 0),
-                                                                       (LAST_INSERT_ID(), 'Digestión', 0),
-                                                                       (LAST_INSERT_ID(), 'Mitosis', 0);
+                                                                       (@preg_cie1, 'H2O', 1), (@preg_cie1, 'CO2', 0), (@preg_cie1, 'O2', 0), (@preg_cie1, 'NaCl', 0);
 
--- Pregunta 7 (Cultura Pop)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_pop, '¿Quién pintó la "Mona Lisa"?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_cie, '¿Qué planeta es conocido como el “planeta rojo”?', 'activa', @admin_id, @admin_id);
+SET @preg_cie2 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Leonardo da Vinci', 1),
-                                                                       (LAST_INSERT_ID(), 'Miguel Ángel', 0),
-                                                                       (LAST_INSERT_ID(), 'Picasso', 0),
-                                                                       (LAST_INSERT_ID(), 'Van Gogh', 0);
+                                                                       (@preg_cie2, 'Marte', 1), (@preg_cie2, 'Venus', 0), (@preg_cie2, 'Mercurio', 0), (@preg_cie2, 'Júpiter', 0);
 
--- Pregunta 8 (Cultura Pop)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_pop, '¿Cómo se llama el fontanero de Nintendo?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_cie, '¿Cuál es el órgano más grande del cuerpo humano?', 'activa', @admin_id, @admin_id);
+SET @preg_cie3 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Mario', 1),
-                                                                       (LAST_INSERT_ID(), 'Luigi', 0),
-                                                                       (LAST_INSERT_ID(), 'Wario', 0),
-                                                                       (LAST_INSERT_ID(), 'Sonic', 0);
+                                                                       (@preg_cie3, 'La piel', 1), (@preg_cie3, 'El hígado', 0), (@preg_cie3, 'El cerebro', 0), (@preg_cie3, 'El corazón', 0);
 
--- Pregunta 9 (Cultura Pop)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_pop, '¿De qué banda era vocalista Freddie Mercury?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_cie, '¿Cuál es el planeta más grande del Sistema Solar?', 'activa', @admin_id, @admin_id);
+SET @preg_cie4 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Queen', 1),
-                                                                       (LAST_INSERT_ID(), 'The Beatles', 0),
-                                                                       (LAST_INSERT_ID(), 'U2', 0),
-                                                                       (LAST_INSERT_ID(), 'Nirvana', 0);
+                                                                       (@preg_cie4, 'Júpiter', 1), (@preg_cie4, 'Saturno', 0), (@preg_cie4, 'Urano', 0), (@preg_cie4, 'Neptuno', 0);
 
--- Pregunta 10 (Cultura Pop)
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
-VALUES (@cat_pop, '¿Quién es el protagonista principal de "Harry Potter"?', 'activa', @admin_id, @admin_id);
+VALUES
+    (@cat_cie, '¿Quién propuso la teoría de la relatividad?', 'activa', @admin_id, @admin_id);
+SET @preg_cie5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
-                                                                       (LAST_INSERT_ID(), 'Harry Potter', 1),
-                                                                       (LAST_INSERT_ID(), 'Ron Weasley', 0),
-                                                                       (LAST_INSERT_ID(), 'Lord Voldemort', 0),
-                                                                       (LAST_INSERT_ID(), 'Dumbledore', 0);
+                                                                       (@preg_cie5, 'Albert Einstein', 1), (@preg_cie5, 'Isaac Newton', 0), (@preg_cie5, 'Stephen Hawking', 0), (@preg_cie5, 'Galileo Galilei', 0);
 
+-- 🏰 HISTORIA
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_his, '¿En qué año cayó el Muro de Berlín?', 'activa', @admin_id, @admin_id);
+SET @preg_his1 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_his1, '1989', 1), (@preg_his1, '1979', 0), (@preg_his1, '1991', 0), (@preg_his1, '1993', 0);
 
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_his, '¿Quién fue el primer emperador del Imperio Romano?', 'activa', @admin_id, @admin_id);
+SET @preg_his2 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_his2, 'Augusto', 1), (@preg_his2, 'Julio César', 0), (@preg_his2, 'Nerón', 0), (@preg_his2, 'Tiberio', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_his, '¿Qué civilización construyó las pirámides de Egipto?', 'activa', @admin_id, @admin_id);
+SET @preg_his3 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_his3, 'Los egipcios', 1), (@preg_his3, 'Los mayas', 0), (@preg_his3, 'Los romanos', 0), (@preg_his3, 'Los griegos', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_his, '¿Quién fue Cristóbal Colón?', 'activa', @admin_id, @admin_id);
+SET @preg_his4 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_his4, 'El navegante que descubrió América', 1), (@preg_his4, 'Un emperador romano', 0), (@preg_his4, 'Un científico italiano', 0), (@preg_his4, 'Un rey español', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_his, '¿Qué país inició la Primera Guerra Mundial?', 'activa', @admin_id, @admin_id);
+SET @preg_his5 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_his5, 'Alemania', 1), (@preg_his5, 'Inglaterra', 0), (@preg_his5, 'Francia', 0), (@preg_his5, 'Italia', 0);
+
+-- 🎬 CULTURA POP / ENTRETENIMIENTO
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_pop, '¿Qué actor interpreta a Iron Man en el Universo Cinematográfico de Marvel?', 'activa', @admin_id, @admin_id);
+SET @preg_pop1 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_pop1, 'Robert Downey Jr.', 1), (@preg_pop1, 'Chris Evans', 0), (@preg_pop1, 'Chris Hemsworth', 0), (@preg_pop1, 'Mark Ruffalo', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_pop, '¿Qué serie popular de Netflix está ambientada en Hawkins?', 'activa', @admin_id, @admin_id);
+SET @preg_pop2 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_pop2, 'Stranger Things', 1), (@preg_pop2, 'The Umbrella Academy', 0), (@preg_pop2, 'Dark', 0), (@preg_pop2, 'The OA', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_pop, '¿Quién es el protagonista de "Harry Potter"?', 'activa', @admin_id, @admin_id);
+SET @preg_pop3 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_pop3, 'Harry Potter', 1), (@preg_pop3, 'Ron Weasley', 0), (@preg_pop3, 'Voldemort', 0), (@preg_pop3, 'Dumbledore', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_pop, '¿De qué banda era Freddie Mercury el vocalista?', 'activa', @admin_id, @admin_id);
+SET @preg_pop4 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_pop4, 'Queen', 1), (@preg_pop4, 'The Beatles', 0), (@preg_pop4, 'U2', 0), (@preg_pop4, 'Coldplay', 0);
+
+INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id)
+VALUES
+    (@cat_pop, '¿Qué empresa creó la consola PlayStation?', 'activa', @admin_id, @admin_id);
+SET @preg_pop5 = LAST_INSERT_ID();
+INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
+                                                                       (@preg_pop5, 'Sony', 1), (@preg_pop5, 'Microsoft', 0), (@preg_pop5, 'Nintendo', 0), (@preg_pop5, 'Sega', 0);
