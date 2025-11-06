@@ -157,7 +157,7 @@
 
         L.Control.geocoder({
             geocoder: L.Control.Geocoder.nominatim({
-                serviceUrl: 'http://localhost/proxyNominatim.php?'
+                serviceUrl: window.location.origin + '/proxyNominatim.php?'
             }),
             defaultMarkGeocode: false
         })
