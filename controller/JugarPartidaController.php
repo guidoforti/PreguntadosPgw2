@@ -30,7 +30,8 @@ class JugarPartidaController
         $partida_id = $this->model->crearPartida($usuario_id);
 
         $usuario = $this->modelUsuarios->getUsuarioById($usuario_id);
-        $lista_de_ids_preguntas = $this->model->buscarPreguntasParaPartida($usuario['ranking']);
+        $this->model->verificarYResetearHistorialUsuario($usuario_id, $usuario['ranking']);
+        $lista_de_ids_preguntas = $this->model->buscarPreguntasParaPartida($usuario['ranking'] , $usuario_id);
 
         $_SESSION['partida_id'] = $partida_id;
         $_SESSION['preguntas_partida'] = $lista_de_ids_preguntas;
