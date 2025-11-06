@@ -43,7 +43,7 @@ class JugarPartidaModel
         LIMIT 10";
 
         $resultado_query = $this->conexion->query($sql);
-        $numeroDePreguntasEncontradas = $resultado_query->num_rows;
+        $numeroDePreguntasEncontradas = count($resultado_query);
 
         if ($numeroDePreguntasEncontradas < 10) {
             $sqlPorFaltaDePreguntas = "SELECT pregunta_id FROM preguntas 
