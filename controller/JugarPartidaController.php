@@ -176,4 +176,24 @@ class JugarPartidaController
         unset($_SESSION['pregunta_start_time']);
     }
 
+    public function mostrarRuleta() {
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+
+        if(!isset($_SESSION['partida_id'])) {
+            header("Location: /jugarPartida/iniciarPartida");
+            exit;
+        }
+
+        $data = [];
+        $data['categorias'] = $this->model->getCategorias();
+
+        $data['categorias_json'] = json_encode($data['categorias']);
+
+        $this->renderer->render("ruleta", $data);
+    }
+
+    public function guardarCategoria(){
+        $_POST['categoria'] = $_POST['categoria_elegida'];
+    }
+
 }

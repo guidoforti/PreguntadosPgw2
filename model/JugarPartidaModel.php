@@ -84,7 +84,10 @@ class JugarPartidaModel
     public function getPreguntaCompleta($pregunta_id)
     {
         $data = [];
-        $sql_pregunta = "SELECT texto_pregunta FROM preguntas WHERE pregunta_id = ?";
+        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
+                            FROM preguntas p
+                            JOIN categorias c ON c.categoria_id = p.categoria_id
+                            WHERE pregunta_id = ?";
         $resultado_pregunta = $this->conexion->preparedQuery($sql_pregunta, 'i', [$pregunta_id]);
         $data['pregunta'] = $resultado_pregunta[0] ?? null;
         $data['pregunta_id'] = $pregunta_id;
@@ -220,4 +223,12 @@ class JugarPartidaModel
 
         return false; // No se reseteó
     }
+
+    public function getCategorias() {
+        $sql = 'SELECT nombre, color_hex FROM categorias';
+
+        $resultado = $this->conexion->query($sql);
+        return $resultado;
+    }
+
 }

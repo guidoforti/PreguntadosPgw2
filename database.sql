@@ -349,3 +349,5 @@ VALUES
 SET @preg_pop5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_pop5, 'Sony', 1), (@preg_pop5, 'Microsoft', 0), (@preg_pop5, 'Nintendo', 0), (@preg_pop5, 'Sega', 0);
+
+

@@ -9,7 +9,9 @@
                     </div>
                 </div>
 
+                <h5 class="h5 text-center mb-2 fw-normal">Categoria: {{pregunta.categoria}}</h5>
                 <h2 class="h3 text-center mb-4 fw-normal">{{pregunta.texto_pregunta}}</h2>
+
 
                 <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
 
@@ -38,12 +40,10 @@
 </div>
 
 <script>
-    // --- 1. CÓDIGO DEL TIMER (Igual que antes) ---
     const timerElement = document.getElementById('timer');
     const formElement = document.getElementById('pregunta-form');
     let tiempoRestante = parseInt(timerElement.innerText);
 
-    // IMPORTANTE: Definimos 'intervalo' en un scope más alto
     let intervalo = setInterval(() => {
         tiempoRestante--;
         timerElement.innerText = tiempoRestante;
@@ -63,45 +63,32 @@
     });
 
 
-    // --- 2. CÓDIGO ANTI-TRAMPA (La nueva versión) ---
 
-    let seFueDeLaPestana = false; // Flag para que se ejecute 1 sola vez por pregunta
+    let seFueDeLaPestana = false;
 
     document.addEventListener("visibilitychange", () => {
 
-        // Chequeamos:
-        // 1. Si el usuario SE FUE ('hidden')
-        // 2. Si NO lo hemos penalizado ya en esta pregunta (!seFueDeLaPestana)
-        // 3. Si el timer todavía existe (intervalo)
+
         if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
-
-            // ¡PENALIZADO!
-            // 1. Levantamos la bandera
             seFueDeLaPestana = true;
-
-            // 2. Frenamos el timer local
             clearInterval(intervalo);
-            intervalo = null; // Lo matamos para que no se ejecute de nuevo
+            intervalo = null;
 
-            // 3. Mostramos el cartelito (¡LA MAGIA!)
             Swal.fire({
                 title: '¡Tramposo!',
                 text: "Cambiaste de pestaña. Esta pregunta se marcará como incorrecta.",
                 icon: 'warning',
                 confirmButtonText: 'Entendido',
-                allowOutsideClick: false, // No puede cerrarlo haciendo clic afuera
-                allowEscapeKey: false // No puede cerrarlo con "Escape"
+                allowOutsideClick: false,
+                allowEscapeKey: false
 
             }).then((result) => {
 
-                // 4. DESPUÉS de que el usuario apretó "Entendido"...
-                // Deshabilitamos los botones
                 document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
                     radio.disabled = true;
                     radio.nextElementSibling.classList.add('disabled');
                 });
 
-                // 5. ...enviamos el formulario (el backend lo toma como incorrecto)
                 formElement.submit();
             });
         }
@@ -109,38 +96,31 @@
 </script>
 
 <style>
-    /* Estilo para el círculo del timer */
     #timer-display {
         font-size: 2.5em;
         font-weight: 700;
-        color: #dc3545; /* Rojo de "danger" de Bootstrap */
+        color: #dc3545;
 
-        /* Círculo */
         width: 80px;
         height: 80px;
-        line-height: 75px; /* Centrado vertical */
+        line-height: 75px;
         text-align: center;
 
         border: 4px solid #dc3545;
         border-radius: 50%;
         background-color: #fff;
 
-        /* Sombra sutil */
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
-    /* Bootstrap por defecto pone el 'btn-outline-primary' azul
-       cuando está seleccionado. Lo cambiamos a un color "seleccionado"
-       más neutro o más fuerte, como un azul sólido.
-    */
     .btn-check:checked + .btn-outline-primary {
-        background-color: #0d6efd; /* Azul primario de Bootstrap */
+        background-color: #0d6efd;
         color: #fff;
         border-color: #0d6efd;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
     }
 
-    /* Para que el label tenga un buen espacio y alineación */
+
     .btn-outline-primary {
         padding-top: 1rem;
         padding-bottom: 1rem;
