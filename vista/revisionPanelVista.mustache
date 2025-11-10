@@ -3,7 +3,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h3>Sugerencias Pendientes ({{pendientes.length}})</h3>
+            <h3>Sugerencias Pendientes ({{count_pendientes}})</h3>
             <ul class="list-group">
                 {{#pendientes}}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -24,18 +24,39 @@
         </div>
 
         <div class="col-md-6">
-            <h3>Reportes Pendientes</h3>
+            <h3>Reportes Pendientes ({{count_reportes}})</h3>
             <ul class="list-group">
+
                 {{#reportes}}
-                <li class="list-group-item list-group-item-warning">
-                    <strong>Pregunta ID {{pregunta_id}}</strong>: {{texto_pregunta}}
-                    <small>Motivo: {{motivo}}</small>
-                </li>
+                    <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-start">
+
+                        <div class="me-3">
+
+                            <div class="mb-2"> <strong>Pregunta:</strong> {{texto_pregunta}}
+                                <small class="text-muted">(ID: {{pregunta_id}})</small>
+                            </div>
+
+                            <div class="mb-2"> <strong>Motivo:</strong>
+                                <span class="text-muted fst-italic">"{{motivo}}"</span>
+                            </div>
+
+                            <div> <strong>Reportado por:</strong>
+                                <small>{{reportador}}</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 flex-shrink-0">
+                            <a href="/editor/aprobarReporte?reporte_id={{reporte_id}}" class="btn btn-sm btn-success">Aprobar Reporte</a>
+                            <a href="/editor/rechazarReporte?reporte_id={{reporte_id}}" class="btn btn-sm btn-danger">Rechazar Reporte</a>
+                        </div>
+
+                    </li>
                 {{/reportes}}
+
                 {{^reportes}}
-                <li class="list-group-item">No hay reportes pendientes.</li>
+                    <li class="list-group-item">No hay reportes pendientes.</li>
                 {{/reportes}}
             </ul>
         </div>
     </div>
-</div><?php
+</div>

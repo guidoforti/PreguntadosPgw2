@@ -85,7 +85,7 @@ CREATE TABLE preguntas (
                            pregunta_id INT NOT NULL AUTO_INCREMENT,
                            categoria_id INT NOT NULL,
                            texto_pregunta TEXT NOT NULL,
-                           estado ENUM('pendiente', 'activa', 'rechazada') NOT NULL DEFAULT 'pendiente',
+                           estado ENUM('pendiente', 'activa', 'rechazada', 'reportada') NOT NULL DEFAULT 'pendiente',
                            dificultad DECIMAL(3,2) DEFAULT 0.50,
                            creada_por_usuario_id INT NULL,
                            aprobado_por_usuario_id INT NULL,
@@ -619,3 +619,4 @@ VALUES
 SET @preg_pop16 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_pop16, 'Joaquin Phoenix', 1), (@preg_pop16, 'Heath Ledger', 0), (@preg_pop16, 'Jared Leto', 0), (@preg_pop16, 'Jack Nicholson', 0);
+

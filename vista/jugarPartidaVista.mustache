@@ -8,6 +8,10 @@
                         {{preguntas_mostradas}} / {{total_preguntas}}
                     </div>
 
+                    <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
+
+                    <input type="hidden" name="respuesta_id" id="respuesta-id-hidden" value="">
+
                     <div class="progress" role="progressbar"
                          aria-label="Progreso de la partida"
                          aria-valuenow="{{preguntas_mostradas}}"
@@ -31,15 +35,12 @@
                 <h5 class="h5 text-center mb-2 fw-normal">Categoria: {{pregunta.categoria}}</h5>
                 <h2 class="h3 text-center mb-4 fw-normal">{{pregunta.texto_pregunta}}</h2>
 
-
-                <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
-
                 <div class="d-grid gap-3">
                     {{#respuestas}}
                         <div>
                             <input  type="radio"
                                     class="btn-check"
-                                    name="respuesta_id"
+                                    name="respuesta_id_opcion" id="opcion-{{ respuesta_id }}"
                                     id="opcion-{{ respuesta_id }}"
                                     value="{{ respuesta_id }}"
                                     autocomplete="off"
@@ -62,25 +63,92 @@
     const timerElement = document.getElementById('timer');
     const formElement = document.getElementById('pregunta-form');
     let tiempoRestante = parseInt(timerElement.innerText);
+    let respondido = false;
+    let intervalo = setInterval(actualizarTimer, 1000);
 
-    let intervalo = setInterval(() => {
+    document.querySelectorAll('input[name="respuesta_id_opcion"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.getElementById('respuesta-id-hidden').value = radio.value;
+        });
+    });
+
+    function actualizarTimer() {
         tiempoRestante--;
         timerElement.innerText = tiempoRestante;
 
         if (tiempoRestante <= 0) {
-            clearInterval(intervalo);
-            bloquearOpciones();
+            if (!respondido) {
+                procesarRespuesta();
+            }
+        }
+    }
+
+    formElement.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!respondido) {
+            procesarRespuesta();
+
+        } else {
             formElement.submit();
         }
-    }, 1000);
-
-    formElement.addEventListener('submit', function () {
-        clearInterval(intervalo);
-        bloquearOpciones();
     });
 
+    function procesarRespuesta() {
+        if (respondido) return;
+
+        clearInterval(intervalo);
+        respondido = true;
+        bloquearOpciones();
+
+        const formData = new FormData(formElement);
+
+        fetch('/jugarPartida/verificarRespuestaAjax', {
+            method: 'POST',
+            body: formData
+        })
+                .then(response => response.json())
+                .then(data => {
+                    const idCorrectaServidor = data.id_correcta;
+                    mostrarResultadoVisual(idCorrectaServidor);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    mostrarResultadoVisual(null);
+                });
+    }
+
+    function mostrarResultadoVisual(idCorrecta) {
+        const radios = document.querySelectorAll('input[name="respuesta_id_opcion"]');
+        const radioSeleccionado = document.querySelector('input[name="respuesta_id_opcion"]:checked');
+
+        let idSeleccionada = radioSeleccionado ? radioSeleccionado.id : null;
+        let idCorrectaDOM = `opcion-${idCorrecta}`;
+
+        radios.forEach(radio => {
+            const label = radio.nextElementSibling;
+            if (radio.id == idCorrectaDOM) {
+                label.classList.remove('btn-outline-primary');
+                label.classList.add('btn-success');
+            }
+        });
+
+        if (radioSeleccionado) {
+            if (idSeleccionada !== idCorrectaDOM) {
+                const labelSeleccionada = radioSeleccionado.nextElementSibling;
+                labelSeleccionada.classList.remove('btn-outline-primary');
+                labelSeleccionada.classList.add('btn-danger');
+            }
+        }
+
+        const boton = formElement.querySelector('button[type="submit"]');
+        boton.innerText = 'Continuar';
+        boton.classList.remove('btn-success');
+        boton.classList.add('btn-primary');
+    }
+
     function bloquearOpciones() {
-        document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
+        document.querySelectorAll('input[name="respuesta_id_opcion"]').forEach(radio => {
             radio.disabled = true;
             radio.nextElementSibling.classList.add('disabled');
         });
@@ -141,6 +209,30 @@
         padding-bottom: 1rem;
         text-align: left;
         padding-left: 1.5rem;
+    }
+
+    .btn-check:disabled + .btn.btn-success {
+        background-color: #198754;
+        border-color: #198754;
+        color: #fff;
+        text-align: left;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .btn-check:disabled + .btn.btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+        text-align: left;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .btn-check:disabled + .btn-outline-primary {
+        opacity: 0.65;
     }
 
 </style>

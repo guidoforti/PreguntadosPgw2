@@ -45,7 +45,7 @@ class JugarPartidaModel
                 WHERE p.estado = 'activa' 
                 AND p.dificultad BETWEEN ? AND ?
                 AND c.nombre = ?
-                AND ru.pregunta_id IS NULL 
+                AND ru.pregunta_id IS NULL
                 ORDER BY RAND()
                 LIMIT ?";
 
@@ -87,8 +87,7 @@ class JugarPartidaModel
         return $ids;
     }
 
-    public function getPreguntaCompleta($pregunta_id)
-    {
+    public function getPreguntaCompleta($pregunta_id) {
         $data = [];
         $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
                             FROM preguntas p
@@ -236,5 +235,56 @@ class JugarPartidaModel
         $resultado = $this->conexion->query($sql);
         return $resultado;
     }
+
+    public function getIdCorrecta($pregunta_id){
+        $sql = "SELECT respuesta_id FROM respuestas WHERE pregunta_id = ? AND es_correcta = 1";
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$pregunta_id]);
+        return $resultado[0]['respuesta_id'] ?? null;
+    }
+
+    public function getPreguntaPorId($pregunta_id){
+        $placeholders = implode(',', array_fill(0, count($pregunta_id), '?'));
+        $types = str_repeat('i', count($pregunta_id));
+
+        $sql = "SELECT pregunta_id, texto_pregunta 
+                FROM preguntas 
+                WHERE pregunta_id IN ($placeholders)";
+
+        return $this->conexion->preparedQuery($sql, $types, $pregunta_id);
+    }
+
+    public function reportarPregunta($reportes, $usuario_id) {
+
+        if (empty($reportes) || empty($usuario_id)) {
+            return;
+        }
+
+        $pregunta_ids = [];
+        foreach ($reportes as $reporte) {
+            $pregunta_ids[] = $reporte['id'];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($pregunta_ids), '?'));
+        $types = str_repeat('i', count($pregunta_ids));
+
+        $sql_update = "UPDATE preguntas 
+                   SET estado = 'reportada' 
+                   WHERE pregunta_id IN ($placeholders)";
+
+        $this->conexion->preparedQuery($sql_update, $types, $pregunta_ids);
+
+        $sql_insert = "INSERT INTO preguntas_reportadas
+                   (pregunta_id, reportado_por_usuario_id, motivo, estado)
+                   VALUES (?, ?, ?, 'reportado')";
+
+        foreach ($reportes as $reporte) {
+            $this->conexion->preparedQuery($sql_insert, 'iis', [
+                $reporte['id'],
+                $usuario_id,
+                $reporte['motivo']
+            ]);
+        }
+    }
+
 
 }
