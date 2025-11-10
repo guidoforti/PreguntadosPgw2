@@ -31,14 +31,15 @@ class JugarPartidaController
 
         $usuario = $this->modelUsuarios->getUsuarioById($usuario_id);
         $this->model->verificarYResetearHistorialUsuario($usuario_id, $usuario['ranking']);
-        $lista_de_ids_preguntas = $this->model->buscarPreguntasParaPartida($usuario['ranking'] , $usuario_id);
 
         $_SESSION['partida_id'] = $partida_id;
-        $_SESSION['preguntas_partida'] = $lista_de_ids_preguntas;
+        $_SESSION['preguntas_partida'] = [];
         $_SESSION['pregunta_actual_index'] = 0;
         $_SESSION['puntaje_actual'] = 0;
 
-        header("Location: /jugarPartida/mostrarPregunta");
+        $_SESSION['ranking_inicio'] = $usuario['ranking'];
+
+        header("Location: /jugarPartida/mostrarRuleta");
         exit;
     }
 
@@ -54,8 +55,13 @@ class JugarPartidaController
         $index_actual = $_SESSION['pregunta_actual_index'];
         $lista_preguntas = $_SESSION['preguntas_partida'];
 
-        if($index_actual >= count($lista_preguntas)) {
+        if($index_actual >= 10) {
             header("Location: /jugarPartida/finalizar");
+            exit;
+        }
+
+        if(!isset($lista_preguntas[$index_actual])) {
+            header("Location: /jugarPartida/mostrarRuleta");
             exit;
         }
 
@@ -84,12 +90,20 @@ class JugarPartidaController
 
         $data_pregunta['timer'] = $tiempo_restante;
 
+        $total_preguntas = 10;
+        $data_pregunta['preguntas_respondidas'] = $index_actual;
+        $data_pregunta['preguntas_mostradas']  = $index_actual + 1;
+        $data_pregunta['total_preguntas']      = $total_preguntas;
+
+        $progreso_fraction = ($index_actual + 1) / $total_preguntas;
+        $data_pregunta['porcentaje_progreso'] = (int) round($progreso_fraction * 100, 0);
 
         $this->renderer->render("jugarPartida", $data_pregunta);
 
     }
 
     public function responder(){
+
         SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /jugarPartida/iniciarPartida");
@@ -124,13 +138,18 @@ class JugarPartidaController
         }
 
         $_SESSION['pregunta_actual_index']++;
+        unset($_SESSION['pregunta_start_time']);
 
-        if ($_SESSION['pregunta_actual_index'] >= count($lista_preguntas)) {
+        $index_nuevo = $_SESSION['pregunta_actual_index'];
+
+        if($index_nuevo >= 10) {
             header("Location: /jugarPartida/finalizar");
+        } else if ($index_nuevo % 2 == 0) {
+            header("Location: /jugarPartida/mostrarRuleta");
         } else {
             header("Location: /jugarPartida/mostrarPregunta");
         }
-        unset($_SESSION['pregunta_start_time']);
+
         exit;
     }
 
@@ -163,6 +182,8 @@ class JugarPartidaController
             'rango' => $rango
         ];
 
+        $_SESSION['preguntas_para_reportar'] = $listaIdPreguntas;
+
         $this->limpiarSesionDePartida();
 
         $this->renderer->render("resultadoPartida", $data_resultado);
@@ -174,6 +195,124 @@ class JugarPartidaController
         unset($_SESSION['pregunta_actual_index']);
         unset($_SESSION['puntaje_actual']);
         unset($_SESSION['pregunta_start_time']);
+    }
+
+    public function mostrarRuleta() {
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+
+        if(!isset($_SESSION['partida_id'])) {
+            header("Location: /jugarPartida/iniciarPartida");
+            exit;
+        }
+
+        $index_actual = $_SESSION['pregunta_actual_index'] ?? 0;
+        $preguntas_en_lista = count($_SESSION['preguntas_partida'] ?? []);
+
+        if ($preguntas_en_lista != $index_actual) {
+            header("Location: /jugarPartida/mostrarPregunta");
+        }
+
+        $data = [];
+        $data['categorias'] = $this->model->getCategorias();
+
+        $data['categorias_json'] = json_encode($data['categorias']);
+
+        $this->renderer->render("ruleta", $data);
+    }
+
+    public function guardarCategoria(){
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        if(!isset($_SESSION['partida_id']) || !isset($_POST['categoria_elegida'])) {
+            header("Location: /");
+            exit;
+        }
+
+        $categoria_elegida = $_POST['categoria_elegida'];
+        $usuario_id = $_SESSION['usuario_id'];
+        $rankingUsuario = $_SESSION['ranking_usuario'];
+
+        $ids_nuevas_preguntas = $this->model->buscarPreguntasParaPartida(
+            $rankingUsuario,
+            $usuario_id,
+            $categoria_elegida,
+            2
+        );
+
+        $_SESSION['preguntas_partida'] = array_merge($_SESSION['preguntas_partida'], $ids_nuevas_preguntas);
+
+        header("Location: /jugarPartida/mostrarPregunta");
+        exit;
+    }
+
+    public function verificarRespuestaAjax() {
+
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+
+        if (!isset($_POST['pregunta_id']) || !isset($_SESSION['partida_id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Petición inválida']);
+            exit;
+        }
+
+        $pregunta_id = $_POST['pregunta_id'];
+        $id_correcta = $this->model->getIdCorrecta($pregunta_id);
+
+        header('Content-type: application/json');
+        echo json_encode(['id_correcta' => $id_correcta]);
+        exit;
+    }
+
+    public function reportarPreguntaForm(){
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+
+        if (!isset($_SESSION['preguntas_para_reportar']) || empty($_SESSION['preguntas_para_reportar'])) {
+            header("Location: /");
+            exit;
+        }
+
+        $ids_preguntas = $_SESSION['preguntas_para_reportar'];
+        $preguntas = $this->model->getPreguntaPorId($ids_preguntas);
+        $data['preguntas'] = $preguntas;
+        $this->renderer->render("reportarPregunta", $data);
+
+    }
+
+    public function procesarReporte(){
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+
+        $ids_a_reportar = $_POST['preguntas_reportadas'] ?? [];
+        $motivos_enviados = $_POST['motivos'] ?? [];
+        $usuario_id = $_SESSION['usuario_id'] ?? null;
+
+        if(empty($ids_a_reportar) || empty($usuario_id)) {
+            header("Location: /");
+            exit;
+        }
+
+        if (count($ids_a_reportar) > 3) {
+            header("Location: /");
+        }
+
+        $reportes = [];
+        foreach ($ids_a_reportar as $id_reportado) {
+            if (isset($motivos_enviados[$id_reportado]) && trim($motivos_enviados[$id_reportado]) !== '') {
+                $reportes[] = [
+                    'id' => $id_reportado,
+                    'motivo' => trim($motivos_enviados[$id_reportado])
+                ];
+            }
+        }
+
+        if (empty($reportes)) {
+            header("Location: /");
+            exit;
+        }
+
+        $this->model->reportarPregunta($reportes, $usuario_id);
+
+        unset($_SESSION['preguntas_para_reportar']);
+        header("Location: /");
+        exit;
     }
 
 }

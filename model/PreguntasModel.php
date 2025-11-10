@@ -148,7 +148,6 @@ class PreguntasModel
 
     public function getReportesPendientes()
     {
-        // Selecciona preguntas con reportes activos
         $sql = "SELECT pr.reporte_id, pr.pregunta_id, pr.motivo, p.texto_pregunta, u.nombre_usuario as reportador
                 FROM preguntas_reportadas pr
                 JOIN preguntas p ON pr.pregunta_id = p.pregunta_id
@@ -173,4 +172,42 @@ class PreguntasModel
 
         return $this->conexion->preparedQuery($sql, 'i', [$preguntaId]) === true;
     }
+
+    public function aprobarReporte($reporteId, $editorId){
+        $sql_get_id = "SELECT pregunta_id FROM preguntas_reportadas WHERE reporte_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql_get_id, 'i', [$reporteId]);
+        $preguntaId = $resultado[0]['pregunta_id'] ?? null;
+
+        if (!$preguntaId) {
+            return false;
+        }
+
+        $sql_reporte = "UPDATE preguntas_reportadas 
+                        SET estado = 'aprobado', revisado_por_usuario_id = ? 
+                        WHERE reporte_id = ?";
+        $this->conexion->preparedQuery($sql_reporte, 'ii', [$editorId, $reporteId]);
+
+        return true;
+    }
+
+    public function rechazarReporte($reporteId, $editorId){
+        $sql_get_id = "SELECT pregunta_id FROM preguntas_reportadas WHERE reporte_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql_get_id, 'i', [$reporteId]);
+        $preguntaId = $resultado[0]['pregunta_id'] ?? null;
+
+        if (!$preguntaId) {
+            return false;
+        }
+
+        $sql_reporte = "UPDATE preguntas_reportadas 
+                        SET estado = 'rechazado', revisado_por_usuario_id = ? 
+                        WHERE reporte_id = ?";
+        $this->conexion->preparedQuery($sql_reporte, 'ii', [$editorId, $reporteId]);
+
+        $sql_pregunta = "UPDATE preguntas SET estado = 'activa' WHERE pregunta_id = ?";
+        $this->conexion->preparedQuery($sql_pregunta, 'i', [$preguntaId]);
+
+        return true;
+    }
+
 }
