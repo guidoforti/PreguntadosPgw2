@@ -181,7 +181,8 @@ SET @ciudad_caba = LAST_INSERT_ID();
 SET @hash_test = '$2y$10$ldqCeVk5gCcDoUEIYtSEGu7QW9vLD4ymMCA/Gc9oAYz.6v.eXLD2i';
 INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
                                                                                                                                           ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
-                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE);
+                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
+                                                                                                                                          ('User', 'user_test', 'user@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'usuario', TRUE);
 
 SET @admin_id = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'admin_test');
 
