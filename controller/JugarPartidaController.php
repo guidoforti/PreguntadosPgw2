@@ -31,14 +31,18 @@ class JugarPartidaController
 
         $usuario = $this->modelUsuarios->getUsuarioById($usuario_id);
         $this->model->verificarYResetearHistorialUsuario($usuario_id, $usuario['ranking']);
-        $lista_de_ids_preguntas = $this->model->buscarPreguntasParaPartida($usuario['ranking'] , $usuario_id);
+
+        //$lista_de_ids_preguntas = $this->model->buscarPreguntasParaPartida($usuario['ranking'] , $usuario_id);
 
         $_SESSION['partida_id'] = $partida_id;
-        $_SESSION['preguntas_partida'] = $lista_de_ids_preguntas;
+        //$_SESSION['preguntas_partida'] = $lista_de_ids_preguntas;
+        $_SESSION['preguntas_partida'] = [];
         $_SESSION['pregunta_actual_index'] = 0;
         $_SESSION['puntaje_actual'] = 0;
 
-        header("Location: /jugarPartida/mostrarPregunta");
+        $_SESSION['ranking_inicio'] = $usuario['ranking'];
+
+        header("Location: /jugarPartida/mostrarRuleta");
         exit;
     }
 
@@ -54,8 +58,13 @@ class JugarPartidaController
         $index_actual = $_SESSION['pregunta_actual_index'];
         $lista_preguntas = $_SESSION['preguntas_partida'];
 
-        if($index_actual >= count($lista_preguntas)) {
+        if($index_actual >= 10) {
             header("Location: /jugarPartida/finalizar");
+            exit;
+        }
+
+        if(!isset($lista_preguntas[$index_actual])) {
+            header("Location: /jugarPartida/mostrarRuleta");
             exit;
         }
 
@@ -84,12 +93,21 @@ class JugarPartidaController
 
         $data_pregunta['timer'] = $tiempo_restante;
 
+        $total_preguntas = 10;
+        $data_pregunta['preguntas_respondidas'] = $index_actual;
+        $data_pregunta['preguntas_mostradas']  = $index_actual + 1;
+        $data_pregunta['total_preguntas']      = $total_preguntas;
+
+        $progreso_fraction = ($index_actual + 1) / $total_preguntas;
+        $data_pregunta['porcentaje_progreso'] = (int) round($progreso_fraction * 100, 0);
+
 
         $this->renderer->render("jugarPartida", $data_pregunta);
 
     }
 
     public function responder(){
+
         SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /jugarPartida/iniciarPartida");
@@ -124,13 +142,18 @@ class JugarPartidaController
         }
 
         $_SESSION['pregunta_actual_index']++;
+        unset($_SESSION['pregunta_start_time']);
 
-        if ($_SESSION['pregunta_actual_index'] >= count($lista_preguntas)) {
+        $index_nuevo = $_SESSION['pregunta_actual_index'];
+
+        if($index_nuevo >= 10) {
             header("Location: /jugarPartida/finalizar");
+        } else if ($index_nuevo % 2 == 0) {
+            header("Location: /jugarPartida/mostrarRuleta");
         } else {
             header("Location: /jugarPartida/mostrarPregunta");
         }
-        unset($_SESSION['pregunta_start_time']);
+
         exit;
     }
 
@@ -193,7 +216,27 @@ class JugarPartidaController
     }
 
     public function guardarCategoria(){
-        $_POST['categoria'] = $_POST['categoria_elegida'];
+        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        if(!isset($_SESSION['partida_id']) || !isset($_POST['categoria_elegida'])) {
+            header("Location: /");
+            exit;
+        }
+
+        $categoria_elegida = $_POST['categoria_elegida'];
+        $usuario_id = $_SESSION['usuario_id'];
+        $rankingUsuario = $_SESSION['ranking_usuario'];
+
+        $ids_nuevas_preguntas = $this->model->buscarPreguntasParaPartida(
+            $rankingUsuario,
+            $usuario_id,
+            $categoria_elegida,
+            2
+        );
+
+        $_SESSION['preguntas_partida'] = array_merge($_SESSION['preguntas_partida'], $ids_nuevas_preguntas);
+
+        header("Location: /jugarPartida/mostrarPregunta");
+        exit;
     }
 
 }

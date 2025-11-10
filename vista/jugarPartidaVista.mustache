@@ -3,6 +3,25 @@
         <div class="col-lg-8 col-md-10">
             <form action="/jugarPartida/responder" method="POST" id="pregunta-form" class="card shadow-sm p-4 ">
 
+                <div class="mb-3 text-center">
+                    <div class="fw-bold mb-2" style="font-size:1.05rem;">
+                        {{preguntas_mostradas}} / {{total_preguntas}}
+                    </div>
+
+                    <div class="progress" role="progressbar"
+                         aria-label="Progreso de la partida"
+                         aria-valuenow="{{preguntas_mostradas}}"
+                         aria-valuemin="0"
+                         aria-valuemax="{{total_preguntas}}"
+                         style="height: 25px;">
+
+                        <div id="miProgressBar"
+                             class="progress-bar"
+                             style="width: {{porcentaje_progreso}}%;">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-center mb-4">
                     <div id="timer-display" class="mx-auto">
                         <span id="timer">{{ timer }}</span>
@@ -50,25 +69,26 @@
 
         if (tiempoRestante <= 0) {
             clearInterval(intervalo);
-            document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
-                radio.disabled = true;
-                radio.nextElementSibling.classList.add('disabled');
-            });
+            bloquearOpciones();
             formElement.submit();
         }
     }, 1000);
 
-    formElement.addEventListener('submit', () => {
+    formElement.addEventListener('submit', function () {
         clearInterval(intervalo);
+        bloquearOpciones();
     });
 
-
+    function bloquearOpciones() {
+        document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
+            radio.disabled = true;
+            radio.nextElementSibling.classList.add('disabled');
+        });
+    }
 
     let seFueDeLaPestana = false;
 
     document.addEventListener("visibilitychange", () => {
-
-
         if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
             seFueDeLaPestana = true;
             clearInterval(intervalo);
@@ -81,19 +101,14 @@
                 confirmButtonText: 'Entendido',
                 allowOutsideClick: false,
                 allowEscapeKey: false
-
-            }).then((result) => {
-
-                document.querySelectorAll('input[name="respuesta_id"]').forEach(radio => {
-                    radio.disabled = true;
-                    radio.nextElementSibling.classList.add('disabled');
-                });
-
+            }).then(() => {
+                bloquearOpciones();
                 formElement.submit();
             });
         }
     });
 </script>
+
 
 <style>
     #timer-display {
@@ -127,4 +142,5 @@
         text-align: left;
         padding-left: 1.5rem;
     }
+
 </style>

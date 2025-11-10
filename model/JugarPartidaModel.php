@@ -31,7 +31,7 @@ class JugarPartidaModel
         return $this->conexion->getInsertId();
     }
 
-    public function buscarPreguntasParaPartida($rankingUsuario, $usuario_id)
+    public function buscarPreguntasParaPartida($rankingUsuario, $usuario_id, $categoria_nombre, $limite = 2)
     {
         $rangoDeDificultadDelUsuario = $this->devolverRangoDeDificultadSegunRanking($rankingUsuario);
 
@@ -40,35 +40,41 @@ class JugarPartidaModel
 
         $sql = "SELECT p.pregunta_id 
                 FROM preguntas p
+                JOIN categorias c ON p.categoria_id = c.categoria_id
                 LEFT JOIN respuestas_usuario ru ON p.pregunta_id = ru.pregunta_id AND ru.usuario_id = ?
                 WHERE p.estado = 'activa' 
                 AND p.dificultad BETWEEN ? AND ?
+                AND c.nombre = ?
                 AND ru.pregunta_id IS NULL 
                 ORDER BY RAND()
-                LIMIT 10";
+                LIMIT ?";
 
 
-        $preguntas_encontradas = $this->conexion->preparedQuery($sql, 'idd', [
+        $preguntas_encontradas = $this->conexion->preparedQuery($sql, 'iddsi', [
             $usuario_id,
             $rangoDeDificultadDelUsuario['rangoMenor'],
-            $rangoDeDificultadDelUsuario['rangoMayor']
+            $rangoDeDificultadDelUsuario['rangoMayor'],
+            $categoria_nombre,
+            $limite
         ]);
 
         // Usamos count() sobre el array/null devuelto para ver que si existen menos de 10 preguntas para ese rango
         // si no existen, se dan  preguntas random sin importar rango
         $numeroDePreguntasEncontradas = count($preguntas_encontradas);
 
-        if ($numeroDePreguntasEncontradas < 10) {
+        if ($numeroDePreguntasEncontradas < $limite) {
 
             $sqlPorFaltaDePreguntas = "SELECT p.pregunta_id 
                 FROM preguntas p
+                JOIN categorias c ON p.categoria_id = c.categoria_id
                 LEFT JOIN respuestas_usuario ru ON p.pregunta_id = ru.pregunta_id AND ru.usuario_id = ?
-                WHERE p.estado = 'activa' 
+                WHERE p.estado = 'activa'
+                AND c.nombre = ?
                 AND ru.pregunta_id IS NULL 
                 ORDER BY RAND()
-                LIMIT 10";
+                LIMIT ?";
 
-            $preguntas_encontradas = $this->conexion->preparedQuery($sqlPorFaltaDePreguntas, 'i', [$usuario_id]);
+            $preguntas_encontradas = $this->conexion->preparedQuery($sqlPorFaltaDePreguntas, 'isi', [$usuario_id, $categoria_nombre, $limite]);
         }
 
         // Extraemos los IDs del resultado final
