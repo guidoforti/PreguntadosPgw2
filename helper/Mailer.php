@@ -7,8 +7,8 @@ class Mailer {
 
     // Configuración del Servidor SMTP
     private static $smtp_host = 'smtp.gmail.com';
-    private static $smtp_user = 'marcofolco28@gmail.com';
-    private static $smtp_pass = 'ripo fsml wrfp mysd';
+    private static $smtp_user = 'marcofolco@gmail.com';
+    private static $smtp_pass = 'qyqn pbgx vbob bqct';
     private static $from_name = 'Preguntados PGW2'; 
 
     public static function enviar(string $destino, string $asunto, string $cuerpoHTML): bool {

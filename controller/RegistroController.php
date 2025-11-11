@@ -110,7 +110,7 @@ class RegistroController
             $linkActivacion = $urlBase . "registro/validar?token=" . $token;
 
             $asunto = "Activa tu cuenta de Preguntados PGW2";
-            $cuerpoHTML = "Para activar tu cuenta, haz click en: <a href='{$linkActivacion}'>ACTIVAR MI CUENTA</a>";
+            $cuerpoHTML = "Para activar tu cuenta, copia y pegá este link en tu navegador: $linkActivacion";
 
             if (Mailer::enviar($emailDestino, $asunto, $cuerpoHTML)) {
                 $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta."]);
