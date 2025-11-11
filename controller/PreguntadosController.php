@@ -22,14 +22,14 @@ class PreguntadosController
 
     public function home()
     {
-        //logica del cron manual
+       /* //logica del cron manual
         if ($this->preguntasModel->debeEjecutarseElCronManual()) {
             session_write_close();
             //con esto nos aseguramos de que toda la tarea se corra por mas que el usuario cierre sesion o la pagina
             ignore_user_abort(true);
             // EJECUTAR LA TAREA PESADA
             $this->preguntasModel->recalcularDificultadDePreguntasGlobal();
-        }
+        }*/
 
 
         $rol = $_SESSION["rol"] ?? 'usuario';

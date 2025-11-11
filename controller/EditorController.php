@@ -71,7 +71,9 @@ class EditorController
         $this->renderer->render("revisionPanel", [
             'pendientes' => $pendientes,
             'reportes' => $reportes,
-            'rol' => $_SESSION['rol']
+            'rol' => $_SESSION['rol'],
+            'count_pendientes' => count($pendientes),
+            'count_reportes' => count($reportes)
         ]);
     }
 
@@ -97,6 +99,29 @@ class EditorController
         $this->model->denegarPregunta($preguntaId);
 
         header("Location: /editor/revisarPendientes?msg=denegada");
+        exit;
+    }
+
+    public function aprobarReporte(){
+        SecurityHelper::checkRole(['admin', 'editor']);
+        $reporteId = $_GET['reporte_id'] ?? null;
+        $editorId = $_SESSION['usuario_id'] ?? null;
+
+        if ($reporteId && $editorId) {
+            $this->model->aprobarReporte($reporteId, $editorId);
+        }
+        header("Location: /editor/revisarPendientes?msg=aprobada");
+        exit;
+    }
+
+    public function rechazarReporte(){
+        SecurityHelper::checkRole(['admin', 'editor']);
+        $reporteId = $_GET['reporte_id'] ?? null;
+        $editorId = $_SESSION['usuario_id'] ?? null;
+        if ($reporteId && $editorId) {
+            $this->model->rechazarReporte($reporteId, $editorId);
+        }
+        header("Location: /editor/revisarPendientes?msg=rechazada");
         exit;
     }
 

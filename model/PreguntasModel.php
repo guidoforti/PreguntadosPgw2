@@ -53,34 +53,34 @@ class PreguntasModel
     /* funcion destinada a ejecutar un scripts
    que corre una tarea como si fuese un job
    */
-    public function debeEjecutarseElCronManual($segundosDeExpiracion = 3600)
-    {
+    /*    public function debeEjecutarseElCronManual($segundosDeExpiracion = 3600)
+        {
 
-        if (!file_exists($this->archivoLogCron)) {
-            // si nunca corrio, lo corremos.
-            return true;
-        }
-        // si ya se ejecuto, del txt obtengo hace cuantos tiempo
-        $ultimaEjecucion = (int)file_get_contents($this->archivoLogCron);
-        //obtengo el tiempo actual
-        $ahora = time();
-        //retorno true o false si pasaron mas de 3600 segundos ( 1 hora )
-        return ($ahora - $ultimaEjecucion) > $segundosDeExpiracion;
-    }
-    public function marcarRecalculoComoEjecutado()
-    {
-        //escribimos el time en donde se ejecuto por ultima vez el archivo
-        //el lock ex nos bloquea el archivo para que no se ejecute
-        $directorio = dirname($this->archivoLogCron);
-        if (!is_dir($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-        file_put_contents($this->archivoLogCron, time(), LOCK_EX);
-    }
+            if (!file_exists($this->archivoLogCron)) {
+                // si nunca corrio, lo corremos.
+                return true;
+            }
+            // si ya se ejecuto, del txt obtengo hace cuantos tiempo
+            $ultimaEjecucion = (int)file_get_contents($this->archivoLogCron);
+            //obtengo el tiempo actual
+            $ahora = time();
+            //retorno true o false si pasaron mas de 3600 segundos ( 1 hora )
+            return ($ahora - $ultimaEjecucion) > $segundosDeExpiracion;
+        }*/
+    /*  public function marcarRecalculoComoEjecutado()
+      {
+          //escribimos el time en donde se ejecuto por ultima vez el archivo
+          //el lock ex nos bloquea el archivo para que no se ejecute
+          $directorio = dirname($this->archivoLogCron);
+          if (!is_dir($directorio)) {
+              mkdir($directorio, 0777, true);
+          }
+          file_put_contents($this->archivoLogCron, time(), LOCK_EX);
+      }*/
 
-    public function recalcularDificultadDePreguntasGlobal()
+    public function recalcularDificultadDePreguntasDePartida($listaDeIds)
     {
-        $this->marcarRecalculoComoEjecutado();
+        //  $this->marcarRecalculoComoEjecutado();
 
         /*constantes para falsear preguntas nunca respuestas (evita que una pregunta que nunca se contesto)
         al ser contestada mal o bien por primera vez , tenga una dificultad del 100 o  0 %
@@ -88,15 +88,17 @@ class PreguntasModel
         $TOTAL_PARA_PONDERAR = 10;
         $TOTAL_CORRECTA_PARA_PONDERAR = 5;
 
-        // Obtengo totales  ---
-        $sqlTotales = "SELECT 
-                            pregunta_id, 
-                            SUM(fue_correcta) as respuestas_correctas, 
-                            COUNT(*) as respuestas_totales
-                        FROM 
-                            respuestas_usuario
-                        GROUP BY 
-                            pregunta_id";
+        // Normalizar: quitar no numéricos, únicos y forzar enteros
+        $listaDeIds = array_values(array_unique(array_filter($listaDeIds, 'is_numeric')));
+        $listaDeIds = array_map('intval', $listaDeIds);
+        // Construir IN (...) seguro porque todos los items ya son enteros
+        $in = implode(',', $listaDeIds);
+
+        // Obtener totales solo para los ids solicitados
+        $sqlTotales = "SELECT pregunta_id, SUM(fue_correcta) AS respuestas_correctas, COUNT(*) AS respuestas_totales
+                   FROM respuestas_usuario
+                   WHERE pregunta_id IN ($in)
+                   GROUP BY pregunta_id";
 
         $totales = $this->conexion->query($sqlTotales);
         /* ejemplo de respuesta , basicamente agrupámos las preguntas por su id, vemos la cantidad total de respuestas y cantidad de aciertos
@@ -106,9 +108,7 @@ class PreguntasModel
          * */
 
         $sqlUpdate = "UPDATE preguntas SET dificultad = ? WHERE pregunta_id = ?";
-
         $contador = 0;
-
         // Validar que $totales no sea null antes de hacer foreach
         if ($totales !== null && is_array($totales)) {
             foreach ($totales as $linea) {
@@ -117,12 +117,12 @@ class PreguntasModel
                 $totalDeRespuestasCorrectas = $linea['respuestas_correctas'];
 
                 $totalPonderado = $TOTAL_PARA_PONDERAR + $totalDeRespuestas;
-                $correctasPonderadas = $TOTAL_CORRECTA_PARA_PONDERAR +  $totalDeRespuestasCorrectas;
+                $correctasPonderadas = $TOTAL_CORRECTA_PARA_PONDERAR + $totalDeRespuestasCorrectas;
 
                 $ratioCorrectas = $correctasPonderadas / $totalPonderado;
-                $nuevaDificultad = round(1.0 - $ratioCorrectas , 2);
+                $nuevaDificultad = round(1.0 - $ratioCorrectas, 2);
 
-                $this->conexion->preparedQuery($sqlUpdate , 'di' , [$nuevaDificultad , $preguntaId]);
+                $this->conexion->preparedQuery($sqlUpdate, 'di', [$nuevaDificultad, $preguntaId]);
                 $contador++;
             }
         }
@@ -135,6 +135,7 @@ class PreguntasModel
         $sql = "SELECT categoria_id, nombre FROM categorias ORDER BY nombre";
         return $this->conexion->preparedQuery($sql);
     }
+
     public function getPreguntasPendientes()
     {
         $sql = "SELECT p.*, u.nombre_usuario as creador 
@@ -147,7 +148,6 @@ class PreguntasModel
 
     public function getReportesPendientes()
     {
-        // Selecciona preguntas con reportes activos
         $sql = "SELECT pr.reporte_id, pr.pregunta_id, pr.motivo, p.texto_pregunta, u.nombre_usuario as reportador
                 FROM preguntas_reportadas pr
                 JOIN preguntas p ON pr.pregunta_id = p.pregunta_id
@@ -172,4 +172,42 @@ class PreguntasModel
 
         return $this->conexion->preparedQuery($sql, 'i', [$preguntaId]) === true;
     }
+
+    public function aprobarReporte($reporteId, $editorId){
+        $sql_get_id = "SELECT pregunta_id FROM preguntas_reportadas WHERE reporte_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql_get_id, 'i', [$reporteId]);
+        $preguntaId = $resultado[0]['pregunta_id'] ?? null;
+
+        if (!$preguntaId) {
+            return false;
+        }
+
+        $sql_reporte = "UPDATE preguntas_reportadas 
+                        SET estado = 'aprobado', revisado_por_usuario_id = ? 
+                        WHERE reporte_id = ?";
+        $this->conexion->preparedQuery($sql_reporte, 'ii', [$editorId, $reporteId]);
+
+        return true;
+    }
+
+    public function rechazarReporte($reporteId, $editorId){
+        $sql_get_id = "SELECT pregunta_id FROM preguntas_reportadas WHERE reporte_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql_get_id, 'i', [$reporteId]);
+        $preguntaId = $resultado[0]['pregunta_id'] ?? null;
+
+        if (!$preguntaId) {
+            return false;
+        }
+
+        $sql_reporte = "UPDATE preguntas_reportadas 
+                        SET estado = 'rechazado', revisado_por_usuario_id = ? 
+                        WHERE reporte_id = ?";
+        $this->conexion->preparedQuery($sql_reporte, 'ii', [$editorId, $reporteId]);
+
+        $sql_pregunta = "UPDATE preguntas SET estado = 'activa' WHERE pregunta_id = ?";
+        $this->conexion->preparedQuery($sql_pregunta, 'i', [$preguntaId]);
+
+        return true;
+    }
+
 }

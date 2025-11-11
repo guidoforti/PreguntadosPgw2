@@ -112,7 +112,6 @@
             </div>
 
             <!-- Card: Últimas partidas -->
-            {{#historial}}
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     <h6 class="mb-0">🎮 Últimas Partidas</h6>
@@ -139,12 +138,16 @@
                                     </td>
                                 </tr>
                                 {{/historial}}
+                                {{^historial}}
+                                <tr>
+                                    <td><span class="text-muted text-center mb-0">Sin datos disponibles</span></td>
+                                </tr>
+                                {{/historial}}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            {{/historial}}
         </div>
     </div>
 

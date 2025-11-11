@@ -1,0 +1,79 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <form action="/jugarPartida/procesarReporte" method="POST" id="reporte-form" class="card shadow-sm p-4">
+                <h1 class="h3 text-center mb-4">Reportar Preguntas</h1>
+                <p class="text-center text-muted">
+                    Selecciona hasta 3 preguntas que consideres incorrectas, mal formuladas o duplicadas.
+                </p>
+
+                <div class="alert alert-danger d-none" role="alert" id="limite-alerta">
+                    Solo puedes seleccionar un máximo de 3 preguntas.
+                </div>
+
+                {{#preguntas}}
+                    <div class="form-check fs-5 my-3">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="preguntas_reportadas[]"
+                               value="{{pregunta_id}}"
+                               id="pregunta-{{pregunta_id}}">
+                        <label class="form-check-label" for="pregunta-{{pregunta_id}}">
+                            {{texto_pregunta}}
+                        </label>
+
+                        <div class="mt-2 d-none" id="motivo-container-{{pregunta_id}}">
+                            <textarea class="form-control"
+                            name="motivos[{{pregunta_id}}]"
+                            rows="3"
+                            maxlength="255"
+                            placeholder="Escribe el motivo del reporte... (máx 255 caracteres)"></textarea>
+                        </div>
+                    </div>
+                {{/preguntas}}
+
+                {{^preguntas}}
+                    <p class="text-center">No hay preguntas para reportar.</p>
+                {{/preguntas}}
+
+                <hr class="my-4">
+
+                <button type="submit" class="btn btn-danger btn-lg w-100">Enviar Reporte</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll('input[name="preguntas_reportadas[]"]');
+    const limite = 3;
+    const alerta = document.getElementById('limite-alerta');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const seleccionados = document.querySelectorAll('input[name="preguntas_reportadas[]"]:checked').length;
+
+            if (seleccionados > limite) {
+                checkbox.checked = false;
+                alerta.classList.remove('d-none');
+            } else {
+                alerta.classList.add('d-none');
+            }
+
+            const motivoContainerId = `motivo-container-${checkbox.value}`;
+            const motivoContainer = document.getElementById(motivoContainerId);
+
+            if (motivoContainer) {
+                if (checkbox.checked) {
+                    motivoContainer.classList.remove('d-none');
+                } else {
+                    motivoContainer.classList.add('d-none');
+                    const textarea = motivoContainer.querySelector('textarea');
+                    if (textarea) {
+                        textarea.value = '';
+                    }
+                }
+            }
+        });
+    });
+</script>

@@ -26,7 +26,6 @@ class ConfigFactory
 {
     private $config;
     private $objetos;
-
     private $conexion;
     private $renderer;
 
@@ -54,7 +53,7 @@ class ConfigFactory
 
         $this->objetos["EditorController"] = new  EditorController(new PreguntasModel($this->conexion), $this->renderer);
 
-        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), new UsuarioModel($this->conexion) , $this->renderer);
+        $this->objetos["JugarPartidaController"] = new JugarPartidaController(new JugarPartidaModel($this->conexion), new UsuarioModel($this->conexion), new PreguntasModel($this->conexion), $this->renderer);
 
         $this->objetos["RankingController"] = new RankingController(new RankingModel($this->conexion), new UsuarioModel($this->conexion), $this->renderer);
 
@@ -66,3 +65,4 @@ class ConfigFactory
         return $this->objetos[$objectName];
     }
 }
+
