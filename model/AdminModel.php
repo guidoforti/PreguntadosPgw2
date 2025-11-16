@@ -179,7 +179,7 @@ class AdminModel
         $sql = "SELECT
                     CASE
                         WHEN ({$anioActual} - ano_nacimiento) < 18 THEN 'Menores'
-                        WHEN ({$anioActual} - ano_nacimiento) BETWEEN 18 AND 64 THEN 'Medio'
+                        WHEN ({$anioActual} - ano_nacimiento) BETWEEN 18 AND 64 THEN 'Adultos'
                         WHEN ({$anioActual} - ano_nacimiento) >= 65 THEN 'Jubilados'
                         ELSE 'Desconocido'
                     END as grupo_edad,
@@ -195,7 +195,7 @@ class AdminModel
                  ORDER BY
                     CASE
                         WHEN grupo_edad = 'Menores' THEN 1
-                        WHEN grupo_edad = 'Medio' THEN 2
+                        WHEN grupo_edad = 'Adultos' THEN 2
                         WHEN grupo_edad = 'Jubilados' THEN 3
                         ELSE 4
                     END";

@@ -361,7 +361,7 @@ INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, a
 ('María López', 'maria_lopez', 'maria@preguntados.com', @hash_test, 2010, 'F', @ciudad_cordoba, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 25 DAY)),
 ('Carlos Rodríguez', 'carlos_r', 'carlos@preguntados.com', @hash_test, 2009, 'M', @ciudad_mendoza, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 20 DAY)),
 ('Sofia Martinez', 'sofia_m', 'sofia@preguntados.com', @hash_test, 2011, 'F', @ciudad_madrid, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 18 DAY)),
--- Usuarios Medio (18-64) - Nacidos en 1961-2006
+-- Usuarios Adultos (18-64) - Nacidos en 1961-2006
 ('Diego Sanchez', 'diego_s', 'diego@preguntados.com', @hash_test, 1980, 'M', @ciudad_barcelona, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 15 DAY)),
 ('Elena García', 'elena_g', 'elena@preguntados.com', @hash_test, 1998, 'F', @ciudad_valencia, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 12 DAY)),
 ('Fernando López', 'fernando_l', 'fernando@preguntados.com', @hash_test, 1985, 'M', @ciudad_cdmx, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 10 DAY)),
