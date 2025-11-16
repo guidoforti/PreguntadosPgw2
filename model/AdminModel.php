@@ -41,11 +41,11 @@ class AdminModel
 
     /**
      * Obtiene el total de preguntas activas en el juego
-     * Nota: La tabla preguntas no tiene columna de fecha, por lo que no se filtra por período
      */
     public function obtenerTotalPreguntasEnJuego($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM preguntas WHERE estado = 'activa'";
+        $sql .= $this->aplicarFiltroFecha('preguntas.fecha_creacion', $filtroFecha);
 
         $resultado = $this->conexion->query($sql);
         if (is_array($resultado) && isset($resultado['error'])) {
@@ -56,11 +56,11 @@ class AdminModel
 
     /**
      * Obtiene el total de preguntas creadas
-     * Nota: La tabla preguntas no tiene columna de fecha, por lo que no se filtra por período
      */
     public function obtenerTotalPreguntasCreadas($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM preguntas";
+        $sql .= $this->aplicarFiltroFecha('preguntas.fecha_creacion', $filtroFecha, false);
 
         $resultado = $this->conexion->query($sql);
         if (is_array($resultado) && isset($resultado['error'])) {
