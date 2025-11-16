@@ -18,7 +18,7 @@ class PreguntasModel
     {
 
         // 1. Insertar la pregunta (estado = 'pendiente')
-        $sqlPregunta = "INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id) VALUES (?, ?, 'pendiente', ?)";
+        $sqlPregunta = "INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, fecha_creacion) VALUES (?, ?, 'pendiente', ?, NOW())";
         $tiposPregunta = 'isi'; // integer, string, integer
         $paramsPregunta = [$categoriaId, $textoPregunta, $usuarioId];
 
