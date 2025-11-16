@@ -1156,6 +1156,254 @@ JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
 WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 5
 LIMIT 1;
 
+-- Respuestas adicionales para demostrar cambios con el filtro de período
+-- Usuario 1 de 7 días: 100% accuracy (all correct)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10080 MINUTE), DATE_SUB(NOW(), INTERVAL 10079 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10078 MINUTE), DATE_SUB(NOW(), INTERVAL 10077 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10076 MINUTE), DATE_SUB(NOW(), INTERVAL 10075 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10074 MINUTE), DATE_SUB(NOW(), INTERVAL 10073 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10072 MINUTE), DATE_SUB(NOW(), INTERVAL 10071 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 9
+LIMIT 1;
+
+-- Usuario 2 de 7 días: 40% accuracy (2 correct, 3 incorrect)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10070 MINUTE), DATE_SUB(NOW(), INTERVAL 10069 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10068 MINUTE), DATE_SUB(NOW(), INTERVAL 10067 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10066 MINUTE), DATE_SUB(NOW(), INTERVAL 10065 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10064 MINUTE), DATE_SUB(NOW(), INTERVAL 10063 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10062 MINUTE), DATE_SUB(NOW(), INTERVAL 10061 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 7
+LIMIT 1;
+
+-- Agregar más respuestas para variar más los resultados según el filtro
+-- Usuario 3: Hoy 100%, 7 días: 20% (GRAN DIFERENCIA)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 2 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 4 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 9
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 9
+LIMIT 1;
+
+-- Usuario 3 hace 7 días: Solo 1 correcto de 5 (20%)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10060 MINUTE), DATE_SUB(NOW(), INTERVAL 10059 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 10
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10058 MINUTE), DATE_SUB(NOW(), INTERVAL 10057 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 10
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10056 MINUTE), DATE_SUB(NOW(), INTERVAL 10055 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 10
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10054 MINUTE), DATE_SUB(NOW(), INTERVAL 10053 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 10
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 10052 MINUTE), DATE_SUB(NOW(), INTERVAL 10051 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 10
+LIMIT 1;
+
+-- Usuario 4: Hoy 40%, 7 días: 100% (INVERSO TOTAL)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, NOW(), DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 11 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, NOW(), DATE_SUB(NOW(), INTERVAL 12 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 13 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 7
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, NOW(), DATE_SUB(NOW(), INTERVAL 14 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 7
+LIMIT 1;
+
+-- Usuario 4 hace 7 días: Todos correctos (100%)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10050 MINUTE), DATE_SUB(NOW(), INTERVAL 10049 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 6
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10048 MINUTE), DATE_SUB(NOW(), INTERVAL 10047 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 6
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10046 MINUTE), DATE_SUB(NOW(), INTERVAL 10045 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 6
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10044 MINUTE), DATE_SUB(NOW(), INTERVAL 10043 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 6
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 10042 MINUTE), DATE_SUB(NOW(), INTERVAL 10041 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 6
+LIMIT 1;
+
 -- ========================================
 -- 11. ACTUALIZAR RANKINGS DE USUARIOS
 -- ========================================
