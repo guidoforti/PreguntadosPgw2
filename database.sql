@@ -410,301 +410,301 @@ SELECT categoria_id INTO @cat_his FROM categorias WHERE nombre = 'Historia';
 -- 🌍 GEOGRAFÍA
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_geo, '¿Cuál es la capital de Francia?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_geo, '¿Cuál es la capital de Francia?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo1 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo1, 'París', 1), (@preg_geo1, 'Roma', 0), (@preg_geo1, 'Londres', 0), (@preg_geo1, 'Madrid', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_geo, '¿En qué país se encuentra la Torre de Pisa?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_geo, '¿En qué país se encuentra la Torre de Pisa?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo2 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo2, 'Italia', 1), (@preg_geo2, 'Francia', 0), (@preg_geo2, 'España', 0), (@preg_geo2, 'Portugal', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_geo, '¿Cuál es el río más largo del mundo?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_geo, '¿Cuál es el río más largo del mundo?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo3 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo3, 'Amazonas', 1), (@preg_geo3, 'Nilo', 0), (@preg_geo3, 'Yangtsé', 0), (@preg_geo3, 'Misisipi', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_geo, '¿En qué continente se encuentra el desierto del Sahara?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_geo, '¿En qué continente se encuentra el desierto del Sahara?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo4 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo4, 'África', 1), (@preg_geo4, 'Asia', 0), (@preg_geo4, 'Oceanía', 0), (@preg_geo4, 'América del Sur', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_geo, '¿Cuál es el país más grande del mundo por superficie?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_geo, '¿Cuál es el país más grande del mundo por superficie?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo5, 'Rusia', 1), (@preg_geo5, 'Canadá', 0), (@preg_geo5, 'China', 0), (@preg_geo5, 'Estados Unidos', 0);
 
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es la montaña más alta del mundo?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es la montaña más alta del mundo?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo6 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo6, 'Monte Everest', 1), (@preg_geo6, 'K2', 0), (@preg_geo6, 'Aconcagua', 0), (@preg_geo6, 'Kilimanjaro', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es el océano más grande del mundo?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es el océano más grande del mundo?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo7 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo7, 'Pacífico', 1), (@preg_geo7, 'Atlántico', 0), (@preg_geo7, 'Índico', 0), (@preg_geo7, 'Ártico', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es la capital de Australia?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es la capital de Australia?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo8 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo8, 'Canberra', 1), (@preg_geo8, 'Sídney', 0), (@preg_geo8, 'Melbourne', 0), (@preg_geo8, 'Brisbane', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿En qué país se encuentra el desierto de Atacama?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿En qué país se encuentra el desierto de Atacama?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 43200 MINUTE));
 SET @preg_geo9 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo9, 'Chile', 1), (@preg_geo9, 'Argentina', 0), (@preg_geo9, 'Perú', 0), (@preg_geo9, 'Bolivia', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Qué estrecho separa Europa de África?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Qué estrecho separa Europa de África?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo10 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo10, 'Estrecho de Gibraltar', 1), (@preg_geo10, 'Canal de Suez', 0), (@preg_geo10, 'Estrecho de Bering', 0), (@preg_geo10, 'Canal de la Mancha', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es la capital de Japón?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es la capital de Japón?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo11 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo11, 'Tokio', 1), (@preg_geo11, 'Kioto', 0), (@preg_geo11, 'Osaka', 0), (@preg_geo11, 'Seúl', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿En qué país se encuentra la Gran Muralla?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿En qué país se encuentra la Gran Muralla?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo12 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo12, 'China', 1), (@preg_geo12, 'India', 0), (@preg_geo12, 'Mongolia', 0), (@preg_geo12, 'Japón', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿En qué país se encuentra el Gran Cañón?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿En qué país se encuentra el Gran Cañón?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo13 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo13, 'Estados Unidos', 1), (@preg_geo13, 'Canadá', 0), (@preg_geo13, 'México', 0), (@preg_geo13, 'Brasil', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es el lago más grande de África?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es el lago más grande de África?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo14 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo14, 'Lago Victoria', 1), (@preg_geo14, 'Lago Tanganica', 0), (@preg_geo14, 'Lago Malaui', 0), (@preg_geo14, 'Lago Chad', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_geo, '¿Cuál es el país más grande de Sudamérica?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_geo, '¿Cuál es el país más grande de Sudamérica?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_geo15 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_geo15, 'Brasil', 1), (@preg_geo15, 'Argentina', 0), (@preg_geo15, 'Perú', 0), (@preg_geo15, 'Colombia', 0);
 -- ⚛️ CIENCIA
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Cuál es la fórmula química del agua?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Cuál es la fórmula química del agua?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie1 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie1, 'H2O', 1), (@preg_cie1, 'CO2', 0), (@preg_cie1, 'O2', 0), (@preg_cie1, 'NaCl', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué planeta es conocido como el “planeta rojo”?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué planeta es conocido como el “planeta rojo”?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie2 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie2, 'Marte', 1), (@preg_cie2, 'Venus', 0), (@preg_cie2, 'Mercurio', 0), (@preg_cie2, 'Júpiter', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Cuál es el órgano más grande del cuerpo humano?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Cuál es el órgano más grande del cuerpo humano?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie3 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie3, 'La piel', 1), (@preg_cie3, 'El hígado', 0), (@preg_cie3, 'El cerebro', 0), (@preg_cie3, 'El corazón', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Cuál es el planeta más grande del Sistema Solar?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Cuál es el planeta más grande del Sistema Solar?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie4 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie4, 'Júpiter', 1), (@preg_cie4, 'Saturno', 0), (@preg_cie4, 'Urano', 0), (@preg_cie4, 'Neptuno', 0);
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Quién propuso la teoría de la relatividad?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Quién propuso la teoría de la relatividad?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie5, 'Albert Einstein', 1), (@preg_cie5, 'Isaac Newton', 0), (@preg_cie5, 'Stephen Hawking', 0), (@preg_cie5, 'Galileo Galilei', 0);
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué partícula subatómica tiene carga negativa?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué partícula subatómica tiene carga negativa?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie6 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie6, 'Electrón', 1), (@preg_cie6, 'Protón', 0), (@preg_cie6, 'Neutrón', 0), (@preg_cie6, 'Positrón', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué gas necesitan las plantas para realizar la fotosíntesis?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué gas necesitan las plantas para realizar la fotosíntesis?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie7 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie7, 'Dióxido de carbono', 1), (@preg_cie7, 'Oxígeno', 0), (@preg_cie7, 'Nitrógeno', 0), (@preg_cie7, 'Hidrógeno', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué unidad se utiliza para medir la intensidad de la corriente eléctrica?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué unidad se utiliza para medir la intensidad de la corriente eléctrica?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie8 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie8, 'Amperio', 1), (@preg_cie8, 'Voltio', 0), (@preg_cie8, 'Ohmio', 0), (@preg_cie8, 'Watt', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué científico formuló las leyes del movimiento y la gravedad?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué científico formuló las leyes del movimiento y la gravedad?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie9 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie9, 'Isaac Newton', 1), (@preg_cie9, 'Galileo Galilei', 0), (@preg_cie9, 'Albert Einstein', 0), (@preg_cie9, 'Nicolás Copérnico', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué elemento químico tiene el símbolo “Fe”?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué elemento químico tiene el símbolo “Fe”?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie10 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie10, 'Hierro', 1), (@preg_cie10, 'Flúor', 0), (@preg_cie10, 'Francio', 0), (@preg_cie10, 'Fósforo', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué órgano del cuerpo humano bombea la sangre?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué órgano del cuerpo humano bombea la sangre?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie11 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie11, 'El corazón', 1), (@preg_cie11, 'El pulmón', 0), (@preg_cie11, 'El riñón', 0), (@preg_cie11, 'El hígado', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué instrumento mide la presión atmosférica?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué instrumento mide la presión atmosférica?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 20160 MINUTE));
 SET @preg_cie12 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie12, 'Barómetro', 1), (@preg_cie12, 'Termómetro', 0), (@preg_cie12, 'Anemómetro', 0), (@preg_cie12, 'Higrómetro', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué tipo de célula no tiene núcleo definido?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué tipo de célula no tiene núcleo definido?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_cie13 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie13, 'Procariota', 1), (@preg_cie13, 'Eucariota', 0), (@preg_cie13, 'Somática', 0), (@preg_cie13, 'Neurona', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué órgano del sistema nervioso controla las funciones del cuerpo?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué órgano del sistema nervioso controla las funciones del cuerpo?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_cie14 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie14, 'El cerebro', 1), (@preg_cie14, 'El corazón', 0), (@preg_cie14, 'El páncreas', 0), (@preg_cie14, 'El intestino', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Cuál es el metal más ligero?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Cuál es el metal más ligero?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_cie15 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie15, 'Litio', 1), (@preg_cie15, 'Aluminio', 0), (@preg_cie15, 'Sodio', 0), (@preg_cie15, 'Magnesio', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_cie, '¿Qué científico descubrió la penicilina?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_cie, '¿Qué científico descubrió la penicilina?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_cie16 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_cie16, 'Alexander Fleming', 1), (@preg_cie16, 'Louis Pasteur', 0), (@preg_cie16, 'Marie Curie', 0), (@preg_cie16, 'Charles Darwin', 0);
 -- 🏰 HISTORIA
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_his, '¿En qué año cayó el Muro de Berlín?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_his, '¿En qué año cayó el Muro de Berlín?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his1 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his1, '1989', 1), (@preg_his1, '1979', 0), (@preg_his1, '1991', 0), (@preg_his1, '1993', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_his, '¿Quién fue el primer emperador del Imperio Romano?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_his, '¿Quién fue el primer emperador del Imperio Romano?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his2 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his2, 'Augusto', 1), (@preg_his2, 'Julio César', 0), (@preg_his2, 'Nerón', 0), (@preg_his2, 'Tiberio', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_his, '¿Qué civilización construyó las pirámides de Egipto?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_his, '¿Qué civilización construyó las pirámides de Egipto?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his3 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his3, 'Los egipcios', 1), (@preg_his3, 'Los mayas', 0), (@preg_his3, 'Los romanos', 0), (@preg_his3, 'Los griegos', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_his, '¿Quién fue Cristóbal Colón?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_his, '¿Quién fue Cristóbal Colón?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his4 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his4, 'El navegante que descubrió América', 1), (@preg_his4, 'Un emperador romano', 0), (@preg_his4, 'Un científico italiano', 0), (@preg_his4, 'Un rey español', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
 VALUES
-    (@cat_his, '¿Qué país inició la Primera Guerra Mundial?', 'activa', @admin_id, @admin_id, NOW());
+    (@cat_his, '¿Qué país inició la Primera Guerra Mundial?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his5 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his5, 'Alemania', 1), (@preg_his5, 'Inglaterra', 0), (@preg_his5, 'Francia', 0), (@preg_his5, 'Italia', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Quién pintó la "Mona Lisa"?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Quién pintó la "Mona Lisa"?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his6 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his6, 'Leonardo da Vinci', 1), (@preg_his6, 'Michelangelo', 0), (@preg_his6, 'Raphael', 0), (@preg_his6, 'Donatello', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Qué evento desencadenó la Primera Guerra Mundial?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Qué evento desencadenó la Primera Guerra Mundial?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his7 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his7, 'El asesinato del archiduque Francisco Fernando', 1), (@preg_his7, 'La invasión de Polonia', 0), (@preg_his7, 'El hundimiento del Lusitania', 0), (@preg_his7, 'La Revolución Francesa', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿En qué año llegó Cristóbal Colón a América por primera vez?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿En qué año llegó Cristóbal Colón a América por primera vez?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his8 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his8, '1492', 1), (@preg_his8, '1776', 0), (@preg_his8, '1588', 0), (@preg_his8, '1453', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Quién fue la primera persona en caminar sobre la Luna?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Quién fue la primera persona en caminar sobre la Luna?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his9 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his9, 'Neil Armstrong', 1), (@preg_his9, 'Buzz Aldrin', 0), (@preg_his9, 'Yuri Gagarin', 0), (@preg_his9, 'Michael Collins', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Qué imperio antiguo era gobernado por Faraones?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Qué imperio antiguo era gobernado por Faraones?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his10 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his10, 'Egipto', 1), (@preg_his10, 'Roma', 0), (@preg_his10, 'Persia', 0), (@preg_his10, 'Grecia', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Qué fue la "Carta Magna"?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Qué fue la "Carta Magna"?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his11 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his11, 'Una carta real de derechos en Inglaterra', 1), (@preg_his11, 'Una pintura famosa', 0), (@preg_his11, 'Una declaración de guerra', 0), (@preg_his11, 'Un poema épico', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Quién lideró la Unión Soviética durante la Segunda Guerra Mundial?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Quién lideró la Unión Soviética durante la Segunda Guerra Mundial?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his12 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his12, 'Joseph Stalin', 1), (@preg_his12, 'Vladimir Lenin', 0), (@preg_his12, 'Mikhail Gorbachev', 0), (@preg_his12, 'Nikita Khrushchev', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Qué batalla marcó el fin del reinado de Napoleón Bonaparte?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Qué batalla marcó el fin del reinado de Napoleón Bonaparte?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his13 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his13, 'La Batalla de Waterloo', 1), (@preg_his13, 'La Batalla de Trafalgar', 0), (@preg_his13, 'La Batalla de Austerlitz', 0), (@preg_his13, 'La Batalla de Hastings', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Quién escribió "El Manifiesto Comunista"?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Quién escribió "El Manifiesto Comunista"?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his14 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his14, 'Karl Marx y Friedrich Engels', 1), (@preg_his14, 'Adam Smith', 0), (@preg_his14, 'Vladimir Lenin', 0), (@preg_his14, 'John Locke', 0);
 
 INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, aprobado_por_usuario_id, fecha_creacion)
-VALUES (@cat_his, '¿Qué civilización construyó Machu Picchu?', 'activa', @admin_id, @admin_id, NOW());
+VALUES (@cat_his, '¿Qué civilización construyó Machu Picchu?', 'activa', @admin_id, @admin_id,  DATE_SUB(NOW(), INTERVAL 10080 MINUTE));
 SET @preg_his15 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_his15, 'Los Incas', 1), (@preg_his15, 'Los Aztecas', 0), (@preg_his15, 'Los Mayas', 0), (@preg_his15, 'Los Egipcios', 0);
