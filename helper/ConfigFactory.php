@@ -7,6 +7,7 @@ include_once("model/UsuarioModel.php");
 include_once("model/PreguntasModel.php");
 include_once("model/JugarPartidaModel.php");
 include_once("model/RankingModel.php");
+include_once("model/AdminModel.php");
 // Helpers y Renderizadores
 include_once("helper/MyConexion.php");
 include_once("helper/NewRouter.php");
@@ -21,6 +22,7 @@ include_once ("controller/EditorController.php");
 include_once ("controller/JugarPartidaController.php");
 include_once ("controller/RankingController.php");
 include_once ("controller/PerfilController.php");
+include_once ("controller/AdminController.php");
 
 class ConfigFactory
 {
@@ -58,6 +60,8 @@ class ConfigFactory
         $this->objetos["RankingController"] = new RankingController(new RankingModel($this->conexion), new UsuarioModel($this->conexion), $this->renderer);
 
         $this->objetos["PerfilController"] = new PerfilController(new UsuarioModel($this->conexion), new RankingModel($this->conexion), $this->renderer);
+
+        $this->objetos["AdminController"] = new AdminController(new AdminModel($this->conexion), $this->renderer);
        }
 
     public function get($objectName)
