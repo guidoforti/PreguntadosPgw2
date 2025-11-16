@@ -171,19 +171,213 @@ CREATE TABLE usuarios_organizaciones (
 -- 8. INSERTS DE DATOS DE PRUEBA
 -- --------------------------------------------------------
 -- Ubicación
-INSERT INTO paises (nombre) VALUES ('Argentina');
-SET @pais_id_arg = LAST_INSERT_ID();
-INSERT INTO provincias (pais_id, nombre) VALUES (@pais_id_arg, 'Buenos Aires');
-SET @prov_ba = LAST_INSERT_ID();
-INSERT INTO ciudades (provincia_id, nombre) VALUES (@prov_ba, 'CABA');
-SET @ciudad_caba = LAST_INSERT_ID();
+INSERT INTO paises (nombre) VALUES
+('Argentina'),
+('España'),
+('México'),
+('Colombia'),
+('Estados Unidos'),
+('Brasil'),
+('Chile'),
+('Perú');
 
--- Usuarios de prueba
+SET @pais_id_arg = (SELECT pais_id FROM paises WHERE nombre = 'Argentina');
+SET @pais_id_esp = (SELECT pais_id FROM paises WHERE nombre = 'España');
+SET @pais_id_mex = (SELECT pais_id FROM paises WHERE nombre = 'México');
+SET @pais_id_col = (SELECT pais_id FROM paises WHERE nombre = 'Colombia');
+SET @pais_id_usa = (SELECT pais_id FROM paises WHERE nombre = 'Estados Unidos');
+SET @pais_id_bra = (SELECT pais_id FROM paises WHERE nombre = 'Brasil');
+SET @pais_id_chi = (SELECT pais_id FROM paises WHERE nombre = 'Chile');
+SET @pais_id_per = (SELECT pais_id FROM paises WHERE nombre = 'Perú');
+
+-- Argentina
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_arg, 'Buenos Aires'),
+(@pais_id_arg, 'Córdoba'),
+(@pais_id_arg, 'Mendoza');
+SET @prov_ba = (SELECT provincia_id FROM provincias WHERE nombre = 'Buenos Aires' AND pais_id = @pais_id_arg);
+SET @prov_cor = (SELECT provincia_id FROM provincias WHERE nombre = 'Córdoba' AND pais_id = @pais_id_arg);
+SET @prov_men = (SELECT provincia_id FROM provincias WHERE nombre = 'Mendoza' AND pais_id = @pais_id_arg);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_ba, 'CABA'), (@prov_ba, 'La Plata'),
+(@prov_cor, 'Córdoba'), (@prov_cor, 'Río Cuarto'),
+(@prov_men, 'Mendoza'), (@prov_men, 'San Rafael');
+SET @ciudad_caba = (SELECT ciudad_id FROM ciudades WHERE nombre = 'CABA');
+SET @ciudad_laplata = (SELECT ciudad_id FROM ciudades WHERE nombre = 'La Plata');
+SET @ciudad_cordoba = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Córdoba');
+SET @ciudad_riocuarto = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Río Cuarto');
+SET @ciudad_mendoza = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Mendoza');
+SET @ciudad_sanrafael = (SELECT ciudad_id FROM ciudades WHERE nombre = 'San Rafael');
+
+-- España
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_esp, 'Madrid'),
+(@pais_id_esp, 'Barcelona'),
+(@pais_id_esp, 'Valencia');
+SET @prov_mad = (SELECT provincia_id FROM provincias WHERE nombre = 'Madrid' AND pais_id = @pais_id_esp);
+SET @prov_bar = (SELECT provincia_id FROM provincias WHERE nombre = 'Barcelona' AND pais_id = @pais_id_esp);
+SET @prov_val = (SELECT provincia_id FROM provincias WHERE nombre = 'Valencia' AND pais_id = @pais_id_esp);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_mad, 'Madrid'), (@prov_mad, 'Alcalá de Henares'),
+(@prov_bar, 'Barcelona'), (@prov_bar, 'Sabadell'),
+(@prov_val, 'Valencia'), (@prov_val, 'Alicante');
+SET @ciudad_madrid = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Madrid');
+SET @ciudad_alcala = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Alcalá de Henares');
+SET @ciudad_barcelona = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Barcelona');
+SET @ciudad_sabadell = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Sabadell');
+SET @ciudad_valencia = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Valencia');
+SET @ciudad_alicante = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Alicante');
+
+-- México
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_mex, 'Ciudad de México'),
+(@pais_id_mex, 'Jalisco'),
+(@pais_id_mex, 'Nuevo León');
+SET @prov_cdmx = (SELECT provincia_id FROM provincias WHERE nombre = 'Ciudad de México' AND pais_id = @pais_id_mex);
+SET @prov_jal = (SELECT provincia_id FROM provincias WHERE nombre = 'Jalisco' AND pais_id = @pais_id_mex);
+SET @prov_nl = (SELECT provincia_id FROM provincias WHERE nombre = 'Nuevo León' AND pais_id = @pais_id_mex);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_cdmx, 'CDMX'), (@prov_cdmx, 'Toluca'),
+(@prov_jal, 'Guadalajara'), (@prov_jal, 'Puerto Vallarta'),
+(@prov_nl, 'Monterrey'), (@prov_nl, 'Guadalupe');
+SET @ciudad_cdmx = (SELECT ciudad_id FROM ciudades WHERE nombre = 'CDMX');
+SET @ciudad_toluca = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Toluca');
+SET @ciudad_guadalajara = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Guadalajara');
+SET @ciudad_pvallarta = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Puerto Vallarta');
+SET @ciudad_monterrey = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Monterrey');
+SET @ciudad_guadalupe = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Guadalupe');
+
+-- Colombia
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_col, 'Bogotá'),
+(@pais_id_col, 'Medellín'),
+(@pais_id_col, 'Cali');
+SET @prov_bog = (SELECT provincia_id FROM provincias WHERE nombre = 'Bogotá' AND pais_id = @pais_id_col);
+SET @prov_med = (SELECT provincia_id FROM provincias WHERE nombre = 'Medellín' AND pais_id = @pais_id_col);
+SET @prov_cal = (SELECT provincia_id FROM provincias WHERE nombre = 'Cali' AND pais_id = @pais_id_col);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_bog, 'Bogotá'), (@prov_bog, 'Soacha'),
+(@prov_med, 'Medellín'), (@prov_med, 'Envigado'),
+(@prov_cal, 'Cali'), (@prov_cal, 'Palmira');
+SET @ciudad_bogota = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Bogotá');
+SET @ciudad_soacha = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Soacha');
+SET @ciudad_medellin = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Medellín');
+SET @ciudad_envigado = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Envigado');
+SET @ciudad_cali = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Cali');
+SET @ciudad_palmira = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Palmira');
+
+-- USA
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_usa, 'California'),
+(@pais_id_usa, 'Texas'),
+(@pais_id_usa, 'Florida');
+SET @prov_ca = (SELECT provincia_id FROM provincias WHERE nombre = 'California' AND pais_id = @pais_id_usa);
+SET @prov_tx = (SELECT provincia_id FROM provincias WHERE nombre = 'Texas' AND pais_id = @pais_id_usa);
+SET @prov_fl = (SELECT provincia_id FROM provincias WHERE nombre = 'Florida' AND pais_id = @pais_id_usa);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_ca, 'Los Angeles'), (@prov_ca, 'San Francisco'),
+(@prov_tx, 'Houston'), (@prov_tx, 'Dallas'),
+(@prov_fl, 'Miami'), (@prov_fl, 'Orlando');
+SET @ciudad_losangeles = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Los Angeles' AND provincia_id = @prov_ca);
+SET @ciudad_sanfrancisco = (SELECT ciudad_id FROM ciudades WHERE nombre = 'San Francisco');
+SET @ciudad_houston = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Houston');
+SET @ciudad_dallas = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Dallas');
+SET @ciudad_miami = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Miami');
+SET @ciudad_orlando = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Orlando');
+
+-- Brasil
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_bra, 'São Paulo'),
+(@pais_id_bra, 'Rio de Janeiro'),
+(@pais_id_bra, 'Minas Gerais');
+SET @prov_sp = (SELECT provincia_id FROM provincias WHERE nombre = 'São Paulo' AND pais_id = @pais_id_bra);
+SET @prov_rj = (SELECT provincia_id FROM provincias WHERE nombre = 'Rio de Janeiro' AND pais_id = @pais_id_bra);
+SET @prov_mg = (SELECT provincia_id FROM provincias WHERE nombre = 'Minas Gerais' AND pais_id = @pais_id_bra);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_sp, 'São Paulo'), (@prov_sp, 'Campinas'),
+(@prov_rj, 'Rio de Janeiro'), (@prov_rj, 'Niterói'),
+(@prov_mg, 'Belo Horizonte'), (@prov_mg, 'Ouro Preto');
+SET @ciudad_saopaulo = (SELECT ciudad_id FROM ciudades WHERE nombre = 'São Paulo');
+SET @ciudad_campinas = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Campinas');
+SET @ciudad_rio = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Rio de Janeiro');
+SET @ciudad_niteroi = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Niterói');
+SET @ciudad_belohorizonte = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Belo Horizonte');
+SET @ciudad_ouropreto = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Ouro Preto');
+
+-- Chile
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_chi, 'Región Metropolitana'),
+(@pais_id_chi, 'Valparaíso'),
+(@pais_id_chi, 'Biobío');
+SET @prov_rm = (SELECT provincia_id FROM provincias WHERE nombre = 'Región Metropolitana' AND pais_id = @pais_id_chi);
+SET @prov_vp = (SELECT provincia_id FROM provincias WHERE nombre = 'Valparaíso' AND pais_id = @pais_id_chi);
+SET @prov_bio = (SELECT provincia_id FROM provincias WHERE nombre = 'Biobío' AND pais_id = @pais_id_chi);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_rm, 'Santiago'), (@prov_rm, 'Puente Alto'),
+(@prov_vp, 'Valparaíso'), (@prov_vp, 'Viña del Mar'),
+(@prov_bio, 'Concepción'), (@prov_bio, 'Los Ángeles');
+SET @ciudad_santiago = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Santiago');
+SET @ciudad_puentealto = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Puente Alto');
+SET @ciudad_valparaiso = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Valparaíso');
+SET @ciudad_vinadelmar = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Viña del Mar');
+SET @ciudad_concepcion = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Concepción');
+SET @ciudad_losangeles_chi = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Los Ángeles' AND provincia_id = @prov_bio);
+
+-- Perú
+INSERT INTO provincias (pais_id, nombre) VALUES
+(@pais_id_per, 'Lima'),
+(@pais_id_per, 'Arequipa'),
+(@pais_id_per, 'Cusco');
+SET @prov_lima_per = (SELECT provincia_id FROM provincias WHERE nombre = 'Lima' AND pais_id = @pais_id_per);
+SET @prov_areq = (SELECT provincia_id FROM provincias WHERE nombre = 'Arequipa' AND pais_id = @pais_id_per);
+SET @prov_cusco = (SELECT provincia_id FROM provincias WHERE nombre = 'Cusco' AND pais_id = @pais_id_per);
+
+INSERT INTO ciudades (provincia_id, nombre) VALUES
+(@prov_lima_per, 'Lima'), (@prov_lima_per, 'San Isidro'),
+(@prov_areq, 'Arequipa'), (@prov_areq, 'Puno'),
+(@prov_cusco, 'Cusco'), (@prov_cusco, 'Urubamba');
+SET @ciudad_lima = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Lima');
+SET @ciudad_sanisidro = (SELECT ciudad_id FROM ciudades WHERE nombre = 'San Isidro');
+SET @ciudad_arequipa = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Arequipa');
+SET @ciudad_puno = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Puno');
+SET @ciudad_cusco = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Cusco');
+SET @ciudad_urubamba = (SELECT ciudad_id FROM ciudades WHERE nombre = 'Urubamba');
+
+-- Usuarios de prueba con diversos datos demográficos
 SET @hash_test = '$2y$10$ldqCeVk5gCcDoUEIYtSEGu7QW9vLD4ymMCA/Gc9oAYz.6v.eXLD2i';
-INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado) VALUES
-                                                                                                                                          ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE),
-                                                                                                                                          ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE),
-                                                                                                                                          ('User', 'user_test', 'user@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'usuario', TRUE);
+INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, sexo, ciudad_id, rol, esta_verificado, fecha_creacion) VALUES
+('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE, NOW()),
+('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE, NOW()),
+('Usuario Test', 'user_test', 'user@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'usuario', TRUE, NOW()),
+('Juan García', 'juan_garcia', 'juan@preguntados.com', @hash_test, 1988, 'M', @ciudad_laplata, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 30 DAY)),
+('María López', 'maria_lopez', 'maria@preguntados.com', @hash_test, 2005, 'F', @ciudad_cordoba, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 25 DAY)),
+('Carlos Rodríguez', 'carlos_r', 'carlos@preguntados.com', @hash_test, 1992, 'M', @ciudad_mendoza, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 20 DAY)),
+('Sofia Martinez', 'sofia_m', 'sofia@preguntados.com', @hash_test, 2000, 'F', @ciudad_madrid, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 18 DAY)),
+('Diego Sanchez', 'diego_s', 'diego@preguntados.com', @hash_test, 1980, 'M', @ciudad_barcelona, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 15 DAY)),
+('Elena García', 'elena_g', 'elena@preguntados.com', @hash_test, 1998, 'F', @ciudad_valencia, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 12 DAY)),
+('Fernando López', 'fernando_l', 'fernando@preguntados.com', @hash_test, 1985, 'M', @ciudad_cdmx, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 10 DAY)),
+('Patricia Ruiz', 'patricia_r', 'patricia@preguntados.com', @hash_test, 2003, 'F', @ciudad_guadalajara, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 8 DAY)),
+('Roberto Silva', 'roberto_s', 'roberto@preguntados.com', @hash_test, 1975, 'M', @ciudad_monterrey, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+('Lucia Fernandez', 'lucia_f', 'lucia@preguntados.com', @hash_test, 2002, 'F', @ciudad_bogota, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 6 DAY)),
+('Andrés Moreno', 'andres_m', 'andres@preguntados.com', @hash_test, 1989, 'M', @ciudad_medellin, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+('Valentina Torres', 'valentina_t', 'valentina@preguntados.com', @hash_test, 2001, 'F', @ciudad_cali, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 4 DAY)),
+('Miguel Romero', 'miguel_r', 'miguel@preguntados.com', @hash_test, 1987, 'M', @ciudad_losangeles, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+('Alejandra Gómez', 'alejandra_g', 'alejandra@preguntados.com', @hash_test, 1999, 'F', @ciudad_sanfrancisco, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+('Ricardo Díaz', 'ricardo_d', 'ricardo@preguntados.com', @hash_test, 1982, 'M', @ciudad_houston, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+('Isabel Vargas', 'isabel_v', 'isabel@preguntados.com', @hash_test, 2004, 'F', @ciudad_miami, 'usuario', TRUE, NOW()),
+('Antonio Jiménez', 'antonio_j', 'antonio@preguntados.com', @hash_test, 1970, 'M', @ciudad_saopaulo, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 14 DAY)),
+('Gabriela Costa', 'gabriela_c', 'gabriela@preguntados.com', @hash_test, 1996, 'F', @ciudad_rio, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 11 DAY)),
+('Paulo Silva', 'paulo_s', 'paulo@preguntados.com', @hash_test, 1991, 'M', @ciudad_belohorizonte, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 9 DAY)),
+('Camila Martínez', 'camila_m', 'camila@preguntados.com', @hash_test, 2003, 'F', @ciudad_santiago, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+('Javier Peña', 'javier_p', 'javier@preguntados.com', @hash_test, 1986, 'M', @ciudad_valparaiso, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+('Martina Flores', 'martina_f', 'martina@preguntados.com', @hash_test, 2000, 'F', @ciudad_lima, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 3 DAY));
 
 SET @admin_id = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'admin_test');
 
@@ -621,4 +815,339 @@ VALUES
 SET @preg_pop16 = LAST_INSERT_ID();
 INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES
                                                                        (@preg_pop16, 'Joaquin Phoenix', 1), (@preg_pop16, 'Heath Ledger', 0), (@preg_pop16, 'Jared Leto', 0), (@preg_pop16, 'Jack Nicholson', 0);
+
+-- ========================================
+-- 10. PARTIDAS Y RESPUESTAS DE USUARIOS (DATOS PARA GRÁFICOS)
+-- ========================================
+
+-- Usuarios para las partidas
+SET @usuario1 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'juan_garcia');
+SET @usuario2 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'maria_lopez');
+SET @usuario3 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'carlos_r');
+SET @usuario4 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'sofia_m');
+SET @usuario5 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'diego_s');
+SET @usuario6 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'elena_g');
+SET @usuario7 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'fernando_l');
+SET @usuario8 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'patricia_r');
+SET @usuario9 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'roberto_s');
+SET @usuario10 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'lucia_f');
+SET @usuario11 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'andres_m');
+SET @usuario12 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'valentina_t');
+SET @usuario13 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'miguel_r');
+SET @usuario14 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'alejandra_g');
+SET @usuario15 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'ricardo_d');
+
+-- Partidas de hoy
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario1, 80, 'finalizada', NOW(), DATE_ADD(NOW(), INTERVAL 5 MINUTE)),
+(@usuario2, 60, 'finalizada', DATE_SUB(NOW(), INTERVAL 2 HOUR), DATE_SUB(NOW(), INTERVAL 115 MINUTE)),
+(@usuario3, 90, 'finalizada', DATE_SUB(NOW(), INTERVAL 4 HOUR), DATE_SUB(NOW(), INTERVAL 235 MINUTE)),
+(@usuario4, 70, 'finalizada', DATE_SUB(NOW(), INTERVAL 6 HOUR), DATE_SUB(NOW(), INTERVAL 355 MINUTE)),
+(@usuario5, 50, 'finalizada', DATE_SUB(NOW(), INTERVAL 8 HOUR), DATE_SUB(NOW(), INTERVAL 475 MINUTE));
+
+SET @partida1 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida2 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida3 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida4 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida5 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas de ayer
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario6, 75, 'finalizada', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1435 MINUTE)),
+(@usuario7, 85, 'finalizada', DATE_SUB(NOW(), INTERVAL 1415 MINUTE), DATE_SUB(NOW(), INTERVAL 1295 MINUTE)),
+(@usuario8, 65, 'finalizada', DATE_SUB(NOW(), INTERVAL 1255 MINUTE), DATE_SUB(NOW(), INTERVAL 1135 MINUTE)),
+(@usuario9, 70, 'finalizada', DATE_SUB(NOW(), INTERVAL 1095 MINUTE), DATE_SUB(NOW(), INTERVAL 975 MINUTE)),
+(@usuario10, 80, 'finalizada', DATE_SUB(NOW(), INTERVAL 935 MINUTE), DATE_SUB(NOW(), INTERVAL 815 MINUTE));
+
+SET @partida6 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida7 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida8 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida9 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida10 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas hace 3 días
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario11, 55, 'finalizada', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 4315 MINUTE)),
+(@usuario12, 92, 'finalizada', DATE_SUB(NOW(), INTERVAL 4295 MINUTE), DATE_SUB(NOW(), INTERVAL 4175 MINUTE)),
+(@usuario13, 68, 'finalizada', DATE_SUB(NOW(), INTERVAL 4135 MINUTE), DATE_SUB(NOW(), INTERVAL 4015 MINUTE)),
+(@usuario14, 78, 'finalizada', DATE_SUB(NOW(), INTERVAL 3975 MINUTE), DATE_SUB(NOW(), INTERVAL 3855 MINUTE)),
+(@usuario15, 62, 'finalizada', DATE_SUB(NOW(), INTERVAL 3815 MINUTE), DATE_SUB(NOW(), INTERVAL 3695 MINUTE));
+
+SET @partida11 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida12 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida13 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida14 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida15 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas hace 7 días (última semana)
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario1, 88, 'finalizada', DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 10075 MINUTE)),
+(@usuario2, 72, 'finalizada', DATE_SUB(NOW(), INTERVAL 10055 MINUTE), DATE_SUB(NOW(), INTERVAL 9935 MINUTE)),
+(@usuario3, 95, 'finalizada', DATE_SUB(NOW(), INTERVAL 9935 MINUTE), DATE_SUB(NOW(), INTERVAL 9815 MINUTE)),
+(@usuario4, 58, 'finalizada', DATE_SUB(NOW(), INTERVAL 9815 MINUTE), DATE_SUB(NOW(), INTERVAL 9695 MINUTE)),
+(@usuario5, 76, 'finalizada', DATE_SUB(NOW(), INTERVAL 9695 MINUTE), DATE_SUB(NOW(), INTERVAL 9575 MINUTE));
+
+SET @partida16 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida17 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida18 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida19 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida20 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas hace 14 días (2 semanas)
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario6, 82, 'finalizada', DATE_SUB(NOW(), INTERVAL 14 DAY), DATE_SUB(NOW(), INTERVAL 20155 MINUTE)),
+(@usuario7, 91, 'finalizada', DATE_SUB(NOW(), INTERVAL 20135 MINUTE), DATE_SUB(NOW(), INTERVAL 20015 MINUTE)),
+(@usuario8, 64, 'finalizada', DATE_SUB(NOW(), INTERVAL 20015 MINUTE), DATE_SUB(NOW(), INTERVAL 19895 MINUTE)),
+(@usuario9, 74, 'finalizada', DATE_SUB(NOW(), INTERVAL 19895 MINUTE), DATE_SUB(NOW(), INTERVAL 19775 MINUTE)),
+(@usuario10, 86, 'finalizada', DATE_SUB(NOW(), INTERVAL 19775 MINUTE), DATE_SUB(NOW(), INTERVAL 19655 MINUTE));
+
+SET @partida21 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida22 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida23 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida24 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida25 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas hace 21 días
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario11, 67, 'finalizada', DATE_SUB(NOW(), INTERVAL 21 DAY), DATE_SUB(NOW(), INTERVAL 30235 MINUTE)),
+(@usuario12, 89, 'finalizada', DATE_SUB(NOW(), INTERVAL 30215 MINUTE), DATE_SUB(NOW(), INTERVAL 30095 MINUTE)),
+(@usuario13, 71, 'finalizada', DATE_SUB(NOW(), INTERVAL 30095 MINUTE), DATE_SUB(NOW(), INTERVAL 29975 MINUTE)),
+(@usuario14, 77, 'finalizada', DATE_SUB(NOW(), INTERVAL 29975 MINUTE), DATE_SUB(NOW(), INTERVAL 29855 MINUTE)),
+(@usuario15, 61, 'finalizada', DATE_SUB(NOW(), INTERVAL 29855 MINUTE), DATE_SUB(NOW(), INTERVAL 29735 MINUTE));
+
+SET @partida26 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
+SET @partida27 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
+SET @partida28 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida29 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida30 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- Partidas hace 30 días (hace un mes)
+INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
+(@usuario1, 73, 'finalizada', DATE_SUB(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 43315 MINUTE)),
+(@usuario2, 84, 'finalizada', DATE_SUB(NOW(), INTERVAL 43295 MINUTE), DATE_SUB(NOW(), INTERVAL 43175 MINUTE)),
+(@usuario3, 66, 'finalizada', DATE_SUB(NOW(), INTERVAL 43175 MINUTE), DATE_SUB(NOW(), INTERVAL 43055 MINUTE));
+
+SET @partida31 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
+SET @partida32 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
+SET @partida33 = CAST(LAST_INSERT_ID() AS SIGNED);
+
+-- ========================================
+-- 10B. RESPUESTAS DE USUARIOS (Inserts sistemáticos)
+-- ========================================
+
+-- Obtener IDs reales de partidas por rango
+SET @min_partida_hoy = (SELECT MIN(partida_id) FROM partidas_usuario WHERE usuario_id = @usuario1 AND estado = 'finalizada' LIMIT 1);
+SET @max_partida_mes = (SELECT MAX(partida_id) FROM partidas_usuario);
+
+-- Obtener respuestas para las preguntas
+SET @resp_geo1_correct = (SELECT respuesta_id FROM respuestas WHERE pregunta_id = (SELECT pregunta_id FROM preguntas WHERE texto_pregunta LIKE '%capital de Francia%') AND es_correcta = 1);
+SET @resp_cie1_correct = (SELECT respuesta_id FROM respuestas WHERE pregunta_id = (SELECT pregunta_id FROM preguntas WHERE texto_pregunta LIKE '%fórmula química del agua%') AND es_correcta = 1);
+SET @resp_his1_correct = (SELECT respuesta_id FROM respuestas WHERE pregunta_id = (SELECT pregunta_id FROM preguntas WHERE texto_pregunta LIKE '%archiduque Francisco%') AND es_correcta = 1);
+SET @resp_pop1_correct = (SELECT respuesta_id FROM respuestas WHERE pregunta_id = (SELECT pregunta_id FROM preguntas WHERE texto_pregunta LIKE '%Iron Man%') AND es_correcta = 1);
+SET @resp_geo2_correct = (SELECT respuesta_id FROM respuestas WHERE pregunta_id = (SELECT pregunta_id FROM preguntas WHERE texto_pregunta LIKE '%Torre de Pisa%') AND es_correcta = 1);
+
+-- Insertar respuestas de usuarios usando SELECT directo para obtener IDs correctos
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, NOW(), DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 80
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_ADD(NOW(), INTERVAL 1 MINUTE), DATE_SUB(NOW(), INTERVAL 2 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 80
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_ADD(NOW(), INTERVAL 2 MINUTE), DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 80
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_ADD(NOW(), INTERVAL 3 MINUTE), DATE_SUB(NOW(), INTERVAL 4 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 80
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario1, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_ADD(NOW(), INTERVAL 4 MINUTE), DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario1 AND pu.puntaje = 80
+LIMIT 1;
+
+-- Respuestas para usuario2 (60% accuracy)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 120 MINUTE), DATE_SUB(NOW(), INTERVAL 119 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 60
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 119 MINUTE), DATE_SUB(NOW(), INTERVAL 118 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 60
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 118 MINUTE), DATE_SUB(NOW(), INTERVAL 117 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 60
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 117 MINUTE), DATE_SUB(NOW(), INTERVAL 116 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 60
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario2, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 116 MINUTE), DATE_SUB(NOW(), INTERVAL 115 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario2 AND pu.puntaje = 60
+LIMIT 1;
+
+-- Respuestas para usuario3 (90% accuracy)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 240 MINUTE), DATE_SUB(NOW(), INTERVAL 239 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 90
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 239 MINUTE), DATE_SUB(NOW(), INTERVAL 238 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 90
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 238 MINUTE), DATE_SUB(NOW(), INTERVAL 237 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 90
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 237 MINUTE), DATE_SUB(NOW(), INTERVAL 236 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 90
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario3, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 236 MINUTE), DATE_SUB(NOW(), INTERVAL 235 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario3 AND pu.puntaje = 90
+LIMIT 1;
+
+-- Respuestas para usuario4 (70% accuracy)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 360 MINUTE), DATE_SUB(NOW(), INTERVAL 359 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 70
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 359 MINUTE), DATE_SUB(NOW(), INTERVAL 358 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 70
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 358 MINUTE), DATE_SUB(NOW(), INTERVAL 357 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 70
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 357 MINUTE), DATE_SUB(NOW(), INTERVAL 356 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 70
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario4, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 356 MINUTE), DATE_SUB(NOW(), INTERVAL 355 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario4 AND pu.puntaje = 70
+LIMIT 1;
+
+-- Respuestas para usuario5 (50% accuracy)
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario5, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 480 MINUTE), DATE_SUB(NOW(), INTERVAL 479 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%capital de Francia%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario5, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 479 MINUTE), DATE_SUB(NOW(), INTERVAL 478 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%fórmula química del agua%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario5, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 478 MINUTE), DATE_SUB(NOW(), INTERVAL 477 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%archiduque Francisco%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario5, pu.partida_id, p.pregunta_id, r.respuesta_id, 1, DATE_SUB(NOW(), INTERVAL 477 MINUTE), DATE_SUB(NOW(), INTERVAL 476 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Iron Man%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 1
+WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
+LIMIT 1;
+
+INSERT INTO respuestas_usuario (usuario_id, partida_id, pregunta_id, respuesta_id, fue_correcta, fecha_respuesta, tiempo_inicio_pregunta)
+SELECT @usuario5, pu.partida_id, p.pregunta_id, r.respuesta_id, 0, DATE_SUB(NOW(), INTERVAL 476 MINUTE), DATE_SUB(NOW(), INTERVAL 475 MINUTE)
+FROM partidas_usuario pu
+JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
+JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
+WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
+LIMIT 1;
 
