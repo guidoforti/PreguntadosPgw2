@@ -356,28 +356,33 @@ INSERT INTO usuarios (nombre_completo, nombre_usuario, email, contrasena_hash, a
 ('Admin Global', 'admin_test', 'admin@preguntados.com', @hash_test, 1990, 'M', @ciudad_caba, 'admin', TRUE, NOW()),
 ('Editor Global', 'editor_test', 'editor@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'editor', TRUE, NOW()),
 ('Usuario Test', 'user_test', 'user@preguntados.com', @hash_test, 1995, 'F', @ciudad_caba, 'usuario', TRUE, NOW()),
-('Juan García', 'juan_garcia', 'juan@preguntados.com', @hash_test, 1988, 'M', @ciudad_laplata, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 30 DAY)),
-('María López', 'maria_lopez', 'maria@preguntados.com', @hash_test, 2005, 'F', @ciudad_cordoba, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 25 DAY)),
-('Carlos Rodríguez', 'carlos_r', 'carlos@preguntados.com', @hash_test, 1992, 'M', @ciudad_mendoza, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 20 DAY)),
-('Sofia Martinez', 'sofia_m', 'sofia@preguntados.com', @hash_test, 2000, 'F', @ciudad_madrid, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 18 DAY)),
+-- Usuarios Menores (<18) - Nacidos en 2007-2024
+('Juan García', 'juan_garcia', 'juan@preguntados.com', @hash_test, 2008, 'M', @ciudad_laplata, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 30 DAY)),
+('María López', 'maria_lopez', 'maria@preguntados.com', @hash_test, 2010, 'F', @ciudad_cordoba, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 25 DAY)),
+('Carlos Rodríguez', 'carlos_r', 'carlos@preguntados.com', @hash_test, 2009, 'M', @ciudad_mendoza, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 20 DAY)),
+('Sofia Martinez', 'sofia_m', 'sofia@preguntados.com', @hash_test, 2011, 'F', @ciudad_madrid, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 18 DAY)),
+-- Usuarios Medio (18-64) - Nacidos en 1961-2006
 ('Diego Sanchez', 'diego_s', 'diego@preguntados.com', @hash_test, 1980, 'M', @ciudad_barcelona, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 15 DAY)),
 ('Elena García', 'elena_g', 'elena@preguntados.com', @hash_test, 1998, 'F', @ciudad_valencia, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 12 DAY)),
 ('Fernando López', 'fernando_l', 'fernando@preguntados.com', @hash_test, 1985, 'M', @ciudad_cdmx, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 10 DAY)),
 ('Patricia Ruiz', 'patricia_r', 'patricia@preguntados.com', @hash_test, 2003, 'F', @ciudad_guadalajara, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 8 DAY)),
-('Roberto Silva', 'roberto_s', 'roberto@preguntados.com', @hash_test, 1975, 'M', @ciudad_monterrey, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
 ('Lucia Fernandez', 'lucia_f', 'lucia@preguntados.com', @hash_test, 2002, 'F', @ciudad_bogota, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 6 DAY)),
 ('Andrés Moreno', 'andres_m', 'andres@preguntados.com', @hash_test, 1989, 'M', @ciudad_medellin, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 5 DAY)),
 ('Valentina Torres', 'valentina_t', 'valentina@preguntados.com', @hash_test, 2001, 'F', @ciudad_cali, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 4 DAY)),
 ('Miguel Romero', 'miguel_r', 'miguel@preguntados.com', @hash_test, 1987, 'M', @ciudad_losangeles, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 3 DAY)),
 ('Alejandra Gómez', 'alejandra_g', 'alejandra@preguntados.com', @hash_test, 1999, 'F', @ciudad_sanfrancisco, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 2 DAY)),
 ('Ricardo Díaz', 'ricardo_d', 'ricardo@preguntados.com', @hash_test, 1982, 'M', @ciudad_houston, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-('Isabel Vargas', 'isabel_v', 'isabel@preguntados.com', @hash_test, 2004, 'F', @ciudad_miami, 'usuario', TRUE, NOW()),
-('Antonio Jiménez', 'antonio_j', 'antonio@preguntados.com', @hash_test, 1970, 'M', @ciudad_saopaulo, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 14 DAY)),
 ('Gabriela Costa', 'gabriela_c', 'gabriela@preguntados.com', @hash_test, 1996, 'F', @ciudad_rio, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 11 DAY)),
 ('Paulo Silva', 'paulo_s', 'paulo@preguntados.com', @hash_test, 1991, 'M', @ciudad_belohorizonte, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 9 DAY)),
-('Camila Martínez', 'camila_m', 'camila@preguntados.com', @hash_test, 2003, 'F', @ciudad_santiago, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
 ('Javier Peña', 'javier_p', 'javier@preguntados.com', @hash_test, 1986, 'M', @ciudad_valparaiso, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 5 DAY)),
-('Martina Flores', 'martina_f', 'martina@preguntados.com', @hash_test, 2000, 'F', @ciudad_lima, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 3 DAY));
+('Martina Flores', 'martina_f', 'martina@preguntados.com', @hash_test, 2000, 'F', @ciudad_lima, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+-- Usuarios Jubilados (65+) - Nacidos en 1960 o antes
+('Isabel Vargas', 'isabel_v', 'isabel@preguntados.com', @hash_test, 1958, 'F', @ciudad_miami, 'usuario', TRUE, NOW()),
+('Antonio Jiménez', 'antonio_j', 'antonio@preguntados.com', @hash_test, 1955, 'M', @ciudad_saopaulo, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 14 DAY)),
+('Camila Martínez', 'camila_m', 'camila@preguntados.com', @hash_test, 1950, 'F', @ciudad_santiago, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+('Roberto Silva', 'roberto_s', 'roberto@preguntados.com', @hash_test, 1952, 'M', @ciudad_monterrey, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+('Ernesto García', 'ernesto_g', 'ernesto@preguntados.com', @hash_test, 1948, 'M', @ciudad_madrid, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 6 DAY)),
+('Rosa Díaz', 'rosa_d', 'rosa@preguntados.com', @hash_test, 1945, 'F', @ciudad_barcelona, 'usuario', TRUE, DATE_SUB(NOW(), INTERVAL 4 DAY));
 
 SET @admin_id = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'admin_test');
 
@@ -839,11 +844,11 @@ SET @usuario15 = (SELECT usuario_id FROM usuarios WHERE nombre_usuario = 'ricard
 
 -- Partidas de hoy
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario1, 80, 'finalizada', NOW(), DATE_ADD(NOW(), INTERVAL 5 MINUTE)),
-(@usuario2, 60, 'finalizada', DATE_SUB(NOW(), INTERVAL 2 HOUR), DATE_SUB(NOW(), INTERVAL 115 MINUTE)),
-(@usuario3, 90, 'finalizada', DATE_SUB(NOW(), INTERVAL 4 HOUR), DATE_SUB(NOW(), INTERVAL 235 MINUTE)),
-(@usuario4, 70, 'finalizada', DATE_SUB(NOW(), INTERVAL 6 HOUR), DATE_SUB(NOW(), INTERVAL 355 MINUTE)),
-(@usuario5, 50, 'finalizada', DATE_SUB(NOW(), INTERVAL 8 HOUR), DATE_SUB(NOW(), INTERVAL 475 MINUTE));
+(@usuario1, 8, 'finalizada', NOW(), DATE_ADD(NOW(), INTERVAL 5 MINUTE)),
+(@usuario2, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 2 HOUR), DATE_SUB(NOW(), INTERVAL 115 MINUTE)),
+(@usuario3, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 4 HOUR), DATE_SUB(NOW(), INTERVAL 235 MINUTE)),
+(@usuario4, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 6 HOUR), DATE_SUB(NOW(), INTERVAL 355 MINUTE)),
+(@usuario5, 5, 'finalizada', DATE_SUB(NOW(), INTERVAL 8 HOUR), DATE_SUB(NOW(), INTERVAL 475 MINUTE));
 
 SET @partida1 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida2 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -853,11 +858,11 @@ SET @partida5 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas de ayer
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario6, 75, 'finalizada', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1435 MINUTE)),
-(@usuario7, 85, 'finalizada', DATE_SUB(NOW(), INTERVAL 1415 MINUTE), DATE_SUB(NOW(), INTERVAL 1295 MINUTE)),
-(@usuario8, 65, 'finalizada', DATE_SUB(NOW(), INTERVAL 1255 MINUTE), DATE_SUB(NOW(), INTERVAL 1135 MINUTE)),
-(@usuario9, 70, 'finalizada', DATE_SUB(NOW(), INTERVAL 1095 MINUTE), DATE_SUB(NOW(), INTERVAL 975 MINUTE)),
-(@usuario10, 80, 'finalizada', DATE_SUB(NOW(), INTERVAL 935 MINUTE), DATE_SUB(NOW(), INTERVAL 815 MINUTE));
+(@usuario6, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1435 MINUTE)),
+(@usuario7, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 1415 MINUTE), DATE_SUB(NOW(), INTERVAL 1295 MINUTE)),
+(@usuario8, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 1255 MINUTE), DATE_SUB(NOW(), INTERVAL 1135 MINUTE)),
+(@usuario9, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 1095 MINUTE), DATE_SUB(NOW(), INTERVAL 975 MINUTE)),
+(@usuario10, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 935 MINUTE), DATE_SUB(NOW(), INTERVAL 815 MINUTE));
 
 SET @partida6 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida7 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -867,11 +872,11 @@ SET @partida10 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas hace 3 días
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario11, 55, 'finalizada', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 4315 MINUTE)),
-(@usuario12, 92, 'finalizada', DATE_SUB(NOW(), INTERVAL 4295 MINUTE), DATE_SUB(NOW(), INTERVAL 4175 MINUTE)),
-(@usuario13, 68, 'finalizada', DATE_SUB(NOW(), INTERVAL 4135 MINUTE), DATE_SUB(NOW(), INTERVAL 4015 MINUTE)),
-(@usuario14, 78, 'finalizada', DATE_SUB(NOW(), INTERVAL 3975 MINUTE), DATE_SUB(NOW(), INTERVAL 3855 MINUTE)),
-(@usuario15, 62, 'finalizada', DATE_SUB(NOW(), INTERVAL 3815 MINUTE), DATE_SUB(NOW(), INTERVAL 3695 MINUTE));
+(@usuario11, 5, 'finalizada', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 4315 MINUTE)),
+(@usuario12, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 4295 MINUTE), DATE_SUB(NOW(), INTERVAL 4175 MINUTE)),
+(@usuario13, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 4135 MINUTE), DATE_SUB(NOW(), INTERVAL 4015 MINUTE)),
+(@usuario14, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 3975 MINUTE), DATE_SUB(NOW(), INTERVAL 3855 MINUTE)),
+(@usuario15, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 3815 MINUTE), DATE_SUB(NOW(), INTERVAL 3695 MINUTE));
 
 SET @partida11 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida12 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -881,11 +886,11 @@ SET @partida15 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas hace 7 días (última semana)
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario1, 88, 'finalizada', DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 10075 MINUTE)),
-(@usuario2, 72, 'finalizada', DATE_SUB(NOW(), INTERVAL 10055 MINUTE), DATE_SUB(NOW(), INTERVAL 9935 MINUTE)),
-(@usuario3, 95, 'finalizada', DATE_SUB(NOW(), INTERVAL 9935 MINUTE), DATE_SUB(NOW(), INTERVAL 9815 MINUTE)),
-(@usuario4, 58, 'finalizada', DATE_SUB(NOW(), INTERVAL 9815 MINUTE), DATE_SUB(NOW(), INTERVAL 9695 MINUTE)),
-(@usuario5, 76, 'finalizada', DATE_SUB(NOW(), INTERVAL 9695 MINUTE), DATE_SUB(NOW(), INTERVAL 9575 MINUTE));
+(@usuario1, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 10075 MINUTE)),
+(@usuario2, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 10055 MINUTE), DATE_SUB(NOW(), INTERVAL 9935 MINUTE)),
+(@usuario3, 10, 'finalizada', DATE_SUB(NOW(), INTERVAL 9935 MINUTE), DATE_SUB(NOW(), INTERVAL 9815 MINUTE)),
+(@usuario4, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 9815 MINUTE), DATE_SUB(NOW(), INTERVAL 9695 MINUTE)),
+(@usuario5, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 9695 MINUTE), DATE_SUB(NOW(), INTERVAL 9575 MINUTE));
 
 SET @partida16 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida17 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -895,11 +900,11 @@ SET @partida20 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas hace 14 días (2 semanas)
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario6, 82, 'finalizada', DATE_SUB(NOW(), INTERVAL 14 DAY), DATE_SUB(NOW(), INTERVAL 20155 MINUTE)),
-(@usuario7, 91, 'finalizada', DATE_SUB(NOW(), INTERVAL 20135 MINUTE), DATE_SUB(NOW(), INTERVAL 20015 MINUTE)),
-(@usuario8, 64, 'finalizada', DATE_SUB(NOW(), INTERVAL 20015 MINUTE), DATE_SUB(NOW(), INTERVAL 19895 MINUTE)),
-(@usuario9, 74, 'finalizada', DATE_SUB(NOW(), INTERVAL 19895 MINUTE), DATE_SUB(NOW(), INTERVAL 19775 MINUTE)),
-(@usuario10, 86, 'finalizada', DATE_SUB(NOW(), INTERVAL 19775 MINUTE), DATE_SUB(NOW(), INTERVAL 19655 MINUTE));
+(@usuario6, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 14 DAY), DATE_SUB(NOW(), INTERVAL 20155 MINUTE)),
+(@usuario7, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 20135 MINUTE), DATE_SUB(NOW(), INTERVAL 20015 MINUTE)),
+(@usuario8, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 20015 MINUTE), DATE_SUB(NOW(), INTERVAL 19895 MINUTE)),
+(@usuario9, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 19895 MINUTE), DATE_SUB(NOW(), INTERVAL 19775 MINUTE)),
+(@usuario10, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 19775 MINUTE), DATE_SUB(NOW(), INTERVAL 19655 MINUTE));
 
 SET @partida21 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida22 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -909,11 +914,11 @@ SET @partida25 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas hace 21 días
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario11, 67, 'finalizada', DATE_SUB(NOW(), INTERVAL 21 DAY), DATE_SUB(NOW(), INTERVAL 30235 MINUTE)),
-(@usuario12, 89, 'finalizada', DATE_SUB(NOW(), INTERVAL 30215 MINUTE), DATE_SUB(NOW(), INTERVAL 30095 MINUTE)),
-(@usuario13, 71, 'finalizada', DATE_SUB(NOW(), INTERVAL 30095 MINUTE), DATE_SUB(NOW(), INTERVAL 29975 MINUTE)),
-(@usuario14, 77, 'finalizada', DATE_SUB(NOW(), INTERVAL 29975 MINUTE), DATE_SUB(NOW(), INTERVAL 29855 MINUTE)),
-(@usuario15, 61, 'finalizada', DATE_SUB(NOW(), INTERVAL 29855 MINUTE), DATE_SUB(NOW(), INTERVAL 29735 MINUTE));
+(@usuario11, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 21 DAY), DATE_SUB(NOW(), INTERVAL 30235 MINUTE)),
+(@usuario12, 9, 'finalizada', DATE_SUB(NOW(), INTERVAL 30215 MINUTE), DATE_SUB(NOW(), INTERVAL 30095 MINUTE)),
+(@usuario13, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 30095 MINUTE), DATE_SUB(NOW(), INTERVAL 29975 MINUTE)),
+(@usuario14, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 29975 MINUTE), DATE_SUB(NOW(), INTERVAL 29855 MINUTE)),
+(@usuario15, 6, 'finalizada', DATE_SUB(NOW(), INTERVAL 29855 MINUTE), DATE_SUB(NOW(), INTERVAL 29735 MINUTE));
 
 SET @partida26 = CAST(LAST_INSERT_ID() AS SIGNED) - 4;
 SET @partida27 = CAST(LAST_INSERT_ID() AS SIGNED) - 3;
@@ -923,9 +928,9 @@ SET @partida30 = CAST(LAST_INSERT_ID() AS SIGNED);
 
 -- Partidas hace 30 días (hace un mes)
 INSERT INTO partidas_usuario (usuario_id, puntaje, estado, fecha_inicio, fecha_fin) VALUES
-(@usuario1, 73, 'finalizada', DATE_SUB(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 43315 MINUTE)),
-(@usuario2, 84, 'finalizada', DATE_SUB(NOW(), INTERVAL 43295 MINUTE), DATE_SUB(NOW(), INTERVAL 43175 MINUTE)),
-(@usuario3, 66, 'finalizada', DATE_SUB(NOW(), INTERVAL 43175 MINUTE), DATE_SUB(NOW(), INTERVAL 43055 MINUTE));
+(@usuario1, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 43315 MINUTE)),
+(@usuario2, 8, 'finalizada', DATE_SUB(NOW(), INTERVAL 43295 MINUTE), DATE_SUB(NOW(), INTERVAL 43175 MINUTE)),
+(@usuario3, 7, 'finalizada', DATE_SUB(NOW(), INTERVAL 43175 MINUTE), DATE_SUB(NOW(), INTERVAL 43055 MINUTE));
 
 SET @partida31 = CAST(LAST_INSERT_ID() AS SIGNED) - 2;
 SET @partida32 = CAST(LAST_INSERT_ID() AS SIGNED) - 1;
@@ -1150,4 +1155,33 @@ JOIN preguntas p ON p.texto_pregunta LIKE '%Torre de Pisa%'
 JOIN respuestas r ON r.pregunta_id = p.pregunta_id AND r.es_correcta = 0
 WHERE pu.usuario_id = @usuario5 AND pu.puntaje = 50
 LIMIT 1;
+
+-- ========================================
+-- 11. ACTUALIZAR RANKINGS DE USUARIOS
+-- ========================================
+-- Basado en MAPA_PUNTUACION:
+-- 0-5 correct = puntos negativos, 6-10 correct = puntos positivos
+-- puntaje está en escala 0-10 (número de respuestas correctas)
+
+UPDATE usuarios u SET ranking = 100 + (
+    SELECT COALESCE(SUM(
+        CASE
+            WHEN pu.puntaje = 0 THEN -15
+            WHEN pu.puntaje = 1 THEN -10
+            WHEN pu.puntaje = 2 THEN -10
+            WHEN pu.puntaje = 3 THEN -5
+            WHEN pu.puntaje = 4 THEN -5
+            WHEN pu.puntaje = 5 THEN -5
+            WHEN pu.puntaje = 6 THEN 5
+            WHEN pu.puntaje = 7 THEN 5
+            WHEN pu.puntaje = 8 THEN 5
+            WHEN pu.puntaje = 9 THEN 10
+            WHEN pu.puntaje = 10 THEN 15
+            ELSE 0
+        END
+    ), 0)
+    FROM partidas_usuario pu
+    WHERE pu.usuario_id = u.usuario_id AND pu.estado IN ('finalizada', 'perdida')
+)
+WHERE u.usuario_id IN (SELECT DISTINCT usuario_id FROM partidas_usuario);
 
