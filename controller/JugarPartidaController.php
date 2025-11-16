@@ -22,7 +22,7 @@ class JugarPartidaController
         $this->iniciarPartida();
     }
     public function iniciarPartida(){
-
+        $this->verificarYFinalizarPartidaActiva();
         $this->limpiarSesionDePartida();
 
         $usuario_id = $_SESSION['usuario_id'];
@@ -242,6 +242,17 @@ class JugarPartidaController
 
         header("Location: /jugarPartida/mostrarPregunta");
         exit;
+    }
+
+    public function verificarYFinalizarPartidaActiva()
+    {
+        $usuario_id = $_SESSION['usuario_id'] ?? null;
+        $penalizacion = $this->model->finalizarPartidaAbandonada($usuario_id);
+
+        if($penalizacion !== 0){
+            $this->modelUsuarios->modificarRanking($usuario_id, $penalizacion);
+            $_SESSION['mensaje_penalizacion'] = "Partida anterior abandona. Se descontaran {$penalizacion} puntos de tu ranking";
+        }
     }
 
     public function verificarRespuestaAjax() {
