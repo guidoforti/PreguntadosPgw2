@@ -214,7 +214,7 @@ class JugarPartidaController
         }
 
         $data = [];
-        $data['categorias'] = $this->model->getCategorias();
+        $data['categorias'] = $this->model->getCategoriasJugables();
 
         $data['categorias_json'] = json_encode($data['categorias']);
 

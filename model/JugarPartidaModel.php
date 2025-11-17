@@ -256,6 +256,22 @@ class JugarPartidaModel
         return $resultado;
     }
 
+    public function getCategoriasJugables() {
+        $sql = "SELECT 
+                c.categoria_id, 
+                c.nombre, 
+                c.color_hex 
+            FROM categorias c
+            JOIN preguntas p ON c.categoria_id = p.categoria_id
+            WHERE p.estado = 'activa'
+            GROUP BY c.categoria_id, c.nombre, c.color_hex
+            HAVING COUNT(p.pregunta_id) >= 2
+            ORDER BY c.nombre";
+        $resultado = $this->conexion->query($sql);
+
+        return $resultado;
+    }
+
     public function getIdCorrecta($pregunta_id){
         $sql = "SELECT respuesta_id FROM respuestas WHERE pregunta_id = ? AND es_correcta = 1";
         $resultado = $this->conexion->preparedQuery($sql, 'i', [$pregunta_id]);
