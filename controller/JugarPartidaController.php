@@ -52,6 +52,8 @@ class JugarPartidaController
             exit;
         }
 
+
+
         $index_actual = $_SESSION['pregunta_actual_index'];
         $lista_preguntas = $_SESSION['preguntas_partida'];
 
@@ -66,7 +68,6 @@ class JugarPartidaController
         }
 
         $id_pregunta_actual = $lista_preguntas[$index_actual];
-
         $data_pregunta = $this->model->getPreguntaCompleta($id_pregunta_actual);
 
         $tiempo_restante = 20;
@@ -217,6 +218,12 @@ class JugarPartidaController
 
         $data['categorias_json'] = json_encode($data['categorias']);
 
+        $mensaje_penalizacion = $_SESSION['mensaje_penalizacion'] ?? null;
+        if ($mensaje_penalizacion) {
+            $data['mensaje_penalizacion'] = $mensaje_penalizacion;
+            unset($_SESSION['mensaje_penalizacion']);
+        }
+
         $this->renderer->render("ruleta", $data);
     }
 
@@ -251,7 +258,7 @@ class JugarPartidaController
 
         if($penalizacion !== 0){
             $this->modelUsuarios->modificarRanking($usuario_id, $penalizacion);
-            $_SESSION['mensaje_penalizacion'] = "Partida anterior abandona. Se descontaran {$penalizacion} puntos de tu ranking";
+            $_SESSION['mensaje_penalizacion'] = "¡Abandonaste la anterior partida! Se descontaran {$penalizacion} puntos de tu ranking";
         }
     }
 

@@ -59,6 +59,7 @@ class RankingModel
                 $fechaInicio = strtotime($partida['fecha_inicio']);
                 $fechaFin = $partida['fecha_fin'] ? strtotime($partida['fecha_fin']) : null;
                 $duracion = "En curso";
+                $es_en_curso = false;
 
                 if ($fechaFin) {
                     $segundos = $fechaFin - $fechaInicio;
@@ -70,6 +71,10 @@ class RankingModel
                 $estado = $partida['estado'];
                 $badge_clase = 'secondary';
                 $resultado_texto = 'Interrumpida';
+                $puntaje = $partida['puntaje'];
+                $puntos_ranking = $mapaPuntuacion[$puntaje] ?? 0;
+                $puntos_signo = ($puntos_ranking >= 0) ? '+' : '-';
+                $puntos_clase = ($puntos_ranking >= 0) ? 'text-success' : 'text-danger';
 
                 if ($estado === 'finalizada') {
                     $badge_clase = 'success';
@@ -77,12 +82,22 @@ class RankingModel
                 } elseif ($estado === 'perdida') {
                     $badge_clase = 'danger';
                     $resultado_texto = 'Derrota';
+                } elseif ($estado === 'abandonada') {
+                    $badge_clase = 'danger';
+                    $resultado_texto = 'Abandonada';
+                    $puntos_ranking = abs($mapaPuntuacion[0]);
+                    $puntos_signo = '-';
+                    $puntos_clase = 'text-danger';
+                } elseif ($estado === 'en_curso') {
+                    // Esta es la partida ACTIVA actual
+                    $badge_clase = 'secondary';
+                    $resultado_texto = 'Interrumpida';
+                    $duracion = "En curso";
+                    $puntos_ranking = 0;
+                    $puntos_signo = '';
+                    $puntos_clase = 'text-muted';
+                    $es_en_curso = true;
                 }
-
-                $puntaje = $partida['puntaje'];
-                $puntos_ranking = $mapaPuntuacion[$puntaje] ?? 0;
-                $puntos_signo = ($puntos_ranking >= 0) ? '+' : '-';
-                $puntos_clase = ($puntos_ranking >= 0) ? 'text-success' : 'text-danger';
 
                 $fecha_formateada = date('M d, H:i', $fechaInicio);
 
@@ -96,7 +111,8 @@ class RankingModel
                     'puntos_signo' => $puntos_signo,
                     'puntos_clase' => $puntos_clase,
                     'badge_clase' => $badge_clase,
-                    'resultado_texto' => $resultado_texto
+                    'resultado_texto' => $resultado_texto,
+                    'es_en_curso' => $es_en_curso
                 ];
             }
         }

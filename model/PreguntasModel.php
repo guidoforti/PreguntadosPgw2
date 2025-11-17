@@ -210,4 +210,36 @@ class PreguntasModel
         return true;
     }
 
+    public function crearCategoria($nombre, $color_hex){
+
+        $sql = "INSERT INTO categorias (nombre, color_hex) VALUES (?, ?)";
+        $resultado = $this->conexion->preparedQuery($sql, 'ss', [$nombre, $color_hex]);
+        if($resultado === true){
+            return ['success' => true, 'categoria_id' => $this->conexion->getInsertId()];
+        }
+        return ['error' => 'No se pudo crear la categoría.'];
+    }
+
+    public function actualizarCategoria($categoriaId, $nombre, $color_hex)
+    {
+        $sql = "UPDATE categorias SET nombre = ?, color_hex = ? WHERE categoria_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 'ssi', [$nombre, $color_hex, $categoriaId]);
+
+        if ($resultado === true) {
+            return ['success' => true];
+        }
+        return ['error' => 'No se pudo actualizar la categoría.'];
+    }
+
+    public function eliminarCategoria($categoriaId)
+    {
+        $sql = "DELETE FROM categorias WHERE categoria_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$categoriaId]);
+        if ($resultado === true) {
+            return ['success' => true];
+        } else {
+            return ['error' => 'No se pudo eliminar la categoría, ya que tiene preguntas asociadas.'];
+        }
+    }
+
 }
