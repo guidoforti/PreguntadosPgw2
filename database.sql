@@ -111,7 +111,7 @@ CREATE TABLE partidas_usuario (
                                   partida_id INT AUTO_INCREMENT PRIMARY KEY,
                                   usuario_id INT NOT NULL,
                                   puntaje INT DEFAULT 0,
-                                  estado ENUM('en_curso', 'finalizada', 'perdida', 'interrumpida') DEFAULT 'en_curso',
+                                  estado ENUM('en_curso', 'finalizada', 'perdida', 'interrumpida', 'abandonada') DEFAULT 'en_curso',
                                   fecha_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
                                   fecha_fin DATETIME NULL,
                                   FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)

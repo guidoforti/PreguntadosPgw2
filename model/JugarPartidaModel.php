@@ -31,6 +31,26 @@ class JugarPartidaModel
         return $this->conexion->getInsertId();
     }
 
+    public function finalizarPartidaAbandonada($usuario_id){
+        $sql = "SELECT partida_id FROM partidas_usuario 
+                WHERE usuario_id = ? AND estado = 'en_curso'";
+
+        $partida_activa = $this->conexion->preparedQuery($sql, 'i', [$usuario_id]);
+
+        if(empty($partida_activa)){
+           return $penalizacion = 0;
+        }
+
+        $partida_id = $partida_activa[0]['partida_id'];
+        $sql_finalizarPartida = "UPDATE partidas_usuario
+        SET estado = 'abandonada', fecha_fin = NOW()
+        WHERE partida_id = ?";
+
+        $this->conexion->preparedQuery($sql_finalizarPartida, 'i', [$partida_id]);
+        $penalizacion = self::MAPA_PUNTUACION[0] ?? -15;
+        return $penalizacion;
+    }
+
     public function buscarPreguntasParaPartida($rankingUsuario, $usuario_id, $categoria_nombre, $limite = 2)
     {
         $rangoDeDificultadDelUsuario = $this->devolverRangoDeDificultadSegunRanking($rankingUsuario);
@@ -89,7 +109,7 @@ class JugarPartidaModel
 
     public function getPreguntaCompleta($pregunta_id) {
         $data = [];
-        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
+        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria, c.color_hex
                             FROM preguntas p
                             JOIN categorias c ON c.categoria_id = p.categoria_id
                             WHERE pregunta_id = ?";
