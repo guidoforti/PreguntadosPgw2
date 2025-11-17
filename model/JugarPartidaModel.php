@@ -109,7 +109,7 @@ class JugarPartidaModel
 
     public function getPreguntaCompleta($pregunta_id) {
         $data = [];
-        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
+        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria, c.color_hex
                             FROM preguntas p
                             JOIN categorias c ON c.categoria_id = p.categoria_id
                             WHERE pregunta_id = ?";

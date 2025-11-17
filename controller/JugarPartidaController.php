@@ -18,7 +18,7 @@ class JugarPartidaController
     }
 
     public function base(){
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
         $this->iniciarPartida();
     }
     public function iniciarPartida(){
@@ -45,7 +45,7 @@ class JugarPartidaController
 
     public function mostrarPregunta(){
 
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
 
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /jugarPartida/iniciarPartida");
@@ -105,7 +105,7 @@ class JugarPartidaController
 
     public function responder(){
 
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /jugarPartida/iniciarPartida");
             exit;
@@ -155,7 +155,7 @@ class JugarPartidaController
     }
 
     public function finalizar(){
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /");
             exit;
@@ -199,7 +199,7 @@ class JugarPartidaController
     }
 
     public function mostrarRuleta() {
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
 
         if(!isset($_SESSION['partida_id'])) {
             header("Location: /jugarPartida/iniciarPartida");
@@ -228,7 +228,7 @@ class JugarPartidaController
     }
 
     public function guardarCategoria(){
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
         if(!isset($_SESSION['partida_id']) || !isset($_POST['categoria_elegida'])) {
             header("Location: /");
             exit;
@@ -264,7 +264,7 @@ class JugarPartidaController
 
     public function verificarRespuestaAjax() {
 
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
 
         if (!isset($_POST['pregunta_id']) || !isset($_SESSION['partida_id'])) {
             http_response_code(400);
@@ -281,7 +281,7 @@ class JugarPartidaController
     }
 
     public function reportarPreguntaForm(){
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
 
         if (!isset($_SESSION['preguntas_para_reportar']) || empty($_SESSION['preguntas_para_reportar'])) {
             header("Location: /");
@@ -296,7 +296,7 @@ class JugarPartidaController
     }
 
     public function procesarReporte(){
-        SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
+        SecurityHelper::checkRole(['usuario']);
 
         $ids_a_reportar = $_POST['preguntas_reportadas'] ?? [];
         $motivos_enviados = $_POST['motivos'] ?? [];

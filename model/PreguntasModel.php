@@ -132,7 +132,7 @@ class PreguntasModel
 
     public function getCategorias()
     {
-        $sql = "SELECT categoria_id, nombre FROM categorias ORDER BY nombre";
+        $sql = "SELECT categoria_id, nombre, color_hex FROM categorias ORDER BY nombre";
         return $this->conexion->preparedQuery($sql);
     }
 
@@ -210,6 +210,12 @@ class PreguntasModel
         return true;
     }
 
+    public function getCategoriasOrderById()
+    {
+        $sql = "SELECT categoria_id, nombre, color_hex FROM categorias ORDER BY categoria_id";
+        return $this->conexion->preparedQuery($sql);
+    }
+
     public function crearCategoria($nombre, $color_hex){
 
         $sql = "INSERT INTO categorias (nombre, color_hex) VALUES (?, ?)";
@@ -233,12 +239,22 @@ class PreguntasModel
 
     public function eliminarCategoria($categoriaId)
     {
+        $sql_check = "SELECT COUNT(*) as count FROM preguntas WHERE categoria_id = ?";
+
+        $res_check = $this->conexion->preparedQuery($sql_check, 'i', [$categoriaId]);
+        $count = $res_check[0]['count'] ?? 0;
+
+        if ($count > 0) {
+            return ['error' => "No se puede eliminar la categoría porque existen {$count} preguntas asociadas."];
+        }
+
         $sql = "DELETE FROM categorias WHERE categoria_id = ?";
         $resultado = $this->conexion->preparedQuery($sql, 'i', [$categoriaId]);
+
         if ($resultado === true) {
             return ['success' => true];
         } else {
-            return ['error' => 'No se pudo eliminar la categoría, ya que tiene preguntas asociadas.'];
+            return ['error' => 'Error inesperado al intentar eliminar la categoría.'];
         }
     }
 
