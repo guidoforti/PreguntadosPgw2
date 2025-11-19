@@ -21,6 +21,9 @@ class UsuarioModel
         if (!$this->sonContraseniasIguales($contraseniaUno, $contraseniaDos)) {
             return ['error' => 'Las contraseñas no coinciden'];
         }
+        if (!$this->esContraseniaValida($contraseniaUno)) {
+            return ['error' => 'La contraseña debe tener mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número'];
+        }
         if (!$this->esEmailValido($email)) {
             return ['error' => 'El email no tiene un formato o dominio válido'];
         }
@@ -239,6 +242,140 @@ class UsuarioModel
         }
     }
 
+    public function actualizarPerfil($id, $nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $paisNombre, $provinciaNombre, $ciudadNombre)
+    {
+        try {
+            if (empty($id)) {
+                return ['error' => 'ID de usuario no proporcionado'];
+            }
+
+            // Verificar que el usuario existe
+            $usuarioActual = $this->getUsuarioById($id);
+            if (!$usuarioActual) {
+                return ['error' => 'El usuario no existe'];
+            }
+
+            // Validar nombre de usuario (debe ser único, excepto el del usuario actual)
+            if ($usuarioActual['nombre_usuario'] !== $nombreUsuario && $this->existeNombreUsuario($nombreUsuario)) {
+                return ['error' => 'El nombre de usuario no está disponible'];
+            }
+
+            // Validar contraseña solo si se proporcionó
+            if (!empty($contraseniaUno) || !empty($contraseniaDos)) {
+                if (!$this->sonContraseniasIguales($contraseniaUno, $contraseniaDos)) {
+                    return ['error' => 'Las contraseñas no coinciden'];
+                }
+                if (!$this->esContraseniaValida($contraseniaUno)) {
+                    return ['error' => 'La contraseña debe tener mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número'];
+                }
+            }
+
+            // Validar email (formato y dominio)
+            if (!$this->esEmailValido($email)) {
+                return ['error' => 'El email no tiene un formato o dominio válido'];
+            }
+
+            // Validar que el email sea único, excepto el del usuario actual
+            if ($usuarioActual['email'] !== $email && $this->existeEmail($email)) {
+                return ['error' => 'El correo electrónico ya está registrado'];
+            }
+
+            // Validar año de nacimiento
+            if (!$this->esAnioNacimientoValido($anioNacimiento)) {
+                return ['error' => 'El año de nacimiento no es válido'];
+            }
+
+            // Procesar imagen si se proporcionó una nueva
+            $rutaRelativa = $usuarioActual['url_foto_perfil'];
+
+            if ($imagen && $imagen['error'] === UPLOAD_ERR_OK) {
+                $tipoMime = mime_content_type($imagen['tmp_name']);
+                $formatosPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+
+                if (!in_array($tipoMime, $formatosPermitidos)) {
+                    return ['error' => 'Formato de imagen no permitido (solo JPG, PNG o GIF)'];
+                }
+
+                if ($imagen['size'] > 2 * 1024 * 1024) {
+                    return ['error' => 'La imagen supera el tamaño máximo de 2MB'];
+                }
+
+                $rutaBase = __DIR__ . "/../imagenes/usuario/";
+                if (!is_dir($rutaBase)) {
+                    mkdir($rutaBase, 0777, true);
+                }
+
+                $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+                $fechaActual = new DateTime();
+                $nombreSeguro = 'profile_' . $fechaActual->format('YmdHisv') . '.' . strtolower($ext);
+                $rutaFinal = $rutaBase . $nombreSeguro;
+                $rutaRelativa = "imagenes/usuario/" . $nombreSeguro;
+
+                if (!move_uploaded_file($imagen['tmp_name'], $rutaFinal)) {
+                    return ['error' => 'Error al guardar la imagen'];
+                }
+
+                // Eliminar imagen anterior si existe
+                if (!empty($usuarioActual['url_foto_perfil'])) {
+                    $rutaImagenAnterior = __DIR__ . '/../' . $usuarioActual['url_foto_perfil'];
+                    if (file_exists($rutaImagenAnterior)) {
+                        @unlink($rutaImagenAnterior);
+                    }
+                }
+            }
+
+            // Hash de contraseña solo si se proporcionó una nueva
+            $contrasenaHash = !empty($contraseniaUno)
+                ? password_hash($contraseniaUno, PASSWORD_DEFAULT)
+                : $usuarioActual['contrasena_hash'];
+
+            // Procesar ubicación
+            $ciudadId = $usuarioActual['ciudad_id'];
+            if (!empty($paisNombre) && !empty($provinciaNombre) && !empty($ciudadNombre)) {
+                $paisId = $this->obtenerOCrear('paises', $paisNombre);
+                $provinciaId = $this->obtenerOCrear('provincias', $provinciaNombre, ['pais_id' => $paisId]);
+                $ciudadId = $this->obtenerOCrear('ciudades', $ciudadNombre, ['provincia_id' => $provinciaId]);
+            }
+
+            // Actualizar usuario en la base de datos
+            $sql = "UPDATE usuarios SET
+            nombre_completo = ?,
+            nombre_usuario = ?,
+            email = ?,
+            contrasena_hash = ?,
+            ano_nacimiento = ?,
+            sexo = ?,
+            url_foto_perfil = ?,
+            ciudad_id = ?
+            WHERE usuario_id = ?";
+
+            $tipos = 'ssssissii';
+
+            $parametros = [
+                $nombreCompleto,
+                $nombreUsuario,
+                $email,
+                $contrasenaHash,
+                $anioNacimiento,
+                $sexo,
+                $rutaRelativa,
+                $ciudadId,
+                $id
+            ];
+
+            $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
+
+            if ($resultado === true) {
+                return ['success' => 'Perfil actualizado correctamente'];
+            } else {
+                return ['error' => 'Error al actualizar el perfil'];
+            }
+        } catch (Exception $e) {
+            error_log("Error en actualizarPerfil: " . $e->getMessage());
+            return ['error' => 'Ocurrió un error al actualizar el perfil'];
+        }
+    }
+
     public function modificarRanking($id, $puntos)
     {
         try {
@@ -291,6 +428,18 @@ class UsuarioModel
             $sonIguales = false;
         }
         return $sonIguales;
+    }
+
+    public function esContraseniaValida($contrasenia)
+    {
+        // Validar que la contraseña cumpla con los requisitos:
+        // - Mínimo 8 caracteres
+        // - Al menos una mayúscula
+        // - Al menos una minúscula
+        // - Al menos un número
+
+        $patron = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/';
+        return preg_match($patron, $contrasenia) === 1;
     }
 
     public function existeEmail($email)

@@ -25,6 +25,21 @@
             <h2 class="mb-1">{{usuario.nombre_completo}}</h2>
             <p class="text-muted mb-3">@{{usuario.nombre_usuario}}</p>
 
+            <!-- Sexo y Edad -->
+            <div class="mb-3">
+                <small class="text-muted">
+                    <span>{{usuario.sexo}}</span>
+                    {{#usuario.edad}}<span> • </span><span>{{usuario.edad}} años</span>{{/usuario.edad}}
+                </small>
+            </div>
+
+            <!-- Botón Editar (solo para el propio perfil) -->
+            {{#esMiPerfil}}
+            <div class="mb-3">
+                <a href="/perfil/editarForm" class="btn btn-sm btn-outline-primary">✏️ Editar Perfil</a>
+            </div>
+            {{/esMiPerfil}}
+
             <!-- Rango -->
             <div class="mb-4">
                 <img src="/{{usuario.rango.imagen}}"
@@ -67,7 +82,10 @@
                     <p class="mb-3">
                         <strong>{{usuario.ubicacion_completa}}</strong>
                     </p>
-                    <div id="map" style="width: 100%; height: 300px; border-radius: 0.375rem; overflow: hidden;"></div>
+                    <div id="map"
+                         style="width: 100%; height: 300px; border-radius: 0.375rem; overflow: hidden;"
+                         data-ubicacion="{{usuario.ubicacion_completa}}"
+                         data-usuario="{{usuario.nombre_usuario}}"></div>
                 </div>
             </div>
 
@@ -162,40 +180,7 @@
     </div>
 </div>
 
-<script>
-    var ubicacion = "{{usuario.ubicacion_completa}}";
-
-    if (!ubicacion || ubicacion.trim() === '') {
-        document.getElementById('map').innerHTML = '<div class="p-4 text-center text-muted"><p>Ubicación no disponible</p></div>';
-    } else {
-        fetch('/proxyNominatim.php?q=' + encodeURIComponent(ubicacion))
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    var result = data[0];
-                    var lat = parseFloat(result.lat);
-                    var lon = parseFloat(result.lon);
-
-                    var map = L.map('map').setView([lat, lon], 6);
-
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors',
-                        maxZoom: 19
-                    }).addTo(map);
-
-                    L.marker([lat, lon])
-                        .bindPopup('<b>{{usuario.nombre_usuario}}</b><br/>{{usuario.ubicacion_completa}}')
-                        .addTo(map);
-                } else {
-                    document.getElementById('map').innerHTML = '<div class="p-4 text-center text-muted"><p>No se encontró la ubicación</p></div>';
-                }
-            })
-            .catch(error => {
-                console.error('Error al cargar ubicación:', error);
-                document.getElementById('map').innerHTML = '<div class="p-4 text-center text-muted"><p>Error al cargar el mapa</p></div>';
-            });
-    }
-</script>
+<script src="/js/perfil.js"></script>
 
 <style>
     .card {
