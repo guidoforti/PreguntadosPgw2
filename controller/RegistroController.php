@@ -29,7 +29,8 @@ class RegistroController
         $data = [
             'exito' => null,
             'error' => null,
-            'anioActual' => date('Y')
+            'anioActual' => date('Y'),
+            'notLoggedIn' => true
         ];
 
         $this->render->render("registrar", $data);
@@ -41,7 +42,8 @@ class RegistroController
             $data = [
                 "error" => "Método no permitido.",
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
             return;
@@ -67,7 +69,8 @@ class RegistroController
                 $data = [
                     "error" => "El campo '$clave' es obligatorio.",
                     "exito" => null,
-                    "anioActual" => date('Y')
+                    "anioActual" => date('Y'),
+                    "notLoggedIn" => true
                 ];
                 $this->render->render("registrar", $data);
                 return;
@@ -95,7 +98,8 @@ class RegistroController
             $data = [
                 "error" => $resultado['error'],
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
 
@@ -113,9 +117,9 @@ class RegistroController
             $cuerpoHTML = "Para activar tu cuenta, copia y pegá este link en tu navegador: $linkActivacion";
 
             if (Mailer::enviar($emailDestino, $asunto, $cuerpoHTML)) {
-                $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta (verifique su bandeja de spam si no encuentra el correo)."]);
+                $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta (verifique su bandeja de spam si no encuentra el correo).", "notLoggedIn" => true]);
             } else {
-                $this->render->render("login", ["error" => "Registro exitoso, pero falló el envío del email de verificación."]);
+                $this->render->render("login", ["error" => "Registro exitoso, pero falló el envío del email de verificación.", "notLoggedIn" => true]);
             }
 
         }
@@ -124,7 +128,8 @@ class RegistroController
             $data = [
                 "error" => "Error desconocido al registrar el usuario.",
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
         }
