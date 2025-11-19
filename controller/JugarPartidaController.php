@@ -106,7 +106,9 @@ class JugarPartidaController
         $start_time = $_SESSION['pregunta_start_time'];
         $lista_preguntas = $_SESSION['preguntas_partida'];
         $index_actual = $_SESSION['pregunta_actual_index'];
-        $respuesta_id_seleccionada = $_POST['respuesta_id'] ?? null;
+        $respuesta_id_seleccionada = isset($_POST['respuesta_id']) && $_POST['respuesta_id'] !== ''
+            ? (int) $_POST['respuesta_id']
+            : null;
         $pregunta_id_respondida = $_POST['pregunta_id'] ?? null;
         $pregunta_id_esperada = $lista_preguntas[$index_actual];
 
@@ -193,6 +195,11 @@ class JugarPartidaController
             exit;
         }
 
+        //esta variable se setea la primera vez que tocamos girar
+        //el tocar girar dispara que el back obtenga la categoria que va a renderizar luego la ruleta en el front
+        //osea que el back ya sabe que categoria toca, la ruleta solo lo que hace es mostrarlo.
+        //girar entonces, dispara el metodo obtener categoria para giro y ya setea esta var de sesion, entonces,
+        // si hacemos un F5 esto ya va a estar seteado , por lo que redirigimos idrecto a guardar categoria.
         if (isset($_SESSION['categoria_elegida_ruleta'])) {
             header("Location: /jugarPartida/guardarCategoria");
             exit;

@@ -92,13 +92,13 @@
             girando = true;
             botonGirar.innerText = 'Girando...';
             botonGirar.disabled = true;
-
+            //llamamos al back, para obtener la categoria, la categoria la decide el back, no la ruleta.
             fetch('/jugarPartida/obtenerCategoriaParaGiro', { method: 'POST' })
                 .then(r => r.json())
                 .then(categoria => {
                     if (categoria.error) throw new Error(categoria.error);
 
-                    // Encontrar el índice (1-based) del segmento por ID
+                    // encontramos el indice con el id de categoria
                     let segIndex = -1;
                     for (let i = 1; i <= ruleta.numSegments; i++) {
                         const s = ruleta.segments[i];
@@ -113,7 +113,7 @@
                         return;
                     }
 
-                    // Calcular un ángulo válido dentro del segmento
+                    // calculamos el angulo correcto dentro del segmento
                     const stopAt = ruleta.getRandomForSegment(segIndex);
                     ruleta.animation.stopAngle = stopAt;
                     ruleta.startAnimation();
