@@ -129,6 +129,10 @@ class JugarPartidaModel
     public function procesarRespuesta($partida_id, $usuario_id, $pregunta_id, $respuesta_id, $start_time)
     {
 
+        if ($respuesta_id === '' || $respuesta_id === 0) {
+            $respuesta_id = null;
+        }
+
         $tiempo_limite = 20;
         $tiempo_usado = time() - $start_time;
 

@@ -49,6 +49,7 @@
 
     let segmentos = categorias.map(cat => {
         return {
+            'id': cat.categoria_id,
             'fillStyle': cat.color_hex,
             'text': cat.nombre
         };
@@ -56,18 +57,13 @@
 
     console.log(segmentos);
 
-
     function ruletaTermino(segmentoElegido) {
-        console.log('Callback ejecutado:', segmentoElegido);
-        let categoriaElegida = segmentoElegido.text;
-
         Swal.fire({
-            title: 'Categoria: ' + categoriaElegida,
+            title: 'Categoría: ' + segmentoElegido.text,
             text: 'Las próximas 2 preguntas serán de esta categoría.',
             icon: 'info',
             confirmButtonText: '¡Vamos!'
-        }).then((result) => {
-            document.getElementById('categoria_elegida').value = categoriaElegida;
+        }).then(() => {
             document.getElementById('formRuleta').submit();
         });
     }
@@ -96,10 +92,42 @@
             girando = true;
             botonGirar.innerText = 'Girando...';
             botonGirar.disabled = true;
+            //llamamos al back, para obtener la categoria, la categoria la decide el back, no la ruleta.
+            fetch('/jugarPartida/obtenerCategoriaParaGiro', { method: 'POST' })
+                .then(r => r.json())
+                .then(categoria => {
+                    if (categoria.error) throw new Error(categoria.error);
 
-            ruleta.startAnimation();
+                    // encontramos el indice con el id de categoria
+                    let segIndex = -1;
+                    for (let i = 1; i <= ruleta.numSegments; i++) {
+                        const s = ruleta.segments[i];
+                        if (s && s.id === categoria.categoria_id) {
+                            segIndex = i;
+                            break;
+                        }
+                    }
+                    if (segIndex === -1) {
+                        console.error('No se encontró el segmento para la categoría', categoria);
+                        ruleta.startAnimation();
+                        return;
+                    }
+
+                    // calculamos el angulo correcto dentro del segmento
+                    const stopAt = ruleta.getRandomForSegment(segIndex);
+                    ruleta.animation.stopAngle = stopAt;
+                    ruleta.startAnimation();
+                })
+                .catch(err => {
+                    console.error('Error al obtener categoría:', err);
+                    Swal.fire('Error', 'No se pudo obtener la categoría, intenta de nuevo.', 'error');
+                    girando = false;
+                    botonGirar.innerText = '¡GIRAR!';
+                    botonGirar.disabled = false;
+                });
         }
     });
+
     const mensajePenalizacion = '{{mensaje_penalizacion}}';
 
     if (mensajePenalizacion.length > 0) {
@@ -115,4 +143,3 @@
         }, 100);
     }
 </script>
-
