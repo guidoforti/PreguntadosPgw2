@@ -244,7 +244,8 @@ class UsuarioModel
         try {
             // Le decimos a mmysql que él mismo haga la suma en vez de obterner el rankign sumarlo y updatearlo, asi tenemos atomicidad.
             // seguro contra condiciones de carrera.
-            $sql = "UPDATE usuarios SET ranking = ranking + ? WHERE usuario_id = ?";
+            //el greatest nos asegura atomicidaad y dejar en 0 si por ej tiene 5 puntos y pierde 15.
+            $sql = "UPDATE usuarios SET ranking = GREATEST(ranking + ?, 0) WHERE usuario_id = ?";
             $resultadoUpdate = $this->conexion->preparedQuery($sql, 'ii', [$puntos, $id]);
 
             if (!$resultadoUpdate) {
