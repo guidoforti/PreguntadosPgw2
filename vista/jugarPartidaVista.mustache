@@ -146,10 +146,11 @@
             }
         }
 
-        const boton = formElement.querySelector('button[type="submit"]');
-        boton.innerText = 'Continuar';
-        boton.classList.remove('btn-success');
-        boton.classList.add('btn-primary');
+        // Eliminamos el cambio de texto del botón
+        // y en su lugar hacemos que se envíe el formulario automáticamente después de 2 segundos
+        setTimeout(() => {
+            formElement.submit();
+        }, 100);
     }
 
     function bloquearOpciones() {
