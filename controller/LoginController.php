@@ -22,7 +22,7 @@ class LoginController
             $this->redirectToIndex();
             return;
         }
-        $this->renderer->render("login");
+        $this->renderer->render("login", ["notLoggedIn" => true]);
     }
 
     public function login()
@@ -33,7 +33,7 @@ class LoginController
 
         // Validar campos vacíos
         if (empty($usuario) || empty($password)) {
-            $this->renderer->render("login", ["error" => "Debe completar todos los campos"]);
+            $this->renderer->render("login", ["error" => "Debe completar todos los campos", "notLoggedIn" => true]);
             return;
         }
 
@@ -42,7 +42,7 @@ class LoginController
 
         // Manejar errores del modelo
         if (isset($resultado['error'])) {
-            $this->renderer->render("login", ["error" => $resultado['error']]);
+            $this->renderer->render("login", ["error" => $resultado['error'], "notLoggedIn" => true]);
             return;
         }
 
@@ -55,7 +55,7 @@ class LoginController
             return;
         }
         // Caso fallback (no debería ocurrir)
-        $this->renderer->render("login", ["error" => "Error desconocido al iniciar sesión"]);
+        $this->renderer->render("login", ["error" => "Error desconocido al iniciar sesión", "notLoggedIn" => true]);
     }
 
 

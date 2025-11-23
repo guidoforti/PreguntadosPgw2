@@ -31,6 +31,26 @@ class JugarPartidaModel
         return $this->conexion->getInsertId();
     }
 
+    public function finalizarPartidaAbandonada($usuario_id){
+        $sql = "SELECT partida_id FROM partidas_usuario 
+                WHERE usuario_id = ? AND estado = 'en_curso'";
+
+        $partida_activa = $this->conexion->preparedQuery($sql, 'i', [$usuario_id]);
+
+        if(empty($partida_activa)){
+           return $penalizacion = 0;
+        }
+
+        $partida_id = $partida_activa[0]['partida_id'];
+        $sql_finalizarPartida = "UPDATE partidas_usuario
+        SET estado = 'abandonada', fecha_fin = NOW()
+        WHERE partida_id = ?";
+
+        $this->conexion->preparedQuery($sql_finalizarPartida, 'i', [$partida_id]);
+        $penalizacion = self::MAPA_PUNTUACION[0] ?? -15;
+        return $penalizacion;
+    }
+
     public function buscarPreguntasParaPartida($rankingUsuario, $usuario_id, $categoria_nombre, $limite = 2)
     {
         $rangoDeDificultadDelUsuario = $this->devolverRangoDeDificultadSegunRanking($rankingUsuario);
@@ -89,7 +109,7 @@ class JugarPartidaModel
 
     public function getPreguntaCompleta($pregunta_id) {
         $data = [];
-        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
+        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria, c.color_hex
                             FROM preguntas p
                             JOIN categorias c ON c.categoria_id = p.categoria_id
                             WHERE pregunta_id = ?";
@@ -108,6 +128,10 @@ class JugarPartidaModel
 
     public function procesarRespuesta($partida_id, $usuario_id, $pregunta_id, $respuesta_id, $start_time)
     {
+
+        if ($respuesta_id === '' || $respuesta_id === 0) {
+            $respuesta_id = null;
+        }
 
         $tiempo_limite = 20;
         $tiempo_usado = time() - $start_time;
@@ -233,6 +257,22 @@ class JugarPartidaModel
         $sql = 'SELECT nombre, color_hex FROM categorias';
 
         $resultado = $this->conexion->query($sql);
+        return $resultado;
+    }
+
+    public function getCategoriasJugables() {
+        $sql = "SELECT 
+                c.categoria_id, 
+                c.nombre, 
+                c.color_hex 
+            FROM categorias c
+            JOIN preguntas p ON c.categoria_id = p.categoria_id
+            WHERE p.estado = 'activa'
+            GROUP BY c.categoria_id, c.nombre, c.color_hex
+            HAVING COUNT(p.pregunta_id) >= 2
+            ORDER BY c.nombre";
+        $resultado = $this->conexion->query($sql);
+
         return $resultado;
     }
 

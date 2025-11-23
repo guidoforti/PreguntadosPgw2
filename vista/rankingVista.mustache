@@ -70,7 +70,12 @@
                                     <td><small>{{duracion}}</small></td>
                                     <td><span class="badge bg-{{badge_clase}}">{{resultado_texto}}</span></td>
                                     <td class="text-end">
-                                        <span class="fw-bold {{puntos_clase}}">{{puntos_signo}}{{puntos_ranking}}</span>
+                                        {{#es_en_curso}}
+                                            <span class="fw-bold text-muted">-</span>
+                                        {{/es_en_curso}}
+                                        {{^es_en_curso}}
+                                            <span class="fw-bold {{puntos_clase}}">{{puntos_signo}}{{puntos_ranking}}</span>
+                                        {{/es_en_curso}}
                                     </td>
                                 </tr>
                                 {{/historial}}

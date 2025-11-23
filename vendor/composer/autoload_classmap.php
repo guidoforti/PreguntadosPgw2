@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'Dompdf\\Cpdf' => $vendorDir . '/dompdf/dompdf/lib/Cpdf.php',
     'Mustache_Cache' => $vendorDir . '/mustache/mustache/src/compat.php',
     'Mustache_Cache_AbstractCache' => $vendorDir . '/mustache/mustache/src/compat.php',
     'Mustache_Cache_FilesystemCache' => $vendorDir . '/mustache/mustache/src/compat.php',

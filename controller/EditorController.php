@@ -23,7 +23,6 @@ class EditorController
     }
 
 
-
     public function sugerirPreguntaForm($data = [])
     {
         // La seguridad de login la garantiza el index.php
@@ -102,7 +101,8 @@ class EditorController
         exit;
     }
 
-    public function aprobarReporte(){
+    public function aprobarReporte()
+    {
         SecurityHelper::checkRole(['admin', 'editor']);
         $reporteId = $_GET['reporte_id'] ?? null;
         $editorId = $_SESSION['usuario_id'] ?? null;
@@ -114,7 +114,8 @@ class EditorController
         exit;
     }
 
-    public function rechazarReporte(){
+    public function rechazarReporte()
+    {
         SecurityHelper::checkRole(['admin', 'editor']);
         $reporteId = $_GET['reporte_id'] ?? null;
         $editorId = $_SESSION['usuario_id'] ?? null;
@@ -124,5 +125,69 @@ class EditorController
         header("Location: /editor/revisarPendientes?msg=rechazada");
         exit;
     }
+
+    public function categoriasForm()
+    {
+        SecurityHelper::checkRole(['admin', 'editor']);
+        $data = [];
+        $data['categorias'] = $this->model->getCategoriasOrderById() ?? [];
+
+        $data['flash_success'] = $_SESSION['flash_success'] ?? null;
+        $data['flash_error'] = $_SESSION['flash_error'] ?? null;
+
+        unset($_SESSION['flash_success']);
+        unset($_SESSION['flash_error']);
+        $this->renderer->render("categoriasForm", $data);
+    }
+
+    public function guardarCategoria()
+    {
+        SecurityHelper::checkRole(['admin', 'editor']);
+        $id = $_POST['categoria_id'] ?? null;
+        $nombre = trim($_POST['nombre'] ?? '');
+        $color_hex = $_POST['color_hex'] ?? '';
+
+        if (empty($nombre) || empty($color_hex)) {
+            $_SESSION['flash_error'] = "El nombre y el color son obligatorios.";
+            header("Location: /editor/categoriasForm");
+            exit;
+        }
+
+        if ($id) {
+            $resultado = $this->model->actualizarCategoria($id, $nombre, $color_hex);
+            $msg_ok = "Categoría actualizada con éxito.";
+        } else {
+            $resultado = $this->model->crearCategoria($nombre, $color_hex);
+            $msg_ok = "Categoría creada con éxito.";
+        }
+        if (isset($resultado['error'])) {
+            $_SESSION['flash_error'] = $resultado['error'];
+        } else {
+            $_SESSION['flash_success'] = $msg_ok;
+        }
+        header("Location: /editor/categoriasForm");
+        exit;
+    }
+    public function eliminarCategoria()
+    {
+        SecurityHelper::checkRole(['admin', 'editor']);
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            $_SESSION['flash_error'] = "ID de categoría no especificado.";
+            header("Location: /editor/categoriasForm");
+            exit;
+        }
+        $resultado = $this->model->eliminarCategoria($id);
+
+        if (isset($resultado['error'])) {
+            $_SESSION['flash_error'] = $resultado['error'];
+        } else {
+            $_SESSION['flash_success'] = "Categoría eliminada con éxito.";
+        }
+        header("Location: /editor/categoriasForm");
+        exit;
+    }
+
 
 }

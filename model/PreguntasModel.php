@@ -18,7 +18,7 @@ class PreguntasModel
     {
 
         // 1. Insertar la pregunta (estado = 'pendiente')
-        $sqlPregunta = "INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id) VALUES (?, ?, 'pendiente', ?)";
+        $sqlPregunta = "INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, fecha_creacion) VALUES (?, ?, 'pendiente', ?, NOW())";
         $tiposPregunta = 'isi'; // integer, string, integer
         $paramsPregunta = [$categoriaId, $textoPregunta, $usuarioId];
 
@@ -132,7 +132,7 @@ class PreguntasModel
 
     public function getCategorias()
     {
-        $sql = "SELECT categoria_id, nombre FROM categorias ORDER BY nombre";
+        $sql = "SELECT categoria_id, nombre, color_hex FROM categorias ORDER BY nombre";
         return $this->conexion->preparedQuery($sql);
     }
 
@@ -208,6 +208,54 @@ class PreguntasModel
         $this->conexion->preparedQuery($sql_pregunta, 'i', [$preguntaId]);
 
         return true;
+    }
+
+    public function getCategoriasOrderById()
+    {
+        $sql = "SELECT categoria_id, nombre, color_hex FROM categorias ORDER BY categoria_id";
+        return $this->conexion->preparedQuery($sql);
+    }
+
+    public function crearCategoria($nombre, $color_hex){
+
+        $sql = "INSERT INTO categorias (nombre, color_hex) VALUES (?, ?)";
+        $resultado = $this->conexion->preparedQuery($sql, 'ss', [$nombre, $color_hex]);
+        if($resultado === true){
+            return ['success' => true, 'categoria_id' => $this->conexion->getInsertId()];
+        }
+        return ['error' => 'No se pudo crear la categoría.'];
+    }
+
+    public function actualizarCategoria($categoriaId, $nombre, $color_hex)
+    {
+        $sql = "UPDATE categorias SET nombre = ?, color_hex = ? WHERE categoria_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 'ssi', [$nombre, $color_hex, $categoriaId]);
+
+        if ($resultado === true) {
+            return ['success' => true];
+        }
+        return ['error' => 'No se pudo actualizar la categoría.'];
+    }
+
+    public function eliminarCategoria($categoriaId)
+    {
+        $sql_check = "SELECT COUNT(*) as count FROM preguntas WHERE categoria_id = ?";
+
+        $res_check = $this->conexion->preparedQuery($sql_check, 'i', [$categoriaId]);
+        $count = $res_check[0]['count'] ?? 0;
+
+        if ($count > 0) {
+            return ['error' => "No se puede eliminar la categoría porque existen {$count} preguntas asociadas."];
+        }
+
+        $sql = "DELETE FROM categorias WHERE categoria_id = ?";
+        $resultado = $this->conexion->preparedQuery($sql, 'i', [$categoriaId]);
+
+        if ($resultado === true) {
+            return ['success' => true];
+        } else {
+            return ['error' => 'Error inesperado al intentar eliminar la categoría.'];
+        }
     }
 
 }

@@ -8,10 +8,7 @@ Options -Indexes
     RewriteEngine On
     RewriteRule ^proxyNominatim\.php$ - [L]
     RewriteBase /
-    RewriteCond %{REQUEST_URI} !\.js$ [NC]
-    RewriteRule ^(imagenes)($|/) - [L,NC]
-    RewriteRule ^scripts/.*$ - [L]
-    RewriteRule ^sonidos/.*$ - [L]
+    RewriteRule ^(imagenes|js)($|/) - [L,NC]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/(.*)/(.*)$ index.php?controller=$1&method=$2&$3 [L,QSA]
