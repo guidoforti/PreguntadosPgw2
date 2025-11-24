@@ -74,7 +74,8 @@ class LoginController
 
     public function redirectToIndex()
     {
-        header("Location: /");
+        $paramAjax = isset($_GET['ajax']) ? '?ajax=true' : '';
+        header("Location: /" . $paramAjax);
         exit;
     }
 

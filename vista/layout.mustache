@@ -14,6 +14,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel@2.8.0/Winwheel.min.js"></script>
 
+    <script>
+        const IS_LOGGED_IN = {{^notLoggedIn}}true{{/notLoggedIn}}{{#notLoggedIn}}false{{/notLoggedIn}};
+    </script>
+
     <!-- JS necesarios en head -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -32,7 +36,7 @@
 <!-- Header -->
 <header class="bg-primary text-white shadow-sm sticky-top">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary container">
-        <a class="navbar-brand fw-bold" href="/">
+        <a class="navbar-brand fw-bold no-ajax-load" href="/">
             🎲 Preguntados
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

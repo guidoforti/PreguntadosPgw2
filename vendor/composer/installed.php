@@ -3,7 +3,7 @@
         'name' => 'marco/proyecto-grupo2',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => 'a45e41ca8dabb724928055dc0afd555d0a7c0a02',
+        'reference' => '38e912f466b6e98845deda8264357c3ca316c532',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'marco/proyecto-grupo2' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => 'a45e41ca8dabb724928055dc0afd555d0a7c0a02',
+            'reference' => '38e912f466b6e98845deda8264357c3ca316c532',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

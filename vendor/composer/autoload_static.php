@@ -7,56 +7,56 @@ namespace Composer\Autoload;
 class ComposerStaticInitdfe963681294b171268acaf2c2790b9b
 {
     public static $prefixLengthsPsr4 = array (
-        'S' =>
+        'S' => 
         array (
             'Svg\\' => 4,
             'Sabberworm\\CSS\\' => 15,
         ),
-        'P' =>
+        'P' => 
         array (
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'M' =>
+        'M' => 
         array (
             'Mustache\\' => 9,
             'Masterminds\\' => 12,
         ),
-        'F' =>
+        'F' => 
         array (
             'FontLib\\' => 8,
         ),
-        'D' =>
+        'D' => 
         array (
             'Dompdf\\' => 7,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Svg\\' =>
+        'Svg\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
         ),
-        'Sabberworm\\CSS\\' =>
+        'Sabberworm\\CSS\\' => 
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
         ),
-        'PHPMailer\\PHPMailer\\' =>
+        'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'Mustache\\' =>
+        'Mustache\\' => 
         array (
             0 => __DIR__ . '/..' . '/mustache/mustache/src',
         ),
-        'Masterminds\\' =>
+        'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
         ),
-        'FontLib\\' =>
+        'FontLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-font-lib/src/FontLib',
         ),
-        'Dompdf\\' =>
+        'Dompdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
         ),

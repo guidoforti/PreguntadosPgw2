@@ -57,30 +57,16 @@ const soundManager = {
 
     play(name) {
         const s = this.sounds[name];
-        if (!s) {
-            console.warn("[soundManager] No existe sonido:", name);
-            return;
-        }
-
-        if (!s.playing()) {
-            console.log("[soundManager] Reproduciendo sonido:", name);
-            s.play();
-        } else {
-            console.log("[soundManager] Sonido ya estaba sonando:", name);
-        }
+        if (!s) return;
+        if (s.loop() && s.playing()) return;
+        s.play();
     },
 
     stop(name) {
         const s = this.sounds[name];
-        if (!s) return;
-
-        if (s.playing()) {
-            console.log("[soundManager] Deteniendo sonido:", name);
+        if (s && s.playing()) {
             s.fade(s.volume(), 0, 500);
-            s.once('fade', function(){
-                s.stop();
-                console.log("[soundManager] Sonido parado:", name);
-            });
+            s.once('fade', function(){ s.stop(); s.volume(0.6); });
         }
     }
 };
@@ -88,28 +74,30 @@ const soundManager = {
 document.addEventListener('DOMContentLoaded', () => {
     const muteBtn = document.getElementById('btn-mute');
     const muteIcon = document.getElementById('icon-mute');
-
     const isMuted = localStorage.getItem('musicMuted') === 'true';
-    Howler.mute(isMuted);
+    if (typeof Howler !== 'undefined') {
+        Howler.mute(isMuted);
+    }
     updateMuteIcon(isMuted);
-
     if (muteBtn) {
-        muteBtn.addEventListener('click' , (e) => {
+        muteBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const currentMuteState = !Howler._muted;
-            Howler.mute(currentMuteState);
-            localStorage.setItem('musicMuted', currentMuteState);
-            updateMuteIcon(currentMuteState);
+            const newMuteState = !Howler._muted;
+            Howler.mute(newMuteState);
+            localStorage.setItem('musicMuted', newMuteState); // Guardamos para el futuro
+            updateMuteIcon(newMuteState);
         });
     }
 
-    function updateMuteIcon (muted){
+    function updateMuteIcon(muted) {
         if (!muteIcon) return;
         if (muted) {
-            muteIcon.className = 'fas fa-volume-mute';
+            muteIcon.classList.remove('fa-volume-up');
+            muteIcon.classList.add('fa-volume-mute');
             muteIcon.style.opacity = "0.5";
         } else {
-            muteIcon.className = 'fas fa-volume-up';
+            muteIcon.classList.remove('fa-volume-mute');
+            muteIcon.classList.add('fa-volume-up');
             muteIcon.style.opacity = "1";
         }
     }
