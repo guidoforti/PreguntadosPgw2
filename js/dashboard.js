@@ -84,6 +84,7 @@ function cargarEstadisticasGenerales(filtro) {
     .then((datos) => {
       if (datos.error) {
         console.error("Error en API:", datos.error);
+        if (typeof soundManager !== 'undefined') {soundManager.play('alert')};
         Swal.fire("Error", "Error en la API: " + datos.error, "error");
         return;
       }
@@ -100,6 +101,7 @@ function cargarEstadisticasGenerales(filtro) {
     })
     .catch((error) => {
       console.error("Error al cargar estadísticas:", error);
+      if (typeof soundManager !== 'undefined') {soundManager.play('alert')};
       Swal.fire(
         "Error",
         "No se pudieron cargar las estadísticas: " + error.message,
@@ -321,6 +323,10 @@ function descargarPDF() {
   // Actualizar campo oculto con el filtro actual
   document.getElementById("filtroPDF").value = filtroActual;
 
+  if (typeof soundManager !== 'undefined'){
+      soundManager.play('alert');
+  }
+
   // Mostrar mensaje de confirmación
   Swal.fire({
     title: "Descargar PDF",
@@ -332,6 +338,7 @@ function descargarPDF() {
   }).then((result) => {
     if (result.isConfirmed) {
       document.getElementById("formPDF").submit();
+      if (typeof soundManager !== 'undefined') {soundManager.play('alert')};
       Swal.fire("Éxito", "El PDF se está descargando...", "success");
     }
   });

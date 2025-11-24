@@ -183,21 +183,27 @@
     let seFueDeLaPestana = false;
 
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
+        const formActual = document.getElementById('pregunta-form');
+        if (!formActual) return;
+
+        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && !respondido){
             seFueDeLaPestana = true;
             clearInterval(intervalo);
-            intervalo = null;
-
+            bloquearOpciones();
+            if(typeof soundManager !== 'undefined') {
+                soundManager.play('alert');
+            }
             Swal.fire({
                 title: '¡Tramposo!',
-                text: "Cambiaste de pestaña. Esta pregunta se marcará como incorrecta.",
+                text: "Cambiaste de pestaña. Se acabó el tiempo para esta pregunta.",
                 icon: 'warning',
-                confirmButtonText: 'Entendido',
+                confirmButtonText: 'Aceptar derrota',
                 allowOutsideClick: false,
                 allowEscapeKey: false
-            }).then(() => {
-                bloquearOpciones();
-                formElement.submit();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    procesarRespuesta();
+                }
             });
         }
     });

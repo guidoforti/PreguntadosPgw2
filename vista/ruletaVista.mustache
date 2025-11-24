@@ -140,6 +140,7 @@
 
             if (mensajePenalizacion.length > 0) {
                 setTimeout(() => {
+                    if (typeof soundManager !== 'undefined') {soundManager.play('alert')};
                     Swal.fire({
                         title: '¡Partida Abandonada!',
                         text: mensajePenalizacion,

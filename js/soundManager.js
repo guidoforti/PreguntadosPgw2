@@ -84,3 +84,33 @@ const soundManager = {
         }
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const muteBtn = document.getElementById('btn-mute');
+    const muteIcon = document.getElementById('icon-mute');
+
+    const isMuted = localStorage.getItem('musicMuted') === 'true';
+    Howler.mute(isMuted);
+    updateMuteIcon(isMuted);
+
+    if (muteBtn) {
+        muteBtn.addEventListener('click' , (e) => {
+            e.preventDefault();
+            const currentMuteState = !Howler._muted;
+            Howler.mute(currentMuteState);
+            localStorage.setItem('musicMuted', currentMuteState);
+            updateMuteIcon(currentMuteState);
+        });
+    }
+
+    function updateMuteIcon (muted){
+        if (!muteIcon) return;
+        if (muted) {
+            muteIcon.className = 'fas fa-volume-mute';
+            muteIcon.style.opacity = "0.5";
+        } else {
+            muteIcon.className = 'fas fa-volume-up';
+            muteIcon.style.opacity = "1";
+        }
+    }
+});
