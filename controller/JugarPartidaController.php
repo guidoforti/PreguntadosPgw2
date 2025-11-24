@@ -133,6 +133,26 @@ class JugarPartidaController
         unset($_SESSION['pregunta_start_time']);
 
         $index_nuevo = $_SESSION['pregunta_actual_index'];
+        $nextUrl = '';
+        if($index_nuevo >= 10) {
+            $nextUrl = '/jugarPartida/finalizar';
+        } else if ($index_nuevo % 2 == 0) {
+            $nextUrl = '/jugarPartida/mostrarRuleta';
+        } else {
+            $nextUrl = '/jugarPartida/mostrarPregunta';
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok', 'next_url' => $nextUrl]);
+            exit;
+        }
+
+        header("Location: " . $nextUrl);
+        exit;
+
+        /*
+        $index_nuevo = $_SESSION['pregunta_actual_index'];
         if ($index_nuevo >= 10) {
             header("Location: /jugarPartida/finalizar");
         } else if ($index_nuevo % 2 == 0) {
@@ -141,6 +161,7 @@ class JugarPartidaController
             header("Location: /jugarPartida/mostrarPregunta");
         }
         exit;
+        */
     }
 
     public function finalizar()
@@ -282,6 +303,12 @@ class JugarPartidaController
         );
 
         $_SESSION['preguntas_partida'] = array_merge($_SESSION['preguntas_partida'], $ids_nuevas_preguntas);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok']);
+            exit;
+        }
 
         header("Location: /jugarPartida/mostrarPregunta");
         exit;

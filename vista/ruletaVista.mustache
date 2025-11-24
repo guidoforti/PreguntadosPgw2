@@ -39,107 +39,117 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel@2.8.0/Winwheel.min.js"></script>
-
 <script>
-    const categoriasJSON = '{{{ categorias_json }}}';
-    const categorias = JSON.parse(categoriasJSON);
+    {
+        const categoriasJSON = '{{{ categorias_json }}}';
+        const categorias = JSON.parse(categoriasJSON);
 
-    let segmentos = categorias.map(cat => {
-        return {
-            'id': cat.categoria_id,
-            'fillStyle': cat.color_hex,
-            'text': cat.nombre
-        };
-    });
-
-    console.log(segmentos);
-
-    function ruletaTermino(segmentoElegido) {
-        Swal.fire({
-            title: 'Categoría: ' + segmentoElegido.text,
-            text: 'Las próximas 2 preguntas serán de esta categoría.',
-            icon: 'info',
-            confirmButtonText: '¡Vamos!'
-        }).then(() => {
-            document.getElementById('formRuleta').submit();
+        let segmentos = categorias.map(cat => {
+            return {
+                'id': cat.categoria_id,
+                'fillStyle': cat.color_hex,
+                'text': cat.nombre
+            };
         });
-    }
 
-    let ruleta = new Winwheel({
-        'canvasId'      :   'miRuleta',
-        'pointerAngle'  :   0,
-        'numSegments'   :   segmentos.length,
-        'outerRadius'   :   212,
-        'textFontSize'  :   16,
-        'segments'      :   segmentos,
-        'animation'     :
-                        {
-                            'type'              :   'spinToStop',
-                            'duration'          :   5,
-                            'spins'             :   3,
-                            'callbackFinished'  :   ruletaTermino
-                        }
-    });
+        console.log(segmentos);
 
-    const botonGirar = document.getElementById('botonGirar');
-    let girando = false;
-
-    botonGirar.addEventListener('click', () => {
-        if (!girando){
-            girando = true;
-            botonGirar.innerText = 'Girando...';
-            botonGirar.disabled = true;
-            //llamamos al back, para obtener la categoria, la categoria la decide el back, no la ruleta.
-            fetch('/jugarPartida/obtenerCategoriaParaGiro', { method: 'POST' })
-                .then(r => r.json())
-                .then(categoria => {
-                    if (categoria.error) throw new Error(categoria.error);
-
-                    // encontramos el indice con el id de categoria
-                    let segIndex = -1;
-                    for (let i = 1; i <= ruleta.numSegments; i++) {
-                        const s = ruleta.segments[i];
-                        if (s && s.id === categoria.categoria_id) {
-                            segIndex = i;
-                            break;
-                        }
-                    }
-                    if (segIndex === -1) {
-                        console.error('No se encontró el segmento para la categoría', categoria);
-                        ruleta.startAnimation();
-                        return;
-                    }
-
-                    // calculamos el angulo correcto dentro del segmento
-                    const stopAt = ruleta.getRandomForSegment(segIndex);
-                    ruleta.animation.stopAngle = stopAt;
-                    ruleta.startAnimation();
-                })
-                .catch(err => {
-                    console.error('Error al obtener categoría:', err);
-                    Swal.fire('Error', 'No se pudo obtener la categoría, intenta de nuevo.', 'error');
-                    girando = false;
-                    botonGirar.innerText = '¡GIRAR!';
-                    botonGirar.disabled = false;
-                });
-        }
-    });
-
-    const mensajePenalizacion = '{{mensaje_penalizacion}}';
-
-    if (mensajePenalizacion.length > 0) {
-        setTimeout(() => {
+        function ruletaTermino(segmentoElegido) {
             Swal.fire({
-                title: '¡Partida Abandonada!',
-                text: mensajePenalizacion,
-                icon: 'error',
-                confirmButtonText: 'Continuar',
-                allowOutsideClick: false,
-                allowEscapeKey: false
+                title: 'Categoría: ' + segmentoElegido.text,
+                text: 'Las próximas 2 preguntas serán de esta categoría.',
+                icon: 'info',
+                confirmButtonText: '¡Vamos!'
+            }).then(() => {
+                fetch('/jugarPartida/guardarCategoria', {
+                    method: 'POST'
+                })
+                        .then(response => {
+                            loadView('/jugarPartida/mostrarPregunta');
+                        })
+                        .catch(error => {
+                            console.error("Error al avanzar:", error);
+                            window.location.href = 'jugarPartida/mostrarPregunta';
+                        });
             });
+        }
+
+        setTimeout(() => {
+            let miRuletaLocal = new Winwheel({
+                'canvasId': 'miRuleta',
+                'pointerAngle': 0,
+                'numSegments': segmentos.length,
+                'outerRadius': 212,
+                'textFontSize': 16,
+                'segments': segmentos,
+                'animation':
+                        {
+                            'type': 'spinToStop',
+                            'duration': 9,
+                            'spins': 6,
+                            'callbackFinished': ruletaTermino
+                        }
+            });
+
+            const botonGirar = document.getElementById('botonGirar');
+            let girando = false;
+
+            botonGirar.addEventListener('click', () => {
+                if (!girando) {
+                    soundManager.play('wheel');
+                    girando = true;
+                    botonGirar.innerText = 'Girando...';
+                    botonGirar.disabled = true;
+                    //llamamos al back, para obtener la categoria, la categoria la decide el back, no la ruleta.
+                    fetch('/jugarPartida/obtenerCategoriaParaGiro', {method: 'POST'})
+                            .then(r => r.json())
+                            .then(categoria => {
+                                if (categoria.error) throw new Error(categoria.error);
+
+                                // encontramos el indice con el id de categoria
+                                let segIndex = -1;
+                                for (let i = 1; i <= miRuletaLocal.numSegments; i++) {
+                                    const s = miRuletaLocal.segments[i];
+                                    if (s && s.id === categoria.categoria_id) {
+                                        segIndex = i;
+                                        break;
+                                    }
+                                }
+                                if (segIndex === -1) {
+                                    console.error('No se encontró el segmento para la categoría', categoria);
+                                    miRuletaLocal.startAnimation();
+                                    return;
+                                }
+
+                                // calculamos el angulo correcto dentro del segmento
+                                const stopAt = miRuletaLocal.getRandomForSegment(segIndex);
+                                miRuletaLocal.animation.stopAngle = stopAt;
+                                miRuletaLocal.startAnimation();
+                            })
+                            .catch(err => {
+                                console.error('Error al obtener categoría:', err);
+                                Swal.fire('Error', 'No se pudo obtener la categoría, intenta de nuevo.', 'error');
+                                girando = false;
+                                botonGirar.innerText = '¡GIRAR!';
+                                botonGirar.disabled = false;
+                            });
+                }
+            });
+
+            const mensajePenalizacion = '{{mensaje_penalizacion}}';
+
+            if (mensajePenalizacion.length > 0) {
+                setTimeout(() => {
+                    Swal.fire({
+                        title: '¡Partida Abandonada!',
+                        text: mensajePenalizacion,
+                        icon: 'error',
+                        confirmButtonText: 'Continuar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                }, 300);
+            }
         }, 100);
     }
 </script>

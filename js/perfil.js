@@ -3,6 +3,7 @@
  * Maneja el mapa de ubicación del usuario
  */
 
+
 document.addEventListener('DOMContentLoaded', function() {
     // Obtener datos del mapa desde los atributos data
     const mapElement = document.getElementById('map');
