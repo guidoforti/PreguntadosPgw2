@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-4 text-end">
                             <button type="button" class="btn btn-success" id="btnDescargarPDF">
-                                <i class="bi bi-file-pdf"></i> Descargar PDF
+                                <i class="bi bi-file-pdf no-ajax-load"></i> Descargar PDF
                             </button>
                             <button type="button" class="btn btn-secondary" id="btnImprimir">
                                 <i class="bi bi-printer"></i> Imprimir
@@ -51,7 +51,6 @@
         </div>
     </div>
 
-    <!-- Estadísticas Generales -->
     <div class="row mb-4" id="estadisticasContainer">
         <div class="col-md-4 mb-3">
             <div class="card text-center border-light shadow-sm">
@@ -95,9 +94,7 @@
         </div>
     </div>
 
-    <!-- Gráficos -->
     <div class="row">
-        <!-- Usuarios por País -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
@@ -114,7 +111,6 @@
             </div>
         </div>
 
-        <!-- Usuarios por Sexo -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
@@ -131,7 +127,6 @@
             </div>
         </div>
 
-        <!-- Usuarios por Grupo de Edad -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
@@ -148,7 +143,6 @@
             </div>
         </div>
 
-        <!-- Porcentaje de Respuestas Correctas -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
@@ -173,7 +167,6 @@
         </div>
     </div>
 
-    <!-- Tabla de Usuarios por País (para impresión) -->
     <div class="row mt-5 no-screen" id="tablaImpresion">
         <div class="col-12">
             <h4 class="mb-3">Tabla Detallada: Usuarios por País</h4>
@@ -191,7 +184,6 @@
         </div>
     </div>
 
-    <!-- Tabla de Usuarios por Sexo (para impresión) -->
     <div class="row mt-4 no-screen">
         <div class="col-12">
             <h4 class="mb-3">Tabla Detallada: Usuarios por Sexo</h4>
@@ -209,7 +201,6 @@
         </div>
     </div>
 
-    <!-- Tabla de Usuarios por Grupo de Edad (para impresión) -->
     <div class="row mt-4 no-screen">
         <div class="col-12">
             <h4 class="mb-3">Tabla Detallada: Usuarios por Grupo de Edad</h4>
@@ -227,16 +218,13 @@
         </div>
     </div>
 </div>
-
-<!-- Formulario oculto para PDF -->
 <form id="formPDF" method="POST" action="/admin/generarPDF" style="display: none;">
     <input type="hidden" id="filtroPDF" name="filtro" value="mes">
 </form>
 
-<!-- Google Charts Library -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<!-- JavaScript del Dashboard -->
+
 <script src="/js/dashboard.js"></script>
 
 <style>

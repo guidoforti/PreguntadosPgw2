@@ -6,7 +6,6 @@
                     <h4 class="mb-0">Editar Perfil</h4>
                 </div>
                 <div class="card-body">
-                    <!-- Mensajes de éxito o error -->
                     {{#exito}}
                         <div class="alert alert-success text-center">{{exito}}</div>
                     {{/exito}}
@@ -16,21 +15,19 @@
                     {{/error}}
 
                     <form id="formEditar" action="/perfil/actualizar" method="POST" enctype="multipart/form-data">
-                        <!-- Nombre Completo -->
+
                         <div class="mb-3">
                             <label for="nombreCompleto" class="form-label">Nombre Completo</label>
                             <input type="text" class="form-control" id="nombreCompleto" name="nombreCompleto" required
                                    minlength="3" maxlength="100" value="{{usuario.nombre_completo}}">
                         </div>
 
-                        <!-- Año de Nacimiento -->
                         <div class="mb-3">
                             <label for="anioNacimiento" class="form-label">Año de Nacimiento</label>
                             <input type="number" class="form-control" id="anioNacimiento" name="anioNacimiento"
                                     max="{{anioActual}}" value="{{usuario.ano_nacimiento}}">
                         </div>
 
-                        <!-- Sexo -->
                         <div class="mb-3">
                             <label class="form-label">Sexo</label>
                             <div class="form-check">
@@ -50,14 +47,12 @@
                             </div>
                         </div>
 
-                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
                             <input type="email" class="form-control" id="email" name="email" required
                                    value="{{usuario.email}}">
                         </div>
 
-                        <!-- Nombre de Usuario -->
                         <div class="mb-3">
                             <label for="nombreUsuario" class="form-label">Nombre de Usuario</label>
                             <input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" required
@@ -65,7 +60,6 @@
                             <div class="form-text">Solo letras, números y guiones bajos</div>
                         </div>
 
-                        <!-- Contraseña (Opcional) -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña (Dejar en blanco para no cambiar)</label>
                             <input type="password" class="form-control" id="password" name="password"
@@ -73,14 +67,11 @@
                             <div class="form-text">Mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número</div>
                         </div>
 
-                        <!-- Confirmar Contraseña (Opcional) -->
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
                             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
                             <div id="passwordMatch" class="invalid-feedback">Las contraseñas no coinciden</div>
                         </div>
-
-                        <!-- Foto de Perfil -->
                         <div class="mb-4">
                             <label for="fotoPerfil" class="form-label">Foto de Perfil (opcional)</label>
                             <input class="form-control" type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
@@ -93,7 +84,6 @@
                             {{/usuario.url_foto_perfil}}
                         </div>
 
-                        <!-- Selección de Ubicación -->
                         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
                         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
                         <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />

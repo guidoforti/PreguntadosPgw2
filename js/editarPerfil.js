@@ -1,14 +1,8 @@
-/**
- * Script para la vista de edición de perfil
- * Maneja validación de contraseña y mapa de ubicación
- */
-
 const password = document.getElementById('password');
 const confirmPassword = document.getElementById('confirmPassword');
 const form = document.getElementById('formEditar');
 
 function validatePassword() {
-    // Solo validar si al menos uno de los campos de contraseña tiene valor
     if (password.value === '' && confirmPassword.value === '') {
         confirmPassword.setCustomValidity('');
         confirmPassword.classList.remove('is-invalid');
@@ -75,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .addTo(map);
 
-    // Si hay ubicación actual, intentar mostrarla en el mapa
     const paisActual = document.getElementById('pais').value;
     const provinciaActual = document.getElementById('provincia').value;
     const ciudadActual = document.getElementById('ciudad').value;

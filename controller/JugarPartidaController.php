@@ -133,14 +133,24 @@ class JugarPartidaController
         unset($_SESSION['pregunta_start_time']);
 
         $index_nuevo = $_SESSION['pregunta_actual_index'];
-        if ($index_nuevo >= 10) {
-            header("Location: /jugarPartida/finalizar");
+        $nextUrl = '';
+        if($index_nuevo >= 10) {
+            $nextUrl = '/jugarPartida/finalizar';
         } else if ($index_nuevo % 2 == 0) {
-            header("Location: /jugarPartida/mostrarRuleta");
+            $nextUrl = '/jugarPartida/mostrarRuleta';
         } else {
-            header("Location: /jugarPartida/mostrarPregunta");
+            $nextUrl = '/jugarPartida/mostrarPregunta';
         }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok', 'next_url' => $nextUrl]);
+            exit;
+        }
+
+        header("Location: " . $nextUrl);
         exit;
+
     }
 
     public function finalizar()
@@ -194,12 +204,6 @@ class JugarPartidaController
             header("Location: /jugarPartida/iniciarPartida");
             exit;
         }
-
-        //esta variable se setea la primera vez que tocamos girar
-        //el tocar girar dispara que el back obtenga la categoria que va a renderizar luego la ruleta en el front
-        //osea que el back ya sabe que categoria toca, la ruleta solo lo que hace es mostrarlo.
-        //girar entonces, dispara el metodo obtener categoria para giro y ya setea esta var de sesion, entonces,
-        // si hacemos un F5 esto ya va a estar seteado , por lo que redirigimos idrecto a guardar categoria.
         if (isset($_SESSION['categoria_elegida_ruleta'])) {
             header("Location: /jugarPartida/guardarCategoria");
             exit;
@@ -282,6 +286,12 @@ class JugarPartidaController
         );
 
         $_SESSION['preguntas_partida'] = array_merge($_SESSION['preguntas_partida'], $ids_nuevas_preguntas);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok']);
+            exit;
+        }
 
         header("Location: /jugarPartida/mostrarPregunta");
         exit;

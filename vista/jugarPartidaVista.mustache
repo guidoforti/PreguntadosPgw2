@@ -65,6 +65,7 @@
 </div>
 
 <script>
+    {
     const timerElement = document.getElementById('timer');
     const formElement = document.getElementById('pregunta-form');
     let tiempoRestante = parseInt(timerElement.innerText);
@@ -93,9 +94,6 @@
 
         if (!respondido) {
             procesarRespuesta();
-
-        } else {
-            formElement.submit();
         }
     });
 
@@ -127,8 +125,15 @@
         const radios = document.querySelectorAll('input[name="respuesta_id_opcion"]');
         const radioSeleccionado = document.querySelector('input[name="respuesta_id_opcion"]:checked');
 
-        let idSeleccionada = radioSeleccionado ? radioSeleccionado.id : null;
         let idCorrectaDOM = `opcion-${idCorrecta}`;
+
+        let valorSeleccionado = radioSeleccionado ? parseInt(radioSeleccionado.value) : null;
+
+        if (valorSeleccionado === parseInt(idCorrecta)) {
+            soundManager.play('correctAnswer');
+        } else {
+            soundManager.play('incorrectAnswer');
+        }
 
         radios.forEach(radio => {
             const label = radio.nextElementSibling;
@@ -139,17 +144,32 @@
         });
 
         if (radioSeleccionado) {
-            if (idSeleccionada !== idCorrectaDOM) {
+            if (radioSeleccionado.id !== idCorrectaDOM) {
                 const labelSeleccionada = radioSeleccionado.nextElementSibling;
                 labelSeleccionada.classList.remove('btn-outline-primary');
                 labelSeleccionada.classList.add('btn-danger');
             }
         }
 
-        // Eliminamos el cambio de texto del botón
-        // y en su lugar hacemos que se envíe el formulario automáticamente después de 2 segundos
         setTimeout(() => {
-            formElement.submit();
+            const formData = new FormData(formElement);
+
+            fetch('/jugarPartida/responder', {
+                method: 'POST',
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.next_url) {
+                            loadView(data.next_url);
+                        } else {
+                            window.location.href = '/jugarPartida/mostrarPregunta';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al avanzar:", error);
+                        window.location.href = '/jugarPartida/mostrarPregunta';
+                    })
         }, 100);
     }
 
@@ -163,24 +183,31 @@
     let seFueDeLaPestana = false;
 
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
+        const formActual = document.getElementById('pregunta-form');
+        if (!formActual) return;
+
+        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && !respondido){
             seFueDeLaPestana = true;
             clearInterval(intervalo);
-            intervalo = null;
-
+            bloquearOpciones();
+            if(typeof soundManager !== 'undefined') {
+                soundManager.play('alert');
+            }
             Swal.fire({
                 title: '¡Tramposo!',
-                text: "Cambiaste de pestaña. Esta pregunta se marcará como incorrecta.",
+                text: "Cambiaste de pestaña. Se acabó el tiempo para esta pregunta.",
                 icon: 'warning',
-                confirmButtonText: 'Entendido',
+                confirmButtonText: 'Aceptar derrota',
                 allowOutsideClick: false,
                 allowEscapeKey: false
-            }).then(() => {
-                bloquearOpciones();
-                formElement.submit();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    procesarRespuesta();
+                }
             });
         }
     });
+    }
 </script>
 
 

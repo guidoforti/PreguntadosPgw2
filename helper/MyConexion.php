@@ -17,11 +17,9 @@ class MyConexion
         $result = $this->conexion->query($sql);
 
         if ($result === false) {
-            // Error en la consulta
             return ['error' => $this->conexion->error];
         }
 
-        // Si es un SELECT
         if ($result instanceof mysqli_result) {
             if ($result->num_rows > 0) {
                 return $result->fetch_all(MYSQLI_ASSOC);
@@ -53,7 +51,7 @@ class MyConexion
         if ($resultado) {
             $data = $resultado->fetch_all(MYSQLI_ASSOC);
         } else {
-            $data = $success; // Devuelve true/false para INSERT/UPDATE/DELETE
+            $data = $success;
         }
         $stmt->close();
         return $data;

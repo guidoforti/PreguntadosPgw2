@@ -3,21 +3,15 @@
 class PreguntasModel
 {
     private $conexion;
-    private $archivoLogCron = __DIR__ . '/../scripts/ultima_ejecucion.txt';
 
     public function __construct($conexion)
     {
         $this->conexion = $conexion;
     }
 
-
-    /**
-     * Inserta la pregunta y sus 4 opciones de respuesta.
-     */
     public function sugerirPregunta($textoPregunta, $categoriaId, $opciones, $respuestaCorrectaIndex, $usuarioId)
     {
 
-        // 1. Insertar la pregunta (estado = 'pendiente')
         $sqlPregunta = "INSERT INTO preguntas (categoria_id, texto_pregunta, estado, creada_por_usuario_id, fecha_creacion) VALUES (?, ?, 'pendiente', ?, NOW())";
         $tiposPregunta = 'isi'; // integer, string, integer
         $paramsPregunta = [$categoriaId, $textoPregunta, $usuarioId];
@@ -28,10 +22,9 @@ class PreguntasModel
             return ['error' => 'Falló la inserción de la pregunta principal.'];
         }
 
-        // 2. Obtener el ID de la pregunta insertada (Asumimos $this->conexion->conexion es la instancia mysqli)
+
         $preguntaId = $this->conexion->getInsertId();
 
-        // 3. Insertar las 4 opciones de respuesta
         $sqlRespuesta = "INSERT INTO respuestas (pregunta_id, texto_respuesta, es_correcta) VALUES (?, ?, ?)";
 
         foreach ($opciones as $index => $textoRespuesta) {
@@ -49,67 +42,24 @@ class PreguntasModel
         return ['success' => 'Sugerencia enviada y respuestas guardadas.'];
     }
 
-
-    /* funcion destinada a ejecutar un scripts
-   que corre una tarea como si fuese un job
-   */
-    /*    public function debeEjecutarseElCronManual($segundosDeExpiracion = 3600)
-        {
-
-            if (!file_exists($this->archivoLogCron)) {
-                // si nunca corrio, lo corremos.
-                return true;
-            }
-            // si ya se ejecuto, del txt obtengo hace cuantos tiempo
-            $ultimaEjecucion = (int)file_get_contents($this->archivoLogCron);
-            //obtengo el tiempo actual
-            $ahora = time();
-            //retorno true o false si pasaron mas de 3600 segundos ( 1 hora )
-            return ($ahora - $ultimaEjecucion) > $segundosDeExpiracion;
-        }*/
-    /*  public function marcarRecalculoComoEjecutado()
-      {
-          //escribimos el time en donde se ejecuto por ultima vez el archivo
-          //el lock ex nos bloquea el archivo para que no se ejecute
-          $directorio = dirname($this->archivoLogCron);
-          if (!is_dir($directorio)) {
-              mkdir($directorio, 0777, true);
-          }
-          file_put_contents($this->archivoLogCron, time(), LOCK_EX);
-      }*/
-
     public function recalcularDificultadDePreguntasDePartida($listaDeIds)
     {
-        //  $this->marcarRecalculoComoEjecutado();
-
-        /*constantes para falsear preguntas nunca respuestas (evita que una pregunta que nunca se contesto)
-        al ser contestada mal o bien por primera vez , tenga una dificultad del 100 o  0 %
-        */
         $TOTAL_PARA_PONDERAR = 10;
         $TOTAL_CORRECTA_PARA_PONDERAR = 5;
 
-        // Normalizar: quitar no numéricos, únicos y forzar enteros
         $listaDeIds = array_values(array_unique(array_filter($listaDeIds, 'is_numeric')));
         $listaDeIds = array_map('intval', $listaDeIds);
-        // Construir IN (...) seguro porque todos los items ya son enteros
         $in = implode(',', $listaDeIds);
 
-        // Obtener totales solo para los ids solicitados
         $sqlTotales = "SELECT pregunta_id, SUM(fue_correcta) AS respuestas_correctas, COUNT(*) AS respuestas_totales
                    FROM respuestas_usuario
                    WHERE pregunta_id IN ($in)
                    GROUP BY pregunta_id";
 
         $totales = $this->conexion->query($sqlTotales);
-        /* ejemplo de respuesta , basicamente agrupámos las preguntas por su id, vemos la cantidad total de respuestas y cantidad de aciertos
-        [ 'pregunta_id' => 1, 'respuestas_correctas' => 90, 'respuestas_totales' => 150 ],
-        [ 'pregunta_id' => 2, 'respuestas_correctas' => 30, 'respuestas_totales' => 40 ],
-        [ 'pregunta_id' => 3, 'respuestas_correctas' => 5,  'respuestas_totales' => 110 ]
-         * */
 
         $sqlUpdate = "UPDATE preguntas SET dificultad = ? WHERE pregunta_id = ?";
         $contador = 0;
-        // Validar que $totales no sea null antes de hacer foreach
         if ($totales !== null && is_array($totales)) {
             foreach ($totales as $linea) {
                 $preguntaId = $linea['pregunta_id'];
@@ -143,7 +93,25 @@ class PreguntasModel
                 LEFT JOIN usuarios u ON p.creada_por_usuario_id = u.usuario_id
                 WHERE p.estado = 'pendiente'";
 
-        return $this->conexion->preparedQuery($sql);
+        $preguntas = $this->conexion->preparedQuery($sql);
+        if (empty($preguntas)) {
+            return [];
+        }
+        $resultadoFinal = [];
+
+        foreach ($preguntas as $pregunta) {
+            $idPregunta = $pregunta['pregunta_id'];
+            $sqlRespuestas = "SELECT texto_respuesta, es_correcta 
+                              FROM respuestas 
+                              WHERE pregunta_id = ?";
+
+            $respuestas = $this->conexion->preparedQuery($sqlRespuestas, 'i', [$idPregunta]);
+            $pregunta['respuestas'] = $respuestas;
+
+            $resultadoFinal[] = $pregunta;
+        }
+
+        return $resultadoFinal;
     }
 
     public function getReportesPendientes()

@@ -53,11 +53,9 @@ class PerfilController
             $usuario['pais_nombre']
         ]));
 
-        // Calcular edad
         $anioActual = date('Y');
         $edad = $anioActual - $usuario['ano_nacimiento'];
 
-        // Mapear sexo a texto legible
         $sexoMap = [
             'M' => 'Masculino',
             'F' => 'Femenino',
@@ -71,7 +69,6 @@ class PerfilController
 
         $qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($profile_url);
 
-        // Verificar si es el perfil del usuario logueado
         $esMiPerfil = ($_SESSION['usuario_id'] ?? null) === $usuario_id;
 
         $data = [
@@ -103,7 +100,6 @@ class PerfilController
     {
         SecurityHelper::checkRole(['usuario', 'editor', 'admin']);
 
-        // Solo permite editar el propio perfil
         $usuario_id = $_SESSION['usuario_id'] ?? null;
 
         if (!$usuario_id) {
@@ -111,7 +107,6 @@ class PerfilController
             exit;
         }
 
-        // Obtener datos actuales del usuario
         $usuario = $this->modelUsuarios->getUsuarioConUbicacion($usuario_id);
 
         if (!$usuario) {
@@ -119,7 +114,6 @@ class PerfilController
             exit;
         }
 
-        // Preparar datos para el formulario
         $data = [
             'usuario' => [
                 'usuario_id' => $usuario['usuario_id'],
@@ -141,7 +135,6 @@ class PerfilController
             'error' => null
         ];
 
-        // Mostrar mensajes flash si existen
         if (isset($_SESSION['flash_success'])) {
             $data['exito'] = $_SESSION['flash_success'];
             unset($_SESSION['flash_success']);
@@ -163,7 +156,6 @@ class PerfilController
             exit;
         }
 
-        // Solo permite editar el propio perfil
         $usuario_id = $_SESSION['usuario_id'] ?? null;
 
         if (!$usuario_id) {
@@ -171,7 +163,6 @@ class PerfilController
             exit;
         }
 
-        // Capturar datos del formulario
         $nombreCompleto   = $_POST['nombreCompleto'] ?? null;
         $anioNacimiento   = $_POST['anioNacimiento'] ?? null;
         $sexo             = $_POST['sexo'] ?? null;
@@ -184,7 +175,6 @@ class PerfilController
         $provinciaNombre  = $_POST['provinciaNombre'] ?? null;
         $ciudadNombre     = $_POST['ciudadNombre'] ?? null;
 
-        // Validar campos obligatorios
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario');
         foreach ($campos as $clave => $valor) {
             if (empty($valor)) {
@@ -194,7 +184,6 @@ class PerfilController
             }
         }
 
-        // Llamar al modelo para actualizar
         $resultado = $this->modelUsuarios->actualizarPerfil(
             $usuario_id,
             $nombreCompleto,

@@ -6,7 +6,6 @@
                     <h4 class="mb-0">Iniciar Sesión</h4>
                 </div>
                 <div class="card-body">
-                    <!-- Mensajes de éxito o error -->
                     {{#exito}}
                         <div class="alert alert-success text-center">{{exito}}</div>
                     {{/exito}}
@@ -14,7 +13,6 @@
                         <div class="alert alert-danger text-center">{{error}}</div>
                     {{/error}}
 
-                    <!-- Formulario de login -->
                     <form action="/login/login" method="POST">
                         <div class="mb-3">
                             <label for="usuario" class="form-label">Nombre de Usuario</label>
@@ -28,7 +26,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Ingresar</button>
-                            <a href="/registro/registrarForm" class="btn btn-outline-secondary">¿No tenés cuenta? Registrate</a>
+                            <a href="/registro/registrarForm" class="btn btn-outline-secondary no-ajax-load">¿No tenés cuenta? Registrate</a>
                         </div>
                     </form>
                 </div>

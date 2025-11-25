@@ -9,9 +9,6 @@ class AdminModel
         $this->conexion = $conexion;
     }
 
-    /**
-     * Obtiene el total de jugadores registrados
-     */
     public function obtenerTotalJugadores($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM usuarios WHERE rol = 'usuario'";
@@ -24,9 +21,6 @@ class AdminModel
         return ($resultado && is_array($resultado) && count($resultado) > 0) ? $resultado[0]['total'] : 0;
     }
 
-    /**
-     * Obtiene el total de partidas jugadas
-     */
     public function obtenerTotalPartidasJugadas($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM partidas_usuario WHERE estado IN ('finalizada', 'perdida')";
@@ -39,9 +33,6 @@ class AdminModel
         return ($resultado && is_array($resultado) && count($resultado) > 0) ? $resultado[0]['total'] : 0;
     }
 
-    /**
-     * Obtiene el total de preguntas activas en el juego
-     */
     public function obtenerTotalPreguntasEnJuego($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM preguntas WHERE estado = 'activa'";
@@ -54,9 +45,6 @@ class AdminModel
         return ($resultado && is_array($resultado) && count($resultado) > 0) ? $resultado[0]['total'] : 0;
     }
 
-    /**
-     * Obtiene el total de preguntas creadas
-     */
     public function obtenerTotalPreguntasCreadas($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM preguntas";
@@ -69,9 +57,7 @@ class AdminModel
         return ($resultado && is_array($resultado) && count($resultado) > 0) ? $resultado[0]['total'] : 0;
     }
 
-    /**
-     * Obtiene el total de usuarios nuevos en el período especificado
-     */
+
     public function obtenerUsuariosNuevos($filtroFecha = null)
     {
         $sql = "SELECT COUNT(*) as total FROM usuarios WHERE rol = 'usuario'";
@@ -84,9 +70,6 @@ class AdminModel
         return ($resultado && is_array($resultado) && count($resultado) > 0) ? $resultado[0]['total'] : 0;
     }
 
-    /**
-     * Obtiene el porcentaje de respuestas correctas por usuario
-     */
     public function obtenerPorcentajeRespuestasCorrectasPorUsuario($filtroFecha = null)
     {
         $sql = "SELECT
@@ -115,9 +98,6 @@ class AdminModel
         return is_array($resultado) ? $resultado : [];
     }
 
-    /**
-     * Obtiene el número de usuarios por país
-     */
     public function obtenerUsuariosPorPais($filtroFecha = null)
     {
         $sql = "SELECT
@@ -143,9 +123,6 @@ class AdminModel
         return is_array($resultado) ? $resultado : [];
     }
 
-    /**
-     * Obtiene el número de usuarios por sexo
-     */
     public function obtenerUsuariosPorSexo($filtroFecha = null)
     {
         $sql = "SELECT
@@ -168,10 +145,6 @@ class AdminModel
         return is_array($resultado) ? $resultado : [];
     }
 
-    /**
-     * Obtiene el número de usuarios por grupo de edad
-     * Menores: < 18, Medio: 18-64, Jubilados: 65+
-     */
     public function obtenerUsuariosPorGrupoEdad($filtroFecha = null)
     {
         $anioActual = date('Y');
@@ -207,9 +180,6 @@ class AdminModel
         return is_array($resultado) ? $resultado : [];
     }
 
-    /**
-     * Obtiene las estadísticas del dashboard (resumen general)
-     */
     public function obtenerEstadisticasGenerales($filtroFecha = null)
     {
         return [
@@ -220,11 +190,7 @@ class AdminModel
             'usuariosNuevos' => $this->obtenerUsuariosNuevos($filtroFecha),
         ];
     }
-
-    /**
-     * Aplica un filtro de fecha según el tipo especificado
-     * Tipos: 'dia', 'semana', 'mes', 'año'
-     */
+    
     private function aplicarFiltroFecha($campo, $tipoFiltro = null, $conAnd = true)
     {
         if (!$tipoFiltro) {
