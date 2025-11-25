@@ -65,6 +65,44 @@ class JugarPartidaController
         }
 
         $id_pregunta_actual = $lista_preguntas[$index_actual];
+
+        // el /responder setea esta variable, si se toca responder y apretas f5 volveria a mostrar preguinta
+        // en caso de que esta variable ya este seteada, le decimos que hizo trampa y vamos a la siguiente pregunta
+        if (isset($_SESSION['pregunta_ya_respondida'][$id_pregunta_actual]) && $_SESSION['pregunta_ya_respondida'][$id_pregunta_actual] === true) {
+            $partida_id = $_SESSION['partida_id'];
+            $usuario_id = $_SESSION['usuario_id'];
+
+
+            $start_time = $_SESSION['pregunta_start_time'] ?? 0;
+
+            // Procesar como respuesta vacía/incorrecta para registrar el evento (modelo debe manejar null)
+            $this->model->procesarRespuesta(
+                $partida_id,
+                $usuario_id,
+                $id_pregunta_actual,
+                null,
+                $start_time
+            );
+
+            // limpio la variable
+            unset($_SESSION['pregunta_ya_respondida'][$id_pregunta_actual]);
+            unset($_SESSION['pregunta_start_time']);
+            $_SESSION['pregunta_actual_index']++;
+
+            // cargo los datos para mostrar la trampa
+            $data_pregunta = $this->model->getPreguntaCompleta($id_pregunta_actual);
+            $data_pregunta['timer'] = 0;
+            $data_pregunta['mensaje_trampa'] = 'Has intentado recargar tras responder: pregunta marcada como incorrecta.';
+            $data_pregunta['preguntas_respondidas'] = $index_actual;
+            $data_pregunta['preguntas_mostradas'] = $index_actual + 1;
+            $data_pregunta['total_preguntas'] = 10;
+            $progreso_fraction = ($index_actual + 1) / 10;
+            $data_pregunta['porcentaje_progreso'] = (int)round($progreso_fraction * 100, 0);
+
+            $this->renderer->render("trampaTimerPartida", $data_pregunta);
+            exit;
+        }
+
         $data_pregunta = $this->model->getPreguntaCompleta($id_pregunta_actual);
 
         $tiempo_restante = 20;
@@ -117,6 +155,9 @@ class JugarPartidaController
             exit;
         }
 
+
+        $_SESSION['pregunta_ya_respondida'][$pregunta_id_respondida] = true;
+
         $fue_correcta = $this->model->procesarRespuesta(
             $partida_id,
             $usuario_id,
@@ -131,6 +172,8 @@ class JugarPartidaController
 
         $_SESSION['pregunta_actual_index']++;
         unset($_SESSION['pregunta_start_time']);
+        unset($_SESSION['respuesta_en_progreso']);
+        unset($_SESSION['pregunta_ya_respondida'][$pregunta_id_respondida]);
 
         $index_nuevo = $_SESSION['pregunta_actual_index'];
         $nextUrl = '';
@@ -194,6 +237,8 @@ class JugarPartidaController
         unset($_SESSION['puntaje_actual']);
         unset($_SESSION['pregunta_start_time']);
         unset($_SESSION['categoria_elegida_ruleta']);
+        unset($_SESSION['pregunta_ya_respondida']);
+        unset($_SESSION['respuesta_en_progreso']);
     }
 
     public function mostrarRuleta()
@@ -318,7 +363,24 @@ class JugarPartidaController
             exit;
         }
 
-        $pregunta_id = $_POST['pregunta_id'];
+        $pregunta_id = (int) $_POST['pregunta_id'];
+
+        // Validar que corresponde a la pregunta actual
+        $lista_preguntas = $_SESSION['preguntas_partida'] ?? [];
+        $index_actual = $_SESSION['pregunta_actual_index'] ?? 0;
+        if (!isset($lista_preguntas[$index_actual]) || (int)$lista_preguntas[$index_actual] !== $pregunta_id) {
+            http_response_code(409);
+            echo json_encode(['error' => 'Estado de pregunta inválido']);
+            exit;
+        }
+
+        // LOCKEO la pregunta , para setear que ya inicio la respuesta y no puedan tocar f5
+        $_SESSION['pregunta_ya_respondida'][$pregunta_id] = true;
+        $_SESSION['respuesta_en_progreso'] = [
+            'pregunta_id' => $pregunta_id,
+            'timestamp' => time()
+        ];
+
         $id_correcta = $this->model->getIdCorrecta($pregunta_id);
 
         header('Content-type: application/json');
