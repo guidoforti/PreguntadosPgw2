@@ -78,3 +78,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    {
+        console.log("[Resultado] Script de finalización iniciado.");
+
+        if (typeof soundManager !== 'undefined') {
+            soundManager.stop('question');
+            soundManager.stop('wheel');
+            soundManager.stop('correctAnswer');
+            soundManager.stop('incorrectAnswer');
+        }
+
+        const jugadorGano = {{#gano}}true{{/gano}}{{^gano}}false{{/gano}};
+        console.log("[Resultado] Ganó:", jugadorGano);
+
+        setTimeout(() => {
+            if (typeof soundManager !== 'undefined') {
+                console.log("[Resultado] Reproduciendo sonido final...");
+
+                if (jugadorGano) {
+                    soundManager.play('victoryGame');
+                } else {
+                    soundManager.play('loseGame');
+                }
+            } else {
+                console.error("[Resultado] soundManager no está definido.");
+            }
+        }, 200);
+    }
+</script>

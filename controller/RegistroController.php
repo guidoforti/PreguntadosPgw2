@@ -29,7 +29,8 @@ class RegistroController
         $data = [
             'exito' => null,
             'error' => null,
-            'anioActual' => date('Y')
+            'anioActual' => date('Y'),
+            'notLoggedIn' => true
         ];
 
         $this->render->render("registrar", $data);
@@ -41,13 +42,12 @@ class RegistroController
             $data = [
                 "error" => "Método no permitido.",
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
             return;
         }
-
-        // Capturar todos los datos del formulario
         $nombreCompleto   = $_POST['nombreCompleto'] ?? null;
         $anioNacimiento   = $_POST['anioNacimiento'] ?? null;
         $sexo             = $_POST['sexo'] ?? null;
@@ -60,21 +60,20 @@ class RegistroController
         $provinciaNombre  = $_POST['provinciaNombre'] ?? null;
         $ciudadNombre     = $_POST['ciudadNombre'] ?? null;
 
-        // Validar campos vacíos antes de pasar al modelo
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario', 'contraseniaUno', 'contraseniaDos');
         foreach ($campos as $clave => $valor) {
             if (empty($valor)) {
                 $data = [
                     "error" => "El campo '$clave' es obligatorio.",
                     "exito" => null,
-                    "anioActual" => date('Y')
+                    "anioActual" => date('Y'),
+                    "notLoggedIn" => true
                 ];
                 $this->render->render("registrar", $data);
                 return;
             }
         }
 
-        // Llamar al modelo para registrar
         $resultado = $this->model->registrar(
             $nombreCompleto,
             $anioNacimiento,
@@ -95,13 +94,13 @@ class RegistroController
             $data = [
                 "error" => $resultado['error'],
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
 
         } elseif (isset($resultado['token'])) {
 
-            // 3. ÉXITO: Envío del Email
             $token = $resultado['token'];
             $emailDestino = $email;
 
@@ -113,9 +112,9 @@ class RegistroController
             $cuerpoHTML = "Para activar tu cuenta, copia y pegá este link en tu navegador: $linkActivacion";
 
             if (Mailer::enviar($emailDestino, $asunto, $cuerpoHTML)) {
-                $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta (verifique su bandeja de spam si no encuentra el correo)."]);
+                $this->render->render("login", ["exito" => "Registro exitoso. Revisa tu email para activar tu cuenta (verifique su bandeja de spam si no encuentra el correo).", "notLoggedIn" => true]);
             } else {
-                $this->render->render("login", ["error" => "Registro exitoso, pero falló el envío del email de verificación."]);
+                $this->render->render("login", ["error" => "Registro exitoso, pero falló el envío del email de verificación.", "notLoggedIn" => true]);
             }
 
         }
@@ -124,7 +123,8 @@ class RegistroController
             $data = [
                 "error" => "Error desconocido al registrar el usuario.",
                 "exito" => null,
-                "anioActual" => date('Y')
+                "anioActual" => date('Y'),
+                "notLoggedIn" => true
             ];
             $this->render->render("registrar", $data);
         }

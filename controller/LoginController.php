@@ -22,31 +22,26 @@ class LoginController
             $this->redirectToIndex();
             return;
         }
-        $this->renderer->render("login");
+        $this->renderer->render("login", ["notLoggedIn" => true]);
     }
 
     public function login()
     {
-        // Tomar los datos del POST
         $usuario = $_POST["usuario"] ?? '';
         $password = $_POST["password"] ?? '';
 
-        // Validar campos vacíos
         if (empty($usuario) || empty($password)) {
-            $this->renderer->render("login", ["error" => "Debe completar todos los campos"]);
+            $this->renderer->render("login", ["error" => "Debe completar todos los campos", "notLoggedIn" => true]);
             return;
         }
 
-        // Llamar al modelo
         $resultado = $this->model->getUserWith($usuario, $password);
 
-        // Manejar errores del modelo
         if (isset($resultado['error'])) {
-            $this->renderer->render("login", ["error" => $resultado['error']]);
+            $this->renderer->render("login", ["error" => $resultado['error'], "notLoggedIn" => true]);
             return;
         }
 
-        // Login exitoso
         if (isset($resultado['success'])) {
             $_SESSION["usuario"] = $resultado['usuario']['nombre_usuario'];
             $_SESSION["rol"] = $resultado['usuario']['rol'];
@@ -54,8 +49,7 @@ class LoginController
             $this->redirectToIndex();
             return;
         }
-        // Caso fallback (no debería ocurrir)
-        $this->renderer->render("login", ["error" => "Error desconocido al iniciar sesión"]);
+        $this->renderer->render("login", ["error" => "Error desconocido al iniciar sesión", "notLoggedIn" => true]);
     }
 
 
@@ -74,7 +68,8 @@ class LoginController
 
     public function redirectToIndex()
     {
-        header("Location: /");
+        $paramAjax = isset($_GET['ajax']) ? '?ajax=true' : '';
+        header("Location: /" . $paramAjax);
         exit;
     }
 

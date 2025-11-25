@@ -14,12 +14,14 @@ class UsuarioModel
 
     public function registrar($nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $paisNombre, $provinciaNombre, $ciudadNombre)
     {
-        // Validaciones de datos lógicas
         if ($this->existeNombreUsuario($nombreUsuario)) {
             return ['error' => 'El nombre de usuario no está disponible'];
         }
         if (!$this->sonContraseniasIguales($contraseniaUno, $contraseniaDos)) {
             return ['error' => 'Las contraseñas no coinciden'];
+        }
+        if (!$this->esContraseniaValida($contraseniaUno)) {
+            return ['error' => 'La contraseña debe tener mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número'];
         }
         if (!$this->esEmailValido($email)) {
             return ['error' => 'El email no tiene un formato o dominio válido'];
@@ -31,7 +33,6 @@ class UsuarioModel
             return ['error' => 'El correo electrónico ya está registrado.'];
         }
 
-        // Validación y guardado de imagen
         $rutaBase = __DIR__ . "/../imagenes/usuario/";
         if (!is_dir($rutaBase)) {
             mkdir($rutaBase, 0777, true);
@@ -42,13 +43,11 @@ class UsuarioModel
             $tipoMime = mime_content_type($imagen['tmp_name']);
             $tamaño = $imagen['size'];
 
-            // Validar formato
             $formatosPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
             if (!in_array($tipoMime, $formatosPermitidos)) {
                 return ['error' => 'Formato de imagen no permitido (solo JPG, PNG o GIF)'];
             }
 
-            // Validar tamaño (máx 2 MB)
             if ($tamaño > 2 * 1024 * 1024) {
                 return ['error' => 'La imagen supera el tamaño máximo de 2MB'];
             }
@@ -57,12 +56,10 @@ class UsuarioModel
             $provinciaId = $this->obtenerOCrear('provincias', $provinciaNombre, ['pais_id' => $paisId]);
             $ciudadId = $this->obtenerOCrear('ciudades', $ciudadNombre, ['provincia_id' => $provinciaId]);
 
-            // Obtener extensión segura
             $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
             $fechaActual = new DateTime();
             $nombreSeguro = 'profile_' . $fechaActual->format('YmdHisv') . '.' . strtolower($ext);
 
-            // Construir rutas
             $rutaFinal = $rutaBase . $nombreSeguro;
             $rutaRelativa = "imagenes/usuario/" . $nombreSeguro;
 
@@ -71,11 +68,9 @@ class UsuarioModel
             }
         }
 
-        // Hash de contraseña
         $contrasenaHash = password_hash($contraseniaUno, PASSWORD_DEFAULT);
         $tokenVerificacion = bin2hex(random_bytes(16));
 
-        // Insert SQL
         $sql = "INSERT INTO usuarios (
             nombre_completo, nombre_usuario, email, contrasena_hash, ano_nacimiento, 
             sexo, ciudad_id, url_foto_perfil, rol, token_verificacion, esta_verificado
@@ -129,13 +124,11 @@ class UsuarioModel
                 return ['error' => 'ID de usuario no proporcionado'];
             }
 
-            // verifico si el usuario existe
             $usuarioActual = $this->getUsuarioById($id);
             if (!$usuarioActual) {
                 return ['error' => 'El usuario no existe'];
             }
 
-            // valido que el nombre de usuario no esté en uso por otro usuario
             if ($usuarioActual['nombre_usuario'] !== $nombreUsuario && $this->existeNombreUsuario($nombreUsuario)) {
                 return ['error' => 'El nombre de usuario no está disponible'];
             }
@@ -155,8 +148,7 @@ class UsuarioModel
                 return ['error' => 'El año de nacimiento no es válido'];
             }
 
-            // Procesar imagen si se proporcionó una nueva
-            $rutaRelativa = $usuarioActual['url_foto_perfil']; // Mantener la imagen actual por defecto
+            $rutaRelativa = $usuarioActual['url_foto_perfil'];
 
             if ($imagen && $imagen['error'] === UPLOAD_ERR_OK) {
 
@@ -189,7 +181,6 @@ class UsuarioModel
                     return ['error' => 'Error al guardar la imagen'];
                 }
 
-                // Si había una imagen anterior, la eliminamos
                 if (!empty($usuarioActual['url_foto_perfil'])) {
                     $rutaImagenAnterior = __DIR__ . '/../' . $usuarioActual['url_foto_perfil'];
                     if (file_exists($rutaImagenAnterior)) {
@@ -198,12 +189,10 @@ class UsuarioModel
                 }
             }
 
-            // hasheamos la contraseña si se proporcionó una nueva
             $contrasenaHash = !empty($contraseniaUno)
                 ? password_hash($contraseniaUno, PASSWORD_DEFAULT)
                 : $usuarioActual['contrasena_hash'];
 
-            // Actualizo en la base de datos con consulta preparada
             $sql = "UPDATE usuarios SET 
             nombre_completo = ?,
             nombre_usuario = ?,
@@ -239,19 +228,140 @@ class UsuarioModel
         }
     }
 
+    public function actualizarPerfil($id, $nombreCompleto, $anioNacimiento, $sexo, $email, $nombreUsuario, $contraseniaUno, $contraseniaDos, $imagen, $paisNombre, $provinciaNombre, $ciudadNombre)
+    {
+        try {
+            if (empty($id)) {
+                return ['error' => 'ID de usuario no proporcionado'];
+            }
+
+            $usuarioActual = $this->getUsuarioById($id);
+            if (!$usuarioActual) {
+                return ['error' => 'El usuario no existe'];
+            }
+
+            if ($usuarioActual['nombre_usuario'] !== $nombreUsuario && $this->existeNombreUsuario($nombreUsuario)) {
+                return ['error' => 'El nombre de usuario no está disponible'];
+            }
+
+            if (!empty($contraseniaUno) || !empty($contraseniaDos)) {
+                if (!$this->sonContraseniasIguales($contraseniaUno, $contraseniaDos)) {
+                    return ['error' => 'Las contraseñas no coinciden'];
+                }
+                if (!$this->esContraseniaValida($contraseniaUno)) {
+                    return ['error' => 'La contraseña debe tener mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número'];
+                }
+            }
+
+            if (!$this->esEmailValido($email)) {
+                return ['error' => 'El email no tiene un formato o dominio válido'];
+            }
+
+            if ($usuarioActual['email'] !== $email && $this->existeEmail($email)) {
+                return ['error' => 'El correo electrónico ya está registrado'];
+            }
+
+            if (!$this->esAnioNacimientoValido($anioNacimiento)) {
+                return ['error' => 'El año de nacimiento no es válido'];
+            }
+
+            $rutaRelativa = $usuarioActual['url_foto_perfil'];
+
+            if ($imagen && $imagen['error'] === UPLOAD_ERR_OK) {
+                $tipoMime = mime_content_type($imagen['tmp_name']);
+                $formatosPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+
+                if (!in_array($tipoMime, $formatosPermitidos)) {
+                    return ['error' => 'Formato de imagen no permitido (solo JPG, PNG o GIF)'];
+                }
+
+                if ($imagen['size'] > 2 * 1024 * 1024) {
+                    return ['error' => 'La imagen supera el tamaño máximo de 2MB'];
+                }
+
+                $rutaBase = __DIR__ . "/../imagenes/usuario/";
+                if (!is_dir($rutaBase)) {
+                    mkdir($rutaBase, 0777, true);
+                }
+
+                $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+                $fechaActual = new DateTime();
+                $nombreSeguro = 'profile_' . $fechaActual->format('YmdHisv') . '.' . strtolower($ext);
+                $rutaFinal = $rutaBase . $nombreSeguro;
+                $rutaRelativa = "imagenes/usuario/" . $nombreSeguro;
+
+                if (!move_uploaded_file($imagen['tmp_name'], $rutaFinal)) {
+                    return ['error' => 'Error al guardar la imagen'];
+                }
+
+                if (!empty($usuarioActual['url_foto_perfil'])) {
+                    $rutaImagenAnterior = __DIR__ . '/../' . $usuarioActual['url_foto_perfil'];
+                    if (file_exists($rutaImagenAnterior)) {
+                        @unlink($rutaImagenAnterior);
+                    }
+                }
+            }
+
+            $contrasenaHash = !empty($contraseniaUno)
+                ? password_hash($contraseniaUno, PASSWORD_DEFAULT)
+                : $usuarioActual['contrasena_hash'];
+
+            // Procesar ubicación
+            $ciudadId = $usuarioActual['ciudad_id'];
+            if (!empty($paisNombre) && !empty($provinciaNombre) && !empty($ciudadNombre)) {
+                $paisId = $this->obtenerOCrear('paises', $paisNombre);
+                $provinciaId = $this->obtenerOCrear('provincias', $provinciaNombre, ['pais_id' => $paisId]);
+                $ciudadId = $this->obtenerOCrear('ciudades', $ciudadNombre, ['provincia_id' => $provinciaId]);
+            }
+
+            $sql = "UPDATE usuarios SET
+            nombre_completo = ?,
+            nombre_usuario = ?,
+            email = ?,
+            contrasena_hash = ?,
+            ano_nacimiento = ?,
+            sexo = ?,
+            url_foto_perfil = ?,
+            ciudad_id = ?
+            WHERE usuario_id = ?";
+
+            $tipos = 'ssssissii';
+
+            $parametros = [
+                $nombreCompleto,
+                $nombreUsuario,
+                $email,
+                $contrasenaHash,
+                $anioNacimiento,
+                $sexo,
+                $rutaRelativa,
+                $ciudadId,
+                $id
+            ];
+
+            $resultado = $this->conexion->preparedQuery($sql, $tipos, $parametros);
+
+            if ($resultado === true) {
+                return ['success' => 'Perfil actualizado correctamente'];
+            } else {
+                return ['error' => 'Error al actualizar el perfil'];
+            }
+        } catch (Exception $e) {
+            error_log("Error en actualizarPerfil: " . $e->getMessage());
+            return ['error' => 'Ocurrió un error al actualizar el perfil'];
+        }
+    }
+
     public function modificarRanking($id, $puntos)
     {
         try {
-            // Le decimos a mmysql que él mismo haga la suma en vez de obterner el rankign sumarlo y updatearlo, asi tenemos atomicidad.
-            // seguro contra condiciones de carrera.
-            $sql = "UPDATE usuarios SET ranking = ranking + ? WHERE usuario_id = ?";
+            $sql = "UPDATE usuarios SET ranking = GREATEST(ranking + ?, 0) WHERE usuario_id = ?";
             $resultadoUpdate = $this->conexion->preparedQuery($sql, 'ii', [$puntos, $id]);
 
             if (!$resultadoUpdate) {
                 throw new Exception("Error al actualizar el ranking (ID no encontrado o sin cambios).");
             }
 
-            // leemos el nuevo valor para devolverlo.
             $sql_select = "SELECT ranking FROM usuarios WHERE usuario_id = ?";
             $resultado = $this->conexion->preparedQuery($sql_select, 'i', [$id]);
 
@@ -293,6 +403,13 @@ class UsuarioModel
         return $sonIguales;
     }
 
+    public function esContraseniaValida($contrasenia)
+    {
+
+        $patron = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/';
+        return preg_match($patron, $contrasenia) === 1;
+    }
+
     public function existeEmail($email)
     {
         $sql = "SELECT usuario_id FROM usuarios WHERE email = ?";
@@ -309,10 +426,8 @@ class UsuarioModel
             $esValido = false;
         }
 
-        // Extraer el dominio del email
         $dominio = strtolower(substr(strrchr($email, "@"), 1));
 
-        // Lista de dominios permitidos
         $dominiosPermitidos = [
             'gmail.com',
             'hotmail.com',
@@ -349,7 +464,6 @@ class UsuarioModel
     {
         $sql = "UPDATE usuarios SET esta_verificado = 1, token_verificacion = NULL 
                 WHERE token_verificacion = ?";
-        // preparedQuery debe devolver true si el UPDATE fue exitoso (y afectó filas)
         return $this->conexion->preparedQuery($sql, 's', [$token]) === true;
     }
 
@@ -420,7 +534,7 @@ class UsuarioModel
             return [
                 "nombre" => "Diamante",
                 "imagen" => $basePath . "diamante.png",
-                "color" => "text-info" // Un color de Bootstrap
+                "color" => "text-info"
             ];
         } elseif ($puntos > 200) {
             return [

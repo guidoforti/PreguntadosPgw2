@@ -31,12 +31,29 @@ class JugarPartidaModel
         return $this->conexion->getInsertId();
     }
 
+    public function finalizarPartidaAbandonada($usuario_id){
+        $sql = "SELECT partida_id FROM partidas_usuario 
+                WHERE usuario_id = ? AND estado = 'en_curso'";
+
+        $partida_activa = $this->conexion->preparedQuery($sql, 'i', [$usuario_id]);
+
+        if(empty($partida_activa)){
+           return $penalizacion = 0;
+        }
+
+        $partida_id = $partida_activa[0]['partida_id'];
+        $sql_finalizarPartida = "UPDATE partidas_usuario
+        SET estado = 'abandonada', fecha_fin = NOW()
+        WHERE partida_id = ?";
+
+        $this->conexion->preparedQuery($sql_finalizarPartida, 'i', [$partida_id]);
+        $penalizacion = self::MAPA_PUNTUACION[0] ?? -15;
+        return $penalizacion;
+    }
+
     public function buscarPreguntasParaPartida($rankingUsuario, $usuario_id, $categoria_nombre, $limite = 2)
     {
         $rangoDeDificultadDelUsuario = $this->devolverRangoDeDificultadSegunRanking($rankingUsuario);
-
-        // con left join lo que hacemos es ver que sean preguntas no respuestas ya por ese usuario
-        // calculamos el rango de dificultad para buscar segun elo del usuario
 
         $sql = "SELECT p.pregunta_id 
                 FROM preguntas p
@@ -58,8 +75,6 @@ class JugarPartidaModel
             $limite
         ]);
 
-        // Usamos count() sobre el array/null devuelto para ver que si existen menos de 10 preguntas para ese rango
-        // si no existen, se dan  preguntas random sin importar rango
         $numeroDePreguntasEncontradas = count($preguntas_encontradas);
 
         if ($numeroDePreguntasEncontradas < $limite) {
@@ -77,7 +92,6 @@ class JugarPartidaModel
             $preguntas_encontradas = $this->conexion->preparedQuery($sqlPorFaltaDePreguntas, 'isi', [$usuario_id, $categoria_nombre, $limite]);
         }
 
-        // Extraemos los IDs del resultado final
         $ids = [];
         if (is_array($preguntas_encontradas)) {
             foreach ($preguntas_encontradas as $fila) {
@@ -89,7 +103,7 @@ class JugarPartidaModel
 
     public function getPreguntaCompleta($pregunta_id) {
         $data = [];
-        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria
+        $sql_pregunta = "SELECT p.texto_pregunta, c.nombre AS categoria, c.color_hex
                             FROM preguntas p
                             JOIN categorias c ON c.categoria_id = p.categoria_id
                             WHERE pregunta_id = ?";
@@ -108,6 +122,10 @@ class JugarPartidaModel
 
     public function procesarRespuesta($partida_id, $usuario_id, $pregunta_id, $respuesta_id, $start_time)
     {
+
+        if ($respuesta_id === '' || $respuesta_id === 0) {
+            $respuesta_id = null;
+        }
 
         $tiempo_limite = 20;
         $tiempo_usado = time() - $start_time;
@@ -192,12 +210,10 @@ class JugarPartidaModel
 
     public function verificarYResetearHistorialUsuario($usuario_id, $rankingUsuario)
     {
-        // obtengo el rango de dificultad del usuario
         $rango = $this->devolverRangoDeDificultadSegunRanking($rankingUsuario);
         $rangoMenor = $rango['rangoMenor'];
         $rangoMayor = $rango['rangoMayor'];
 
-        // cuento total de preguntas activas EN ESE RANGO
         $sql_total = "SELECT COUNT(*) as total 
                       FROM preguntas 
                       WHERE estado = 'activa' 
@@ -206,7 +222,6 @@ class JugarPartidaModel
         $res_total = $this->conexion->preparedQuery($sql_total, 'dd', [$rangoMenor, $rangoMayor]);
         $total_activas_en_rango = $res_total[0]['total'] ?? 0;
 
-        // cuanto cuantas preguntas EN ESE RANGO ha respondido el usuario
         $sql_respondidas = "SELECT COUNT(DISTINCT p.pregunta_id) as total 
                             FROM preguntas p
                             JOIN respuestas_usuario ru ON p.pregunta_id = ru.pregunta_id
@@ -216,23 +231,37 @@ class JugarPartidaModel
         $res_respondidas = $this->conexion->preparedQuery($sql_respondidas, 'idd', [$usuario_id, $rangoMenor, $rangoMayor]);
         $total_respondidas_en_rango = $res_respondidas[0]['total'] ?? 0;
 
-        //calculo las preguntas que le quedan en su rango
         $preguntas_sin_ver = $total_activas_en_rango - $total_respondidas_en_rango;
 
-        // si le quedan 9 o menos, reseteamos su historial completo
         if ($preguntas_sin_ver < 10) {
             $sql_delete = "DELETE FROM respuestas_usuario WHERE usuario_id = ?";
             $this->conexion->preparedQuery($sql_delete, 'i', [$usuario_id]);
-            return true; // Se reseteó
+            return true;
         }
 
-        return false; // No se reseteó
+        return false;
     }
 
     public function getCategorias() {
         $sql = 'SELECT nombre, color_hex FROM categorias';
 
         $resultado = $this->conexion->query($sql);
+        return $resultado;
+    }
+
+    public function getCategoriasJugables() {
+        $sql = "SELECT 
+                c.categoria_id, 
+                c.nombre, 
+                c.color_hex 
+            FROM categorias c
+            JOIN preguntas p ON c.categoria_id = p.categoria_id
+            WHERE p.estado = 'activa'
+            GROUP BY c.categoria_id, c.nombre, c.color_hex
+            HAVING COUNT(p.pregunta_id) >= 2
+            ORDER BY c.nombre";
+        $resultado = $this->conexion->query($sql);
+
         return $resultado;
     }
 

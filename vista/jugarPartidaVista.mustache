@@ -4,8 +4,8 @@
             <form action="/jugarPartida/responder" method="POST" id="pregunta-form" class="card shadow-sm p-4 ">
 
                 <div class="mb-3 text-center">
-                    <div class="fw-bold mb-2" style="font-size:1.05rem;">
-                        {{preguntas_mostradas}} / {{total_preguntas}}
+                    <div class="fw-bold mb-2 text-secondary" style="font-size:1.05rem;">
+                        Pregunta {{preguntas_mostradas}} de {{total_preguntas}}
                     </div>
 
                     <input type="hidden" name="pregunta_id" value="{{ pregunta_id }}">
@@ -20,19 +20,24 @@
                          style="height: 25px;">
 
                         <div id="miProgressBar"
-                             class="progress-bar"
-                             style="width: {{porcentaje_progreso}}%;">
+                             class="progress-bar fw-bold"
+                             style="width: {{porcentaje_progreso}}%; background-color: {{pregunta.color_hex}};">
+                            {{porcentaje_progreso}}%
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mb-4">
-                    <div id="timer-display" class="mx-auto">
+                    <div id="timer-display" class="mx-auto"
+                         style="border-color: {{pregunta.color_hex}}; color: {{pregunta.color_hex}};">
                         <span id="timer">{{ timer }}</span>
                     </div>
                 </div>
 
-                <h5 class="h5 text-center mb-2 fw-normal">Categoria: {{pregunta.categoria}}</h5>
+                <div class="text-center mb-4 p-2 rounded-3 text-white fw-bold shadow-sm"
+                     style="background-color: {{pregunta.color_hex}};">
+                    Categoría: {{pregunta.categoria}}
+                </div>
                 <h2 class="h3 text-center mb-4 fw-normal">{{pregunta.texto_pregunta}}</h2>
 
                 <div class="d-grid gap-3">
@@ -60,6 +65,7 @@
 </div>
 
 <script>
+    {
     const timerElement = document.getElementById('timer');
     const formElement = document.getElementById('pregunta-form');
     let tiempoRestante = parseInt(timerElement.innerText);
@@ -88,9 +94,6 @@
 
         if (!respondido) {
             procesarRespuesta();
-
-        } else {
-            formElement.submit();
         }
     });
 
@@ -122,8 +125,15 @@
         const radios = document.querySelectorAll('input[name="respuesta_id_opcion"]');
         const radioSeleccionado = document.querySelector('input[name="respuesta_id_opcion"]:checked');
 
-        let idSeleccionada = radioSeleccionado ? radioSeleccionado.id : null;
         let idCorrectaDOM = `opcion-${idCorrecta}`;
+
+        let valorSeleccionado = radioSeleccionado ? parseInt(radioSeleccionado.value) : null;
+
+        if (valorSeleccionado === parseInt(idCorrecta)) {
+            soundManager.play('correctAnswer');
+        } else {
+            soundManager.play('incorrectAnswer');
+        }
 
         radios.forEach(radio => {
             const label = radio.nextElementSibling;
@@ -134,17 +144,33 @@
         });
 
         if (radioSeleccionado) {
-            if (idSeleccionada !== idCorrectaDOM) {
+            if (radioSeleccionado.id !== idCorrectaDOM) {
                 const labelSeleccionada = radioSeleccionado.nextElementSibling;
                 labelSeleccionada.classList.remove('btn-outline-primary');
                 labelSeleccionada.classList.add('btn-danger');
             }
         }
 
-        const boton = formElement.querySelector('button[type="submit"]');
-        boton.innerText = 'Continuar';
-        boton.classList.remove('btn-success');
-        boton.classList.add('btn-primary');
+        setTimeout(() => {
+            const formData = new FormData(formElement);
+
+            fetch('/jugarPartida/responder', {
+                method: 'POST',
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.next_url) {
+                            loadView(data.next_url);
+                        } else {
+                            window.location.href = '/jugarPartida/mostrarPregunta';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al avanzar:", error);
+                        window.location.href = '/jugarPartida/mostrarPregunta';
+                    })
+        }, 500);
     }
 
     function bloquearOpciones() {
@@ -157,24 +183,31 @@
     let seFueDeLaPestana = false;
 
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && intervalo) {
+        const formActual = document.getElementById('pregunta-form');
+        if (!formActual) return;
+
+        if (document.visibilityState === 'hidden' && !seFueDeLaPestana && !respondido){
             seFueDeLaPestana = true;
             clearInterval(intervalo);
-            intervalo = null;
-
+            bloquearOpciones();
+            if(typeof soundManager !== 'undefined') {
+                soundManager.play('alert');
+            }
             Swal.fire({
                 title: '¡Tramposo!',
-                text: "Cambiaste de pestaña. Esta pregunta se marcará como incorrecta.",
+                text: "Cambiaste de pestaña. Se acabó el tiempo para esta pregunta.",
                 icon: 'warning',
-                confirmButtonText: 'Entendido',
+                confirmButtonText: 'Aceptar derrota',
                 allowOutsideClick: false,
                 allowEscapeKey: false
-            }).then(() => {
-                bloquearOpciones();
-                formElement.submit();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    procesarRespuesta();
+                }
             });
         }
     });
+    }
 </script>
 
 

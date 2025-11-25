@@ -1,0 +1,112 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Editar Perfil</h4>
+                </div>
+                <div class="card-body">
+                    {{#exito}}
+                        <div class="alert alert-success text-center">{{exito}}</div>
+                    {{/exito}}
+
+                    {{#error}}
+                        <div class="alert alert-danger text-center">{{error}}</div>
+                    {{/error}}
+
+                    <form id="formEditar" action="/perfil/actualizar" method="POST" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombreCompleto" name="nombreCompleto" required
+                                   minlength="3" maxlength="100" value="{{usuario.nombre_completo}}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="anioNacimiento" class="form-label">Año de Nacimiento</label>
+                            <input type="number" class="form-control" id="anioNacimiento" name="anioNacimiento"
+                                    max="{{anioActual}}" value="{{usuario.ano_nacimiento}}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sexo</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sexo" id="masculino" value="M" required
+                                       {{sexo_M}}>
+                                <label class="form-check-label" for="masculino">Masculino</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sexo" id="femenino" value="F"
+                                       {{sexo_F}}>
+                                <label class="form-check-label" for="femenino">Femenino</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sexo" id="noEspecificar" value="X"
+                                       {{sexo_X}}>
+                                <label class="form-check-label" for="noEspecificar">Prefiero no cargarlo</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                   value="{{usuario.email}}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nombreUsuario" class="form-label">Nombre de Usuario</label>
+                            <input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" required
+                                   minlength="4" maxlength="30" pattern="[A-Za-z0-9_]+" value="{{usuario.nombre_usuario}}">
+                            <div class="form-text">Solo letras, números y guiones bajos</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña (Dejar en blanco para no cambiar)</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$">
+                            <div class="form-text">Mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                            <div id="passwordMatch" class="invalid-feedback">Las contraseñas no coinciden</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="fotoPerfil" class="form-label">Foto de Perfil (opcional)</label>
+                            <input class="form-control" type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
+                            <div class="form-text">Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 2MB</div>
+                            {{#usuario.url_foto_perfil}}
+                                <div class="mt-2">
+                                    <small class="text-muted">Foto actual:</small><br>
+                                    <img src="/{{usuario.url_foto_perfil}}" alt="Foto actual" style="max-width: 150px; max-height: 150px; border-radius: 0.25rem;">
+                                </div>
+                            {{/usuario.url_foto_perfil}}
+                        </div>
+
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+                        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+                        <div class="mb-4">
+                            <label class="form-label">Ubicación (opcional - dejar en blanco para mantener la actual)</label>
+                            <div id="map" style="height: 300px;"></div>
+                        </div>
+
+                        <input type="hidden" name="paisNombre" id="pais" value="{{usuario.pais_nombre}}">
+                        <input type="hidden" name="provinciaNombre" id="provincia" value="{{usuario.provincia_nombre}}">
+                        <input type="hidden" name="ciudadNombre" id="ciudad" value="{{usuario.ciudad_nombre}}">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <a href="/perfil/ver" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/editarPerfil.js"></script>
