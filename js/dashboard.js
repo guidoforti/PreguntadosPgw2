@@ -2,7 +2,7 @@
 let filtroActual = "mes";
 
 document.addEventListener("DOMContentLoaded", function () {
-s
+
   google.charts.load("current", { packages: ["corechart", "bar"] });
   google.charts.setOnLoadCallback(inicializarDashboard);
 

@@ -93,7 +93,25 @@ class PreguntasModel
                 LEFT JOIN usuarios u ON p.creada_por_usuario_id = u.usuario_id
                 WHERE p.estado = 'pendiente'";
 
-        return $this->conexion->preparedQuery($sql);
+        $preguntas = $this->conexion->preparedQuery($sql);
+        if (empty($preguntas)) {
+            return [];
+        }
+        $resultadoFinal = [];
+
+        foreach ($preguntas as $pregunta) {
+            $idPregunta = $pregunta['pregunta_id'];
+            $sqlRespuestas = "SELECT texto_respuesta, es_correcta 
+                              FROM respuestas 
+                              WHERE pregunta_id = ?";
+
+            $respuestas = $this->conexion->preparedQuery($sqlRespuestas, 'i', [$idPregunta]);
+            $pregunta['respuestas'] = $respuestas;
+
+            $resultadoFinal[] = $pregunta;
+        }
+
+        return $resultadoFinal;
     }
 
     public function getReportesPendientes()

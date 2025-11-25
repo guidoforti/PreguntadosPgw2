@@ -6,19 +6,39 @@
             <h3>Sugerencias Pendientes ({{count_pendientes}})</h3>
             <ul class="list-group">
                 {{#pendientes}}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{pregunta_id}}</strong>: {{texto_pregunta}}
-                        <small class="text-muted"> (Sugerida por: {{creador}})</small>
-                    </div>
-                    <div>
-                        <a href="/editor/aprobar?id={{pregunta_id}}" class="btn btn-sm btn-success me-2">Aprobar</a>
-                        <a href="/editor/denegar?id={{pregunta_id}}" class="btn btn-sm btn-danger">Denegar</a>
-                    </div>
-                </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                        <div class="text-break me-3 w-100">
+                            <strong>{{pregunta_id}}</strong>: {{texto_pregunta}}
+                            <small class="text-muted"> (Sugerida por: {{creador}})</small>
+
+                            <div class="mt-2 p-2 bg-light border rounded">
+                                <strong class="d-block mb-1" style="font-size: 0.85rem;">Opciones:</strong>
+                                <ul class="list-unstyled mb-0" style="font-size: 0.9rem;">
+                                    {{#respuestas}}
+                                        <li class="{{#es_correcta}}text-success fw-bold{{/es_correcta}}">
+                                            {{#es_correcta}}✅{{/es_correcta}}
+                                            {{^es_correcta}}⚪{{/es_correcta}}
+                                            {{texto_respuesta}}
+                                        </li>
+                                    {{/respuestas}}
+
+                                    {{^respuestas}}
+                                        <li class="text-danger small">⚠️ No se cargaron opciones.</li>
+                                    {{/respuestas}}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0 ms-2">
+                            <a href="/editor/aprobar?id={{pregunta_id}}" class="btn btn-sm btn-success mb-2 d-block no-ajax-load">Aprobar</a>
+                            <a href="/editor/denegar?id={{pregunta_id}}" class="btn btn-sm btn-danger d-block no-ajax-load">Denegar</a>
+                        </div>
+                    </li>
                 {{/pendientes}}
+
                 {{^pendientes}}
-                <li class="list-group-item">No hay preguntas nuevas para revisar.</li>
+                    <li class="list-group-item">No hay preguntas nuevas para revisar.</li>
                 {{/pendientes}}
             </ul>
         </div>
@@ -30,8 +50,7 @@
                 {{#reportes}}
                     <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-start">
 
-                        <div class="me-3">
-
+                        <div class="me-3 text-break w-100">
                             <div class="mb-2"> <strong>Pregunta:</strong> {{texto_pregunta}}
                                 <small class="text-muted">(ID: {{pregunta_id}})</small>
                             </div>
@@ -45,9 +64,9 @@
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 flex-shrink-0">
-                            <a class="nav-link no-ajax-load btn btn-sm btn-success" href="/editor/aprobarReporte?reporte_id={{reporte_id}}">Aprobar Reporte</a>
-                            <a class="nav-link no-ajax-load btn btn-sm btn-danger" href="/editor/rechazarReporte?reporte_id={{reporte_id}}">Rechazar Reporte</a>
+                        <div class="d-grid gap-2 flex-shrink-0 ms-2">
+                            <a class="btn btn-sm btn-success no-ajax-load" href="/editor/aprobarReporte?reporte_id={{reporte_id}}">Aprobar</a>
+                            <a class="btn btn-sm btn-danger no-ajax-load" href="/editor/rechazarReporte?reporte_id={{reporte_id}}">Rechazar</a>
                         </div>
 
                     </li>
