@@ -10,6 +10,9 @@
                 <div class="alert alert-danger d-none" role="alert" id="limite-alerta">
                     Solo puedes seleccionar un máximo de 3 preguntas.
                 </div>
+                <div class="alert alert-warning d-none" role="alert" id="validacion-alerta">
+                    Por favor, escribe una justificación para todas las preguntas seleccionadas.
+                </div>
 
                 {{#preguntas}}
                     <div class="form-check fs-5 my-3">
@@ -28,6 +31,9 @@
                             rows="3"
                             maxlength="255"
                             placeholder="Escribe el motivo del reporte... (máx 255 caracteres)"></textarea>
+                            <div class="invalid-feedback">
+                                La justificación no puede estar vacía.
+                            </div>
                         </div>
                     </div>
                 {{/preguntas}}
@@ -36,18 +42,21 @@
                     <p class="text-center">No hay preguntas para reportar.</p>
                 {{/preguntas}}
 
-                <hr class="my-4">
-
-                <button type="submit" class="btn btn-danger btn-lg w-100">Enviar Reporte</button>
+                <div class="d-flex gap-3">
+                    <a href="/" class="btn btn-secondary btn-lg w-50">Cancelar reporte</a>
+                    <button type="submit" class="btn btn-danger btn-lg w-50">Enviar Reporte</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
 <script>
+    const form = document.getElementById('reporte-form');
     const checkboxes = document.querySelectorAll('input[name="preguntas_reportadas[]"]');
     const limite = 3;
     const alerta = document.getElementById('limite-alerta');
+    const alertaValidacion = document.getElementById('validacion-alerta');
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
@@ -64,6 +73,7 @@
             const motivoContainer = document.getElementById(motivoContainerId);
 
             if (motivoContainer) {
+                const textarea = motivoContainer.querySelector('textarea');
                 if (checkbox.checked) {
                     motivoContainer.classList.remove('d-none');
                 } else {
@@ -71,9 +81,43 @@
                     const textarea = motivoContainer.querySelector('textarea');
                     if (textarea) {
                         textarea.value = '';
+                        textarea.classList.remove('is-invalid');
                     }
                 }
             }
         });
+    });
+    document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+    form.addEventListener('submit', function(event) {
+        alertaValidacion.classList.add('d-none');
+        let esValido = true;
+        let algunSeleccionado = false;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                algunSeleccionado = true;
+                const motivoContainer = document.getElementById(`motivo-container-${checkbox.value}`);
+                const textarea = motivoContainer.querySelector('textarea');
+
+                if (!textarea.value.trim()) {
+                    esValido = false;
+                    textarea.classList.add('is-invalid');
+                }
+            }
+        });
+        if (!algunSeleccionado) {
+            event.preventDefault();
+            return;
+        }
+        if (!esValido) {
+            event.preventDefault();
+            alertaValidacion.classList.remove('d-none');
+        }
     });
 </script>

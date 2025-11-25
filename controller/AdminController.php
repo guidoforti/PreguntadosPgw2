@@ -14,38 +14,26 @@ class AdminController
         $this->renderer = $renderer;
     }
 
-    /**
-     * Página principal del dashboard de administración
-     */
     public function base()
     {
-        // Verificar que el usuario es administrador
         SecurityHelper::checkRole(['admin']);
 
         $this->renderer->render("adminDashboard");
     }
 
-    /**
-     * API endpoint para obtener datos de métricas via AJAX
-     * Espera parámetros GET: metrica, filtro
-     */
     public function obtenerDatosMetricas()
     {
-        // Verificar que el usuario es administrador
         SecurityHelper::checkRole(['admin']);
 
-        // Obtener los parámetros de la solicitud
         $metrica = $_GET['metrica'] ?? '';
-        $filtro = $_GET['filtro'] ?? null; // dia, semana, mes, año
+        $filtro = $_GET['filtro'] ?? null;
 
-        // Validar que la métrica sea solicitada
         if (empty($metrica)) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Métrica no especificada']);
             return;
         }
 
-        // Obtener los datos según la métrica solicitada
         $datos = [];
         try {
             switch ($metrica) {
@@ -68,7 +56,6 @@ class AdminController
                     $datos = ['error' => 'Métrica desconocida'];
             }
 
-            // Retornar JSON
             header('Content-Type: application/json');
             echo json_encode($datos);
         } catch (Exception $e) {
@@ -78,25 +65,18 @@ class AdminController
         }
     }
 
-    /**
-     * Genera un PDF con los reportes del dashboard
-     */
     public function generarPDF()
     {
-        // Verificar que el usuario es administrador
         SecurityHelper::checkRole(['admin']);
 
-        // Obtener el tipo de filtro del formulario
         $filtro = $_POST['filtro'] ?? 'mes';
 
-        // Obtener todos los datos
         $estadisticasGenerales = $this->model->obtenerEstadisticasGenerales($filtro);
         $porcentajeRespuestas = $this->model->obtenerPorcentajeRespuestasCorrectasPorUsuario($filtro);
         $usuariosPorPais = $this->model->obtenerUsuariosPorPais($filtro);
         $usuariosPorSexo = $this->model->obtenerUsuariosPorSexo($filtro);
         $usuariosPorGrupoEdad = $this->model->obtenerUsuariosPorGrupoEdad($filtro);
 
-        // Generar HTML del PDF
         $html = $this->generarHtmlPDF(
             $estadisticasGenerales,
             $porcentajeRespuestas,
@@ -106,7 +86,6 @@ class AdminController
             $filtro
         );
 
-        // Configurar DomPDF
         $options = new Options();
         $options->set('defaultFont', 'Courier');
         $options->set('isRemoteEnabled', true);
@@ -116,14 +95,10 @@ class AdminController
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        // Descargar PDF
         $nombreArchivo = 'reporte_admin_' . date('Y-m-d_H-i-s') . '.pdf';
         $dompdf->stream($nombreArchivo, array("Attachment" => true));
     }
 
-    /**
-     * Genera el HTML para el PDF con formato personalizado
-     */
     private function generarHtmlPDF($estadisticas, $porcentajeRespuestas, $usuariosPorPais, $usuariosPorSexo, $usuariosPorGrupoEdad, $filtro)
     {
         $fechaGeneracion = date('d/m/Y H:i:s');
@@ -272,8 +247,6 @@ class AdminController
         <span><strong>Período:</strong> {$nombreFiltro}</span>
         <span><strong>Generado:</strong> {$fechaGeneracion}</span>
     </div>
-
-    <!-- Sección de Estadísticas Generales -->
     <div class="section">
         <h2>Estadísticas Generales</h2>
         <div class="estadisticas-grid">
@@ -300,7 +273,6 @@ class AdminController
         </div>
     </div>
 
-    <!-- Sección de Usuarios por País -->
     <div class="section">
         <h2>Usuarios por País</h2>
 HTML;
@@ -327,7 +299,6 @@ HTML;
 
         $html .= '</div>';
 
-        // Sección de Usuarios por Sexo
         $html .= '<div class="section">
                     <h2>Usuarios por Sexo</h2>';
 
@@ -353,7 +324,6 @@ HTML;
 
         $html .= '</div>';
 
-        // Sección de Usuarios por Grupo de Edad
         $html .= '<div class="section">
                     <h2>Usuarios por Grupo de Edad</h2>';
 
@@ -379,7 +349,6 @@ HTML;
 
         $html .= '</div>';
 
-        // Sección de Porcentaje de Respuestas Correctas
         $html .= '<div class="section">
                     <h2>Porcentaje de Respuestas Correctas por Usuario</h2>';
 
@@ -420,9 +389,6 @@ HTML;
         return $html;
     }
 
-    /**
-     * Obtiene el nombre descriptivo del filtro
-     */
     private function obtenerNombreFiltro($filtro)
     {
         switch ($filtro) {

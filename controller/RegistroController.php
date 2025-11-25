@@ -48,8 +48,6 @@ class RegistroController
             $this->render->render("registrar", $data);
             return;
         }
-
-        // Capturar todos los datos del formulario
         $nombreCompleto   = $_POST['nombreCompleto'] ?? null;
         $anioNacimiento   = $_POST['anioNacimiento'] ?? null;
         $sexo             = $_POST['sexo'] ?? null;
@@ -62,7 +60,6 @@ class RegistroController
         $provinciaNombre  = $_POST['provinciaNombre'] ?? null;
         $ciudadNombre     = $_POST['ciudadNombre'] ?? null;
 
-        // Validar campos vacíos antes de pasar al modelo
         $campos = compact('nombreCompleto', 'anioNacimiento', 'sexo', 'email', 'nombreUsuario', 'contraseniaUno', 'contraseniaDos');
         foreach ($campos as $clave => $valor) {
             if (empty($valor)) {
@@ -77,7 +74,6 @@ class RegistroController
             }
         }
 
-        // Llamar al modelo para registrar
         $resultado = $this->model->registrar(
             $nombreCompleto,
             $anioNacimiento,
@@ -105,7 +101,6 @@ class RegistroController
 
         } elseif (isset($resultado['token'])) {
 
-            // 3. ÉXITO: Envío del Email
             $token = $resultado['token'];
             $emailDestino = $email;
 
