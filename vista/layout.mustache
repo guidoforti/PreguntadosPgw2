@@ -5,11 +5,9 @@
     <title>Preguntados</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Scripts de ruleta -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel@2.8.0/Winwheel.min.js"></script>
@@ -18,14 +16,12 @@
         const IS_LOGGED_IN = {{^notLoggedIn}}true{{/notLoggedIn}}{{#notLoggedIn}}false{{/notLoggedIn}};
     </script>
 
-    <!-- JS necesarios en head -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script src="/js/soundManager.js" defer></script>
     <script src="/js/globalEvents.js" defer></script>
 
-    <!-- Leaflet -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -33,7 +29,6 @@
 </head>
 <body class="bg-light d-flex flex-column vh-100">
 
-<!-- Header -->
 <header class="bg-primary text-white shadow-sm sticky-top">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary container">
         <a class="navbar-brand fw-bold no-ajax-load" href="/">
@@ -74,14 +69,12 @@
     </nav>
 </header>
 
-<!-- Contenido principal (vistas inyectadas) -->
 <main class="flex-fill">
     <div id="app-content">
         {{{contenido}}}
     </div>
 </main>
 
-<!-- Footer -->
 <footer class="bg-primary text-white py-3 mt-5 shadow-sm">
     <div class="container text-center">
         <p class="mb-0">© 2025 Preguntados - Grupo 2</p>

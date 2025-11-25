@@ -25,7 +25,6 @@
         display: inline-block;
     }
 
-    /* El puntero (flecha) */
     #ruleta-puntero {
         position: absolute;
         top: -10px;
@@ -100,13 +99,11 @@
                     girando = true;
                     botonGirar.innerText = 'Girando...';
                     botonGirar.disabled = true;
-                    //llamamos al back, para obtener la categoria, la categoria la decide el back, no la ruleta.
                     fetch('/jugarPartida/obtenerCategoriaParaGiro', {method: 'POST'})
                             .then(r => r.json())
                             .then(categoria => {
                                 if (categoria.error) throw new Error(categoria.error);
 
-                                // encontramos el indice con el id de categoria
                                 let segIndex = -1;
                                 for (let i = 1; i <= miRuletaLocal.numSegments; i++) {
                                     const s = miRuletaLocal.segments[i];
@@ -121,7 +118,6 @@
                                     return;
                                 }
 
-                                // calculamos el angulo correcto dentro del segmento
                                 const stopAt = miRuletaLocal.getRandomForSegment(segIndex);
                                 miRuletaLocal.animation.stopAngle = stopAt;
                                 miRuletaLocal.startAnimation();

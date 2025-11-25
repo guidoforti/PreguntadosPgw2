@@ -1,9 +1,3 @@
-/**
- * Script para la vista de perfil
- * Maneja el mapa de ubicación del usuario
- */
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // Obtener datos del mapa desde los atributos data
     const mapElement = document.getElementById('map');
@@ -21,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Cargar ubicación desde Nominatim
     fetch('/proxyNominatim.php?q=' + encodeURIComponent(ubicacion))
         .then(response => response.json())
         .then(data => {
@@ -30,16 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const lat = parseFloat(result.lat);
                 const lon = parseFloat(result.lon);
 
-                // Inicializar mapa
                 const map = L.map('map').setView([lat, lon], 6);
 
-                // Agregar capa de tiles
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors',
                     maxZoom: 19
                 }).addTo(map);
 
-                // Agregar marcador
                 L.marker([lat, lon])
                     .bindPopup(`<b>${nombreUsuario}</b><br/>${ubicacion}`)
                     .addTo(map);

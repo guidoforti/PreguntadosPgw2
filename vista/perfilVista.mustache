@@ -4,7 +4,6 @@
 
 <div class="container my-5">
     <div class="row g-4">
-        <!-- COLUMNA IZQUIERDA: Datos del usuario -->
         <div class="col-12 col-md-4 text-center">
             <!-- Avatar -->
             <div class="mb-4">
@@ -22,11 +21,9 @@
                 {{/usuario.url_foto_perfil}}
             </div>
 
-            <!-- Nombre y usuario -->
             <h2 class="mb-1">{{usuario.nombre_completo}}</h2>
             <p class="text-muted mb-3">@{{usuario.nombre_usuario}}</p>
 
-            <!-- Sexo y Edad -->
             <div class="mb-3">
                 <small class="text-muted">
                     <span>{{usuario.sexo}}</span>
@@ -34,14 +31,12 @@
                 </small>
             </div>
 
-            <!-- Botón Editar (solo para el propio perfil) -->
             {{#esMiPerfil}}
             <div class="mb-3">
                 <a href="/perfil/editarForm" class="btn btn-sm btn-outline-primary">✏️ Editar Perfil</a>
             </div>
             {{/esMiPerfil}}
 
-            <!-- Rango -->
             <div class="mb-4">
                 <img src="/{{usuario.rango.imagen}}"
                      alt="{{usuario.rango.nombre}}"
@@ -49,7 +44,6 @@
                 <span class="{{usuario.rango.color}} fw-bold fs-5">{{usuario.rango.nombre}}</span>
             </div>
 
-            <!-- Ranking score -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body text-center">
                     <h3 class="display-4 mb-0 text-primary">{{usuario.ranking}}</h3>
@@ -57,7 +51,6 @@
                 </div>
             </div>
 
-            <!-- QR Code -->
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
                     <h6 class="mb-0">📱 Código QR</h6>
@@ -72,9 +65,7 @@
             </div>
         </div>
 
-        <!-- COLUMNA DERECHA: Mapa y estadísticas -->
         <div class="col-12 col-md-8">
-            <!-- Card: Ubicación con mapa -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-success text-white">
                     <h6 class="mb-0">📍 Ubicación</h6>
@@ -90,7 +81,6 @@
                 </div>
             </div>
 
-            <!-- Card: Estadísticas -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-warning text-dark">
                     <h6 class="mb-0">📊 Estadísticas</h6>
@@ -130,7 +120,6 @@
                 </div>
             </div>
 
-            <!-- Card: Últimas partidas -->
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     <h6 class="mb-0">🎮 Últimas Partidas</h6>
@@ -175,7 +164,6 @@
         </div>
     </div>
 
-    <!-- Botón volver -->
     <div class="mt-4">
         <a href="/ranking/verRanking" class="btn btn-outline-secondary">← Volver al Ranking</a>
     </div>

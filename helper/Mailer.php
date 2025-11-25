@@ -5,7 +5,6 @@ use PHPMailer\PHPMailer\Exception;
 
 class Mailer {
 
-    // Configuración del Servidor SMTP
     private static $smtp_host = 'smtp.gmail.com';
     private static $smtp_user = 'marcofolco@gmail.com';
     private static $smtp_pass = 'qyqn pbgx vbob bqct';
@@ -16,7 +15,6 @@ class Mailer {
         $mail = new PHPMailer(true);
 
         try {
-            // Configuración del Servidor
             $mail->isSMTP();
             $mail->Host       = self::$smtp_host;
             $mail->SMTPAuth   = true;
@@ -26,9 +24,8 @@ class Mailer {
             $mail->Port       = 465;
             $mail->CharSet    = 'UTF-8';
 
-            // Remitente y Destinatario
             $mail->setFrom(self::$smtp_user, self::$from_name);
-            $mail->addAddress($destino); // El email del nuevo usuario
+            $mail->addAddress($destino);
 
             // Contenido del Email
             $mail->isHTML(true);
